@@ -566,7 +566,7 @@ int resize_key_cache(KEY_CACHE *keycache, uint key_cache_block_size,
   if (!keycache->key_cache_inited)
     DBUG_RETURN(keycache->disk_blocks);
 
-  if (key_cache_block_size == keycache->key_cache_block_size &&
+  if(key_cache_block_size == keycache->key_cache_block_size &&
      use_mem == keycache->key_cache_mem_size)
   {
     change_key_cache_param(keycache, division_limit, age_threshold);
@@ -2029,7 +2029,7 @@ restart:
           DBUG_ASSERT(keycache->blocks_used <
                       (ulong) keycache->disk_blocks);
           block= &keycache->block_root[keycache->blocks_used];
-          block_mem_offset=
+          block_mem_offset= 
            ((size_t) keycache->blocks_used) * keycache->key_cache_block_size;
           block->buffer= ADD_TO_PTR(keycache->block_mem,
                                     block_mem_offset,
@@ -2523,7 +2523,7 @@ uchar *key_cache_read(KEY_CACHE *keycache,
                                 (ulong) (keycache->blocks_unused *
                                          keycache->key_cache_block_size));
     }
-
+  
     /*
       When the key cache is once initialized, we use the cache_lock to
       reliably distinguish the cases of normal operation, resizing, and
@@ -2648,7 +2648,7 @@ uchar *key_cache_read(KEY_CACHE *keycache,
       remove_reader(block);
 
       /* Error injection for coverage testing. */
-      DBUG_EXECUTE_if ("key_cache_read_block_error",
+      DBUG_EXECUTE_IF("key_cache_read_block_error",
                       block->status|= BLOCK_ERROR;);
 
       /* Do not link erroneous blocks into the LRU ring, but free them. */
@@ -2912,7 +2912,7 @@ int key_cache_insert(KEY_CACHE *keycache,
       remove_reader(block);
 
       /* Error injection for coverage testing. */
-      DBUG_EXECUTE_if ("key_cache_insert_block_error",
+      DBUG_EXECUTE_IF("key_cache_insert_block_error",
                       block->status|= BLOCK_ERROR; errno=EIO;);
 
       /* Do not link erroneous blocks into the LRU ring, but free them. */
@@ -3219,7 +3219,7 @@ int key_cache_write(KEY_CACHE *keycache,
       remove_reader(block);
 
       /* Error injection for coverage testing. */
-      DBUG_EXECUTE_if ("key_cache_write_block_error",
+      DBUG_EXECUTE_IF("key_cache_write_block_error",
                       block->status|= BLOCK_ERROR;);
 
       /* Do not link erroneous blocks into the LRU ring, but free them. */
@@ -3271,7 +3271,7 @@ end:
     dec_counter_for_resize_op(keycache);
     keycache_pthread_mutex_unlock(&keycache->cache_lock);
   }
-
+  
   if (MYSQL_KEYCACHE_WRITE_DONE_ENABLED())
   {
     MYSQL_KEYCACHE_WRITE_DONE((ulong) (keycache->blocks_used *
@@ -3279,7 +3279,7 @@ end:
                               (ulong) (keycache->blocks_unused *
                                        keycache->key_cache_block_size));
   }
-
+  
 #if !defined(DBUG_OFF) && defined(EXTRA_DEBUG)
   DBUG_EXECUTE("exec",
                test_key_cache(keycache, "end of key_cache_write", 1););
@@ -3338,13 +3338,13 @@ static void free_block(KEY_CACHE *keycache, BLOCK_LINK *block)
   /* Assert that the block is not in the LRU ring. */
   DBUG_ASSERT(!block->next_used && !block->prev_used);
   /*
-    IMHO the below condition (if ()) makes no sense. I can't see how it
+    IMHO the below condition (if()) makes no sense. I can't see how it
     could be possible that free_block() is entered with a NULL hash_link
     pointer. The only place where it can become NULL is in free_block()
     (or before its first use ever, but for those blocks free_block() is
     not called). I don't remove the conditional as it cannot harm, but
     place an DBUG_ASSERT to confirm my hypothesis. Eventually the
-    condition (if ()) can be removed.
+    condition (if()) can be removed.
   */
   DBUG_ASSERT(block->hash_link && block->hash_link->block == block);
   if (block->hash_link)

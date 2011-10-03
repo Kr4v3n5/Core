@@ -1,15 +1,15 @@
 /* Copyright (C) 2000 MySQL AB
-
+   
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License as published by the Free Software Foundation; version 2
    of the License.
-
+   
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-
+   
    You should have received a copy of the GNU Library General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
@@ -65,7 +65,7 @@ my_bincmp(const uchar *s, const uchar *se,
 
 
 static size_t
-my_caseup_str_mb2_or_mb4(CHARSET_INFO * cs  __attribute__((unused)),
+my_caseup_str_mb2_or_mb4(CHARSET_INFO * cs  __attribute__((unused)), 
                          char * s __attribute__((unused)))
 {
   DBUG_ASSERT(0);
@@ -74,7 +74,7 @@ my_caseup_str_mb2_or_mb4(CHARSET_INFO * cs  __attribute__((unused)),
 
 
 static size_t
-my_casedn_str_mb2_or_mb4(CHARSET_INFO *cs __attribute__((unused)),
+my_casedn_str_mb2_or_mb4(CHARSET_INFO *cs __attribute__((unused)), 
                          char * s __attribute__((unused)))
 {
   DBUG_ASSERT(0);
@@ -107,7 +107,7 @@ my_strntol_mb2_or_mb4(CHARSET_INFO *cs,
   register const uchar *s= (const uchar*) nptr;
   register const uchar *e= (const uchar*) nptr+l;
   const uchar *save;
-
+  
   *err= 0;
   do
   {
@@ -121,17 +121,17 @@ my_strntol_mb2_or_mb4(CHARSET_INFO *cs,
         case '+' : break;
         default  : goto bs;
       }
-    }
+    } 
     else /* No more characters or bad multibyte sequence */
     {
       if (endptr != NULL )
         *endptr= (char*) s;
       err[0]= (cnv==MY_CS_ILSEQ) ? EILSEQ : EDOM;
       return 0;
-    }
+    } 
     s+= cnv;
   } while (1);
-
+  
 bs:
 
   overflow= 0;
@@ -139,7 +139,7 @@ bs:
   save= s;
   cutoff= ((uint32)~0L) / (uint32) base;
   cutlim= (uint) (((uint32)~0L) % (uint32) base);
-
+  
   do {
     if ((cnv= cs->cset->mb_wc(cs, &wc, s, e)) > 0)
     {
@@ -168,23 +168,23 @@ bs:
         *endptr = (char*) s;
       err[0]= EILSEQ;
       return 0;
-    }
+    } 
     else
     {
       /* No more characters */
       break;
     }
-  } while (1);
-
+  } while(1);
+  
   if (endptr != NULL)
     *endptr = (char *) s;
-
+  
   if (s == save)
   {
     err[0]= EDOM;
     return 0L;
   }
-
+  
   if (negative)
   {
     if (res > (uint32) INT_MIN32)
@@ -192,20 +192,20 @@ bs:
   }
   else if (res > INT_MAX32)
     overflow= 1;
-
+  
   if (overflow)
   {
     err[0]= ERANGE;
     return negative ? INT_MIN32 : INT_MAX32;
   }
-
+  
   return (negative ? -((long) res) : (long) res);
 }
 
 
 static ulong
 my_strntoul_mb2_or_mb4(CHARSET_INFO *cs,
-                       const char *nptr, size_t l, int base,
+                       const char *nptr, size_t l, int base, 
                        char **endptr, int *err)
 {
   int      negative= 0;
@@ -218,7 +218,7 @@ my_strntoul_mb2_or_mb4(CHARSET_INFO *cs,
   register const uchar *s= (const uchar*) nptr;
   register const uchar *e= (const uchar*) nptr + l;
   const uchar *save;
-
+  
   *err= 0;
   do
   {
@@ -232,17 +232,17 @@ my_strntoul_mb2_or_mb4(CHARSET_INFO *cs,
         case '+' : break;
         default  : goto bs;
       }
-    }
+    } 
     else /* No more characters or bad multibyte sequence */
     {
       if (endptr !=NULL )
         *endptr= (char*)s;
       err[0]= (cnv == MY_CS_ILSEQ) ? EILSEQ : EDOM;
       return 0;
-    }
+    } 
     s+= cnv;
   } while (1);
-
+  
 bs:
 
   overflow= 0;
@@ -250,7 +250,7 @@ bs:
   save= s;
   cutoff= ((uint32)~0L) / (uint32) base;
   cutlim= (uint) (((uint32)~0L) % (uint32) base);
-
+  
   do
   {
     if ((cnv= cs->cset->mb_wc(cs, &wc, s, e)) > 0)
@@ -280,34 +280,34 @@ bs:
         *endptr= (char*)s;
       err[0]= EILSEQ;
       return 0;
-    }
+    } 
     else
     {
       /* No more characters */
       break;
     }
-  } while (1);
-
+  } while(1);
+  
   if (endptr != NULL)
     *endptr= (char *) s;
-
+  
   if (s == save)
   {
     err[0]= EDOM;
     return 0L;
   }
-
+  
   if (overflow)
   {
     err[0]= (ERANGE);
     return (~(uint32) 0);
   }
-
+  
   return (negative ? -((long) res) : (long) res);
 }
 
 
-static longlong
+static longlong 
 my_strntoll_mb2_or_mb4(CHARSET_INFO *cs,
                        const char *nptr, size_t l, int base,
                        char **endptr, int *err)
@@ -322,7 +322,7 @@ my_strntoll_mb2_or_mb4(CHARSET_INFO *cs,
   register const uchar *s= (const uchar*) nptr;
   register const uchar *e= (const uchar*) nptr+l;
   const uchar *save;
-
+  
   *err= 0;
   do
   {
@@ -336,17 +336,17 @@ my_strntoll_mb2_or_mb4(CHARSET_INFO *cs,
         case '+' : break;
         default  : goto bs;
       }
-    }
+    } 
     else /* No more characters or bad multibyte sequence */
     {
       if (endptr !=NULL )
         *endptr = (char*)s;
       err[0] = (cnv==MY_CS_ILSEQ) ? EILSEQ : EDOM;
       return 0;
-    }
+    } 
     s+=cnv;
   } while (1);
-
+  
 bs:
 
   overflow = 0;
@@ -383,23 +383,23 @@ bs:
         *endptr = (char*)s;
       err[0]=EILSEQ;
       return 0;
-    }
+    } 
     else
     {
       /* No more characters */
       break;
     }
-  } while (1);
-
+  } while(1);
+  
   if (endptr != NULL)
     *endptr = (char *) s;
-
+  
   if (s == save)
   {
     err[0]=EDOM;
     return 0L;
   }
-
+  
   if (negative)
   {
     if (res  > (ulonglong) LONGLONG_MIN)
@@ -407,13 +407,13 @@ bs:
   }
   else if (res > (ulonglong) LONGLONG_MAX)
     overflow = 1;
-
+  
   if (overflow)
   {
     err[0]=ERANGE;
     return negative ? LONGLONG_MIN : LONGLONG_MAX;
   }
-
+  
   return (negative ? -((longlong)res) : (longlong)res);
 }
 
@@ -433,7 +433,7 @@ my_strntoull_mb2_or_mb4(CHARSET_INFO *cs,
   register const uchar *s= (const uchar*) nptr;
   register const uchar *e= (const uchar*) nptr + l;
   const uchar *save;
-
+  
   *err= 0;
   do
   {
@@ -447,17 +447,17 @@ my_strntoull_mb2_or_mb4(CHARSET_INFO *cs,
         case '+' : break;
         default  : goto bs;
       }
-    }
+    } 
     else /* No more characters or bad multibyte sequence */
     {
       if (endptr !=NULL )
         *endptr = (char*)s;
       err[0]= (cnv==MY_CS_ILSEQ) ? EILSEQ : EDOM;
       return 0;
-    }
+    } 
     s+=cnv;
   } while (1);
-
+  
 bs:
 
   overflow = 0;
@@ -495,23 +495,23 @@ bs:
         *endptr = (char*)s;
       err[0]= EILSEQ;
       return 0;
-    }
+    } 
     else
     {
       /* No more characters */
       break;
     }
-  } while (1);
-
+  } while(1);
+  
   if (endptr != NULL)
     *endptr = (char *) s;
-
+  
   if (s == save)
   {
     err[0]= EDOM;
     return 0L;
   }
-
+  
   if (overflow)
   {
     err[0]= ERANGE;
@@ -524,7 +524,7 @@ bs:
 
 static double
 my_strntod_mb2_or_mb4(CHARSET_INFO *cs,
-                      char *nptr, size_t length,
+                      char *nptr, size_t length, 
                       char **endptr, int *err)
 {
   char     buf[256];
@@ -600,10 +600,10 @@ my_l10tostr_mb2_or_mb4(CHARSET_INFO *cs,
   long int new_val;
   int  sl= 0;
   unsigned long int uval = (unsigned long int) val;
-
+  
   p= &buffer[sizeof(buffer) - 1];
   *p= '\0';
-
+  
   if (radix < 0)
   {
     if (val < 0)
@@ -613,23 +613,23 @@ my_l10tostr_mb2_or_mb4(CHARSET_INFO *cs,
       uval  = (unsigned long int)0 - uval;
     }
   }
-
+  
   new_val = (long) (uval / 10);
   *--p    = '0'+ (char) (uval - (unsigned long) new_val * 10);
   val= new_val;
-
+  
   while (val != 0)
   {
     new_val= val / 10;
     *--p= '0' + (char) (val - new_val * 10);
     val= new_val;
   }
-
+  
   if (sl)
   {
     *--p= '-';
   }
-
+  
   for ( db= dst, de= dst + len ; (dst < de) && *p ; p++)
   {
     int cnvres= cs->cset->wc_mb(cs,(my_wc_t)p[0],(uchar*) dst, (uchar*) de);
@@ -651,7 +651,7 @@ my_ll10tostr_mb2_or_mb4(CHARSET_INFO *cs,
   long long_val;
   int sl= 0;
   ulonglong uval= (ulonglong) val;
-
+  
   if (radix < 0)
   {
     if (val < 0)
@@ -661,16 +661,16 @@ my_ll10tostr_mb2_or_mb4(CHARSET_INFO *cs,
       uval = (ulonglong)0 - uval;
     }
   }
-
+  
   p= &buffer[sizeof(buffer)-1];
   *p='\0';
-
+  
   if (uval == 0)
   {
     *--p= '0';
     goto cnv;
   }
-
+  
   while (uval > (ulonglong) LONG_MAX)
   {
     ulonglong quo= uval/(uint) 10;
@@ -678,7 +678,7 @@ my_ll10tostr_mb2_or_mb4(CHARSET_INFO *cs,
     *--p= '0' + rem;
     uval= quo;
   }
-
+  
   long_val= (long) uval;
   while (long_val != 0)
   {
@@ -686,13 +686,13 @@ my_ll10tostr_mb2_or_mb4(CHARSET_INFO *cs,
     *--p= (char) ('0' + (long_val - quo*10));
     long_val= quo;
   }
-
+  
 cnv:
   if (sl)
   {
     *--p= '-';
   }
-
+  
   for ( db= dst, de= dst + len ; (dst < de) && *p ; p++)
   {
     int cnvres= cs->cset->wc_mb(cs, (my_wc_t) p[0], (uchar*) dst, (uchar*) de);
@@ -883,7 +883,7 @@ my_scan_mb2(CHARSET_INFO *cs __attribute__((unused)),
 {
   const char *str0= str;
   end--; /* for easier loop condition, because of two bytes per character */
-
+  
   switch (sequence_type)
   {
   case MY_SEQ_SPACES:
@@ -918,21 +918,21 @@ my_vsnprintf_mb2(char *dst, size_t n, const char* fmt, va_list ap)
     {
       if (dst == end)                     /* End of buffer */
         break;
-
+      
       *dst++='\0';
       *dst++= *fmt;          /* Copy ordinary char */
       continue;
     }
-
+    
     fmt++;
-
+    
     /* Skip if max size is used (to be compatible with printf) */
     while ( (*fmt >= '0' && *fmt <= '9') || *fmt == '.' || *fmt == '-')
       fmt++;
-
+    
     if (*fmt == 'l')
       fmt++;
-
+    
     if (*fmt == 's')                      /* String parameter */
     {
       char *par= va_arg(ap, char *);
@@ -956,7 +956,7 @@ my_vsnprintf_mb2(char *dst, size_t n, const char* fmt, va_list ap)
       int iarg;
       char nbuf[16];
       char *pbuf= nbuf;
-
+      
       if ((size_t) (end - dst) < 32)
         break;
       iarg= va_arg(ap, int);
@@ -972,14 +972,14 @@ my_vsnprintf_mb2(char *dst, size_t n, const char* fmt, va_list ap)
       }
       continue;
     }
-
+    
     /* We come here on '%%', unknown code or too long parameter */
     if (dst == end)
       break;
     *dst++= '\0';
     *dst++= '%';                            /* % used as % or unknown code */
   }
-
+  
   DBUG_ASSERT(dst <= end);
   *dst='\0';                                /* End of errmessage */
   return (size_t) (dst - start);
@@ -1029,7 +1029,7 @@ my_utf16_uni(CHARSET_INFO *cs __attribute__((unused)),
 {
   if (s + 2 > e)
     return MY_CS_TOOSMALL2;
-
+  
   /*
     High bytes: 0xD[89AB] = B'110110??'
     Low bytes:  0xD[CDEF] = B'110111??'
@@ -1049,7 +1049,7 @@ my_utf16_uni(CHARSET_INFO *cs __attribute__((unused)),
       s[1]= ????????  (<< 10)
       s[2]= 110111??  (<<  8)
       s[3]= ????????  (<<  0)
-    */
+    */ 
 
     *pwc= ((s[0] & 3) << 18) + (s[1] << 10) +
           ((s[2] & 3) << 8) + s[3] + 0x10000;
@@ -1059,7 +1059,7 @@ my_utf16_uni(CHARSET_INFO *cs __attribute__((unused)),
 
   if (MY_UTF16_LOW_HEAD(*s)) /* Low surrogate part without high part */
     return MY_CS_ILSEQ;
-
+  
   *pwc= (s[0] << 8) + s[1];
   return 2;
 }
@@ -1139,7 +1139,7 @@ my_caseup_utf16(CHARSET_INFO *cs, char *src, size_t srclen,
   char *srcend= src + srclen;
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   DBUG_ASSERT(src == dst && srclen == dstlen);
-
+  
   while ((src < srcend) &&
          (res= my_utf16_uni(cs, &wc, (uchar *)src, (uchar*) srcend)) > 0)
   {
@@ -1200,8 +1200,8 @@ my_casedn_utf16(CHARSET_INFO *cs, char *src, size_t srclen,
 
 
 static int
-my_strnncoll_utf16(CHARSET_INFO *cs,
-                   const uchar *s, size_t slen,
+my_strnncoll_utf16(CHARSET_INFO *cs, 
+                   const uchar *s, size_t slen, 
                    const uchar *t, size_t tlen,
                    my_bool t_is_prefix)
 {
@@ -1294,7 +1294,7 @@ my_strnncollsp_utf16(CHARSET_INFO *cs,
 
     my_tosort_utf16(uni_plane, &s_wc);
     my_tosort_utf16(uni_plane, &t_wc);
-
+    
     if (s_wc != t_wc)
     {
       return s_wc > t_wc ? 1 : -1;
@@ -1344,15 +1344,15 @@ my_ismbchar_utf16(CHARSET_INFO *cs __attribute__((unused)),
 {
   if (b + 2 > e)
     return 0;
-
+  
   if (MY_UTF16_HIGH_HEAD(*b))
   {
     return (b + 4 <= e) && MY_UTF16_LOW_HEAD(b[2]) ? 4 : 0;
   }
-
+  
   if (MY_UTF16_LOW_HEAD(*b))
     return 0;
-
+  
   return 2;
 }
 
@@ -1387,7 +1387,7 @@ my_charpos_utf16(CHARSET_INFO *cs,
 {
   const char *b0= b;
   uint charlen;
-
+  
   for ( ; pos; b+= charlen, pos--)
   {
     if (!(charlen= my_ismbchar(cs, b, e)))
@@ -1405,7 +1405,7 @@ my_well_formed_len_utf16(CHARSET_INFO *cs,
   const char *b0= b;
   uint charlen;
   *error= 0;
-
+  
   for ( ; nchars; b+= charlen, nchars--)
   {
     if (!(charlen= my_ismbchar(cs, b, e)))
@@ -1426,7 +1426,7 @@ my_wildcmp_utf16_ci(CHARSET_INFO *cs,
 {
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   return my_wildcmp_unicode(cs, str, str_end, wildstr, wildend,
-                            escape, w_one, w_many, uni_plane);
+                            escape, w_one, w_many, uni_plane); 
 }
 
 
@@ -1437,12 +1437,12 @@ my_wildcmp_utf16_bin(CHARSET_INFO *cs,
                      int escape, int w_one, int w_many)
 {
   return my_wildcmp_unicode(cs, str, str_end, wildstr, wildend,
-                            escape, w_one, w_many, NULL);
+                            escape, w_one, w_many, NULL); 
 }
 
 
 static int
-my_strnncoll_utf16_bin(CHARSET_INFO *cs,
+my_strnncoll_utf16_bin(CHARSET_INFO *cs, 
                        const uchar *s, size_t slen,
                        const uchar *t, size_t tlen,
                        my_bool t_is_prefix)
@@ -1549,7 +1549,7 @@ my_hash_sort_utf16_bin(CHARSET_INFO *cs __attribute__((unused)),
                        const uchar *key, size_t len,ulong *nr1, ulong *nr2)
 {
   const uchar *pos = key;
-
+  
   key+= len;
 
   while (key > pos + 1 && key[-1] == ' ' && key[-2] == '\0')
@@ -1557,7 +1557,7 @@ my_hash_sort_utf16_bin(CHARSET_INFO *cs __attribute__((unused)),
 
   for (; pos < (uchar*) key ; pos++)
   {
-    nr1[0]^= (ulong) ((((uint) nr1[0] & 63) + nr2[0]) *
+    nr1[0]^= (ulong) ((((uint) nr1[0] & 63) + nr2[0]) * 
               ((uint)*pos)) + (nr1[0] << 8);
     nr2[0]+= 3;
   }
@@ -1713,9 +1713,9 @@ static int
 my_uni_utf32(CHARSET_INFO *cs __attribute__((unused)),
              my_wc_t wc, uchar *s, uchar *e)
 {
-  if (s + 4 > e)
+  if (s + 4 > e) 
     return MY_CS_TOOSMALL4;
-
+  
   s[0]= (uchar) (wc >> 24);
   s[1]= (uchar) (wc >> 16) & 0xFF;
   s[2]= (uchar) (wc >> 8)  & 0xFF;
@@ -1768,7 +1768,7 @@ my_caseup_utf32(CHARSET_INFO *cs, char *src, size_t srclen,
   char *srcend= src + srclen;
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   DBUG_ASSERT(src == dst && srclen == dstlen);
-
+  
   while ((src < srcend) &&
          (res= my_utf32_uni(cs, &wc, (uchar *)src, (uchar*) srcend)) > 0)
   {
@@ -1837,8 +1837,8 @@ my_casedn_utf32(CHARSET_INFO *cs, char *src, size_t srclen,
 
 
 static int
-my_strnncoll_utf32(CHARSET_INFO *cs,
-                   const uchar *s, size_t slen,
+my_strnncoll_utf32(CHARSET_INFO *cs, 
+                   const uchar *s, size_t slen, 
                    const uchar *t, size_t tlen,
                    my_bool t_is_prefix)
 {
@@ -1851,21 +1851,21 @@ my_strnncoll_utf32(CHARSET_INFO *cs,
   {
     int s_res= my_utf32_uni(cs, &s_wc, s, se);
     int t_res= my_utf32_uni(cs, &t_wc, t, te);
-
+    
     if ( s_res <= 0 || t_res <= 0)
     {
       /* Incorrect string, compare by char value */
       return my_bincmp(s, se, t, te);
     }
-
+    
     my_tosort_utf32(uni_plane, &s_wc);
     my_tosort_utf32(uni_plane, &t_wc);
-
+    
     if (s_wc != t_wc)
     {
       return s_wc > t_wc ? 1 : -1;
     }
-
+    
     s+= s_res;
     t+= t_res;
   }
@@ -1931,7 +1931,7 @@ my_strnncollsp_utf32(CHARSET_INFO *cs,
 
     my_tosort_utf32(uni_plane, &s_wc);
     my_tosort_utf32(uni_plane, &t_wc);
-
+    
     if ( s_wc != t_wc )
     {
       return s_wc > t_wc ? 1 : -1;
@@ -1991,7 +1991,7 @@ my_ismbchar_utf32(CHARSET_INFO *cs __attribute__((unused)),
 
 
 static uint
-my_mbcharlen_utf32(CHARSET_INFO *cs  __attribute__((unused)) ,
+my_mbcharlen_utf32(CHARSET_INFO *cs  __attribute__((unused)) , 
                    uint c __attribute__((unused)))
 {
   return 4;
@@ -2009,23 +2009,23 @@ my_vsnprintf_utf32(char *dst, size_t n, const char* fmt, va_list ap)
     {
       if (dst >= end)                        /* End of buffer */
         break;
-
+      
       *dst++= '\0';
       *dst++= '\0';
       *dst++= '\0';
       *dst++= *fmt;        /* Copy ordinary char */
       continue;
     }
-
+    
     fmt++;
-
+    
     /* Skip if max size is used (to be compatible with printf) */
     while ( (*fmt>='0' && *fmt<='9') || *fmt == '.' || *fmt == '-')
       fmt++;
-
+    
     if (*fmt == 'l')
       fmt++;
-
+    
     if (*fmt == 's')                                /* String parameter */
     {
       reg2 char *par= va_arg(ap, char *);
@@ -2050,7 +2050,7 @@ my_vsnprintf_utf32(char *dst, size_t n, const char* fmt, va_list ap)
       register int iarg;
       char nbuf[16];
       char *pbuf= nbuf;
-
+      
       if ((size_t) (end - dst) < 64)
         break;
       iarg= va_arg(ap, int);
@@ -2068,7 +2068,7 @@ my_vsnprintf_utf32(char *dst, size_t n, const char* fmt, va_list ap)
       }
       continue;
     }
-
+    
     /* We come here on '%%', unknown code or too long parameter */
     if (dst == end)
       break;
@@ -2077,7 +2077,7 @@ my_vsnprintf_utf32(char *dst, size_t n, const char* fmt, va_list ap)
     *dst++= '\0';
     *dst++= '%';    /* % used as % or unknown code */
   }
-
+  
   DBUG_ASSERT(dst < end);
   *dst++= '\0';
   *dst++= '\0';
@@ -2320,7 +2320,7 @@ void my_fill_utf32(CHARSET_INFO *cs,
   char buf[10];
   uint buflen;
   char *e= s + slen;
-
+  
   DBUG_ASSERT((slen % 4) == 0);
 
   buflen= cs->cset->wc_mb(cs, (my_wc_t) fill, (uchar*) buf,
@@ -2354,7 +2354,7 @@ my_wildcmp_utf32_ci(CHARSET_INFO *cs,
 {
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   return my_wildcmp_unicode(cs, str, str_end, wildstr, wildend,
-                            escape, w_one, w_many, uni_plane);
+                            escape, w_one, w_many, uni_plane); 
 }
 
 
@@ -2365,12 +2365,12 @@ my_wildcmp_utf32_bin(CHARSET_INFO *cs,
                      int escape, int w_one, int w_many)
 {
   return my_wildcmp_unicode(cs, str, str_end, wildstr, wildend,
-                            escape, w_one, w_many, NULL);
+                            escape, w_one, w_many, NULL); 
 }
 
 
 static int
-my_strnncoll_utf32_bin(CHARSET_INFO *cs,
+my_strnncoll_utf32_bin(CHARSET_INFO *cs, 
                        const uchar *s, size_t slen,
                        const uchar *t, size_t tlen,
                        my_bool t_is_prefix)
@@ -2383,7 +2383,7 @@ my_strnncoll_utf32_bin(CHARSET_INFO *cs,
   {
     int s_res= my_utf32_uni(cs, &s_wc, s, se);
     int t_res= my_utf32_uni(cs, &t_wc, t, te);
-
+    
     if (s_res <= 0 || t_res <= 0)
     {
       /* Incorrect string, compare by char value */
@@ -2393,7 +2393,7 @@ my_strnncoll_utf32_bin(CHARSET_INFO *cs,
     {
       return  s_wc > t_wc ? 1 : -1;
     }
-
+    
     s+= s_res;
     t+= t_res;
   }
@@ -2413,8 +2413,8 @@ my_utf32_get(const uchar *s)
 
 
 static int
-my_strnncollsp_utf32_bin(CHARSET_INFO *cs __attribute__((unused)),
-                         const uchar *s, size_t slen,
+my_strnncollsp_utf32_bin(CHARSET_INFO *cs __attribute__((unused)), 
+                         const uchar *s, size_t slen, 
                          const uchar *t, size_t tlen,
                          my_bool diff_if_only_endspace_difference
                          __attribute__((unused)))
@@ -2465,7 +2465,7 @@ my_scan_utf32(CHARSET_INFO *cs,
               const char *str, const char *end, int sequence_type)
 {
   const char *str0= str;
-
+  
   switch (sequence_type)
   {
   case MY_SEQ_SPACES:
@@ -2683,7 +2683,7 @@ static int my_ucs2_uni(CHARSET_INFO *cs __attribute__((unused)),
 {
   if (s+2 > e) /* Need 2 characters */
     return MY_CS_TOOSMALL2;
-
+  
   *pwc= ((uchar)s[0]) * 256  + ((uchar)s[1]);
   return 2;
 }
@@ -2691,7 +2691,7 @@ static int my_ucs2_uni(CHARSET_INFO *cs __attribute__((unused)),
 static int my_uni_ucs2(CHARSET_INFO *cs __attribute__((unused)) ,
 		       my_wc_t wc, uchar *r, uchar *e)
 {
-  if ( r+2 > e )
+  if ( r+2 > e ) 
     return MY_CS_TOOSMALL2;
 
   if (wc > 0xFFFF) /* UCS2 does not support characters outside BMP */
@@ -2712,7 +2712,7 @@ static size_t my_caseup_ucs2(CHARSET_INFO *cs, char *src, size_t srclen,
   char *srcend= src + srclen;
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   DBUG_ASSERT(src == dst && srclen == dstlen);
-
+  
   while ((src < srcend) &&
          (res= my_ucs2_uni(cs, &wc, (uchar *)src, (uchar*) srcend)) > 0)
   {
@@ -2773,8 +2773,8 @@ static size_t my_casedn_ucs2(CHARSET_INFO *cs, char *src, size_t srclen,
 }
 
 
-static int my_strnncoll_ucs2(CHARSET_INFO *cs,
-			     const uchar *s, size_t slen,
+static int my_strnncoll_ucs2(CHARSET_INFO *cs, 
+			     const uchar *s, size_t slen, 
                              const uchar *t, size_t tlen,
                              my_bool t_is_prefix)
 {
@@ -2789,13 +2789,13 @@ static int my_strnncoll_ucs2(CHARSET_INFO *cs,
     int plane;
     s_res=my_ucs2_uni(cs,&s_wc, s, se);
     t_res=my_ucs2_uni(cs,&t_wc, t, te);
-
+    
     if ( s_res <= 0 || t_res <= 0 )
     {
       /* Incorrect string, compare by char value */
-      return ((int)s[0]-(int)t[0]);
+      return ((int)s[0]-(int)t[0]); 
     }
-
+    
     plane=(s_wc>>8) & 0xFF;
     s_wc = uni_plane[plane] ? uni_plane[plane][s_wc & 0xFF].sort : s_wc;
     plane=(t_wc>>8) & 0xFF;
@@ -2804,7 +2804,7 @@ static int my_strnncoll_ucs2(CHARSET_INFO *cs,
     {
       return  s_wc > t_wc ? 1 : -1;
     }
-
+    
     s+=s_res;
     t+=t_res;
   }
@@ -2860,7 +2860,7 @@ static int my_strnncollsp_ucs2(CHARSET_INFO *cs __attribute__((unused)),
     int s_wc = uni_plane[s[0]] ? (int) uni_plane[s[0]][s[1]].sort :
                                  (((int) s[0]) << 8) + (int) s[1];
 
-    int t_wc = uni_plane[t[0]] ? (int) uni_plane[t[0]][t[1]].sort :
+    int t_wc = uni_plane[t[0]] ? (int) uni_plane[t[0]][t[1]].sort : 
                                  (((int) t[0]) << 8) + (int) t[1];
     if ( s_wc != t_wc )
       return  s_wc > t_wc ? 1 : -1;
@@ -2897,7 +2897,7 @@ static uint my_ismbchar_ucs2(CHARSET_INFO *cs __attribute__((unused)),
 }
 
 
-static uint my_mbcharlen_ucs2(CHARSET_INFO *cs  __attribute__((unused)) ,
+static uint my_mbcharlen_ucs2(CHARSET_INFO *cs  __attribute__((unused)) , 
                               uint c __attribute__((unused)))
 {
   return 2;
@@ -2944,7 +2944,7 @@ int my_wildcmp_ucs2_ci(CHARSET_INFO *cs,
 {
   MY_UNICASE_INFO **uni_plane= cs->caseinfo;
   return my_wildcmp_unicode(cs,str,str_end,wildstr,wildend,
-                            escape,w_one,w_many,uni_plane);
+                            escape,w_one,w_many,uni_plane); 
 }
 
 
@@ -2955,12 +2955,12 @@ int my_wildcmp_ucs2_bin(CHARSET_INFO *cs,
 		    int escape, int w_one, int w_many)
 {
   return my_wildcmp_unicode(cs,str,str_end,wildstr,wildend,
-                            escape,w_one,w_many,NULL);
+                            escape,w_one,w_many,NULL); 
 }
 
 
 static
-int my_strnncoll_ucs2_bin(CHARSET_INFO *cs,
+int my_strnncoll_ucs2_bin(CHARSET_INFO *cs, 
                           const uchar *s, size_t slen,
                           const uchar *t, size_t tlen,
                           my_bool t_is_prefix)
@@ -2974,25 +2974,25 @@ int my_strnncoll_ucs2_bin(CHARSET_INFO *cs,
   {
     s_res=my_ucs2_uni(cs,&s_wc, s, se);
     t_res=my_ucs2_uni(cs,&t_wc, t, te);
-
+    
     if ( s_res <= 0 || t_res <= 0 )
     {
       /* Incorrect string, compare by char value */
-      return ((int)s[0]-(int)t[0]);
+      return ((int)s[0]-(int)t[0]); 
     }
     if ( s_wc != t_wc )
     {
       return  s_wc > t_wc ? 1 : -1;
     }
-
+    
     s+=s_res;
     t+=t_res;
   }
   return (int) (t_is_prefix ? t-te : ((se-s) - (te-t)));
 }
 
-static int my_strnncollsp_ucs2_bin(CHARSET_INFO *cs __attribute__((unused)),
-                                   const uchar *s, size_t slen,
+static int my_strnncollsp_ucs2_bin(CHARSET_INFO *cs __attribute__((unused)), 
+                                   const uchar *s, size_t slen, 
                                    const uchar *t, size_t tlen,
                                    my_bool diff_if_only_endspace_difference
                                    __attribute__((unused)))
@@ -3043,7 +3043,7 @@ void my_hash_sort_ucs2_bin(CHARSET_INFO *cs __attribute__((unused)),
 			   const uchar *key, size_t len,ulong *nr1, ulong *nr2)
 {
   const uchar *pos = key;
-
+  
   key+= len;
 
   while (key > pos+1 && key[-1] == ' ' && key[-2] == '\0')
@@ -3051,7 +3051,7 @@ void my_hash_sort_ucs2_bin(CHARSET_INFO *cs __attribute__((unused)),
 
   for (; pos < (uchar*) key ; pos++)
   {
-    nr1[0]^=(ulong) ((((uint) nr1[0] & 63)+nr2[0]) *
+    nr1[0]^=(ulong) ((((uint) nr1[0] & 63)+nr2[0]) * 
 	     ((uint)*pos)) + (nr1[0] << 8);
     nr2[0]+=3;
   }

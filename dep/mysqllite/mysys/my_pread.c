@@ -71,12 +71,12 @@ size_t my_pread(File Filedes, uchar *Buffer, size_t Count, my_off_t offset,
 #else
 #if defined(_WIN32)
     readbytes= my_win_pread(Filedes, Buffer, Count, offset);
-#else
+#else 
     readbytes= pread(Filedes, Buffer, Count, offset);
 #endif
     error= (readbytes != Count);
 #endif
-    if (error)
+    if(error)
     {
       my_errno= errno ? errno : -1;
       if (errno == 0 || (readbytes != (size_t) -1 &&
@@ -161,7 +161,7 @@ size_t my_pwrite(File Filedes, const uchar *Buffer, size_t Count,
 #else
     writtenbytes= pwrite(Filedes, Buffer, Count, offset);
 #endif
-    if (writtenbytes == Count)
+    if(writtenbytes == Count)
       break;
     my_errno= errno;
     if (writtenbytes != (size_t) -1)
@@ -199,7 +199,7 @@ size_t my_pwrite(File Filedes, const uchar *Buffer, size_t Count,
     else
       break;					/* Return bytes written */
   }
-  DBUG_EXECUTE_if ("check", my_seek(Filedes, -1, SEEK_SET, MYF(0)););
+  DBUG_EXECUTE_IF("check", my_seek(Filedes, -1, SEEK_SET, MYF(0)););
   if (MyFlags & (MY_NABP | MY_FNABP))
     DBUG_RETURN(0);			/* Want only errors */
   DBUG_RETURN(writtenbytes+written); /* purecov: inspected */

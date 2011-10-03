@@ -240,7 +240,7 @@ ACE_Stack_Trace::generate_trace (ssize_t starting_frame_offset,
           return;
         }
 
-      if (prevPc == 0 || prevFp == 0) break;
+      if(prevPc == 0 || prevFp == 0) break;
 
       if (depth >= starting_frame)
         {
@@ -400,7 +400,7 @@ add_frame_to_buf (void* pc, void* usrarg)
   const char* func = "??";
   const char* lib = "??";
 
-  if (dladdr(pc, & info) != 0)
+  if(dladdr(pc, & info) != 0)
     {
       lib = (const char *) info.dli_fname;
       func = (const char *) info.dli_sname;

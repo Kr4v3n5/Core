@@ -112,7 +112,7 @@ ACE_Notification_Queue::purge_pending_notifications(
 
   int number_purged = 0;
   ACE_Notification_Queue_Node * node = notify_queue_.head();
-  while (node != 0)
+  while(node != 0)
     {
       if (!node->matches_for_purging(eh))
         {
@@ -213,7 +213,7 @@ ACE_Notification_Queue::pop_next_notification(
   current = node->get();
   free_queue_.push_front(node);
 
-  if (!this->notify_queue_.is_empty())
+  if(!this->notify_queue_.is_empty())
     {
       more_messages_queued = true;
       next = notify_queue_.head()->get();

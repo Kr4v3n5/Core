@@ -1,5 +1,5 @@
 # Copyright (C) 2006 MySQL AB
-# Copyright (C) 2011 TrilliumEMU <http://www.trilliumemu.com/>
+# Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -29,9 +29,9 @@ set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG ENABLED_DEBUG_SYNC
 # Set DBUG_OFF and other optional release-only flags for non-debug project types
 foreach(BUILD_TYPE RELEASE RELWITHDEBINFO MINSIZEREL)
   set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_${BUILD_TYPE} DBUG_OFF)
-  if (WITH_FAST_MUTEXES)
+  if(WITH_FAST_MUTEXES)
     set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_${BUILD_TYPE} "MY_PTHREAD_FASTMUTEX=1")
-  endif ()
+  endif()
 endforeach()
 
 # Set commonly used variables
@@ -42,7 +42,7 @@ set(MYSQL_DATADIR "${DEFAULT_MYSQL_HOME}/data")
 set(DEFAULT_CHARSET_HOME "${DEFAULT_MYSQL_HOME}")
 set(PLUGINDIR "${DEFAULT_MYSQL_HOME}/lib/plugin")
 
-set(COMPILATION_COMMENT "Source distribution lite for TrilliumEMU")
+set(COMPILATION_COMMENT "Source distribution lite for TrinityCore")
 
 # Run platform tests
 include(${CMAKE_CURRENT_SOURCE_DIR}/configure.cmake)
@@ -110,10 +110,10 @@ set(STRINGS_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/strings/strcont.c
   ${CMAKE_CURRENT_SOURCE_DIR}/strings/strappend.c
 )
-if (NOT HAVE_STRNLEN)
+if(NOT HAVE_STRNLEN)
   # OSX does not have strnlen
   set(STRINGS_SOURCES ${STRINGS_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/strings/strnlen.c)
-endif ()
+endif()
 
 set(VIO_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/vio/vio.c
@@ -228,15 +228,15 @@ set(MYSYS_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/mysys/my_windac.c
   ${CMAKE_CURRENT_SOURCE_DIR}/mysys/my_conio.c
 )
-if (HAVE_ALARM)
+if(HAVE_ALARM)
  set(MYSYS_SOURCES ${MYSYS_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/mysys/my_alarm.c)
-endif ()
-if (HAVE_LARGE_PAGES)
+endif()
+if(HAVE_LARGE_PAGES)
  set(MYSYS_SOURCES ${MYSYS_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/mysys/my_largepage.c)
-endif ()
-if (HAVE_MLOCK)
+endif()
+if(HAVE_MLOCK)
  set(MYSYS_SOURCES ${MYSYS_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/mysys/my_lockmem.c)
-endif ()
+endif()
 
 set(CLIENT_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/libmysql/get_password.c 

@@ -1112,7 +1112,7 @@ ACE_OS::mkstemp_emulation (ACE_TCHAR * s)
 
   // We only care about UTF-8 / ASCII characters in generated
   // filenames.  A UTF-16 or UTF-32 character could potentially cause
-  // a very large space to be searched in the below do/while () loop,
+  // a very large space to be searched in the below do/while() loop,
   // greatly slowing down this mkstemp() implementation.  It is more
   // practical to limit the search space to UTF-8 / ASCII characters
   // (i.e. 127 characters).
@@ -1144,7 +1144,7 @@ ACE_OS::mkstemp_emulation (ACE_TCHAR * s)
         {
           ACE_TCHAR r;
 
-          // This do/while () loop allows this alphanumeric character
+          // This do/while() loop allows this alphanumeric character
           // selection to work for EBCDIC, as well.
           do
             {

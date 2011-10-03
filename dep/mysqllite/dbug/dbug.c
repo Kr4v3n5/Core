@@ -686,7 +686,7 @@ void FixTraceFlags_helper(CODE_STATE *cs, const char *func,
     It's ok, because cs->framep may only affect DO_TRACE/DONT_TRACE return
     values, but we ignore them here anyway
   */
-  switch (DoTrace(cs)) {
+  switch(DoTrace(cs)) {
   case ENABLE_TRACE:
     framep->level|= TRACE_ON;
     break;
@@ -942,7 +942,7 @@ void _db_pop_()
       } while (0)
 #define colon_to_buf   do {                     \
         if (buf != start) char_to_buf(':');     \
-      } while (0)
+      } while(0)
 #define op_int_to_buf(C, val, def) do {         \
         if ((val) != (def))                     \
         {                                       \
@@ -1279,7 +1279,7 @@ void _db_doprnt_(const char *format,...)
 
 /*
  * This function is intended as a
- * vfprintf clone with consistent, platform independent output for
+ * vfprintf clone with consistent, platform independent output for 
  * problematic formats like %p, %zd and %lld.
  */
 static void DbugVfprintf(FILE *stream, const char* format, va_list args)
@@ -1668,7 +1668,7 @@ static int DoTrace(CODE_STATE *cs)
 {
   if ((cs->stack->maxdepth == 0 || cs->level <= cs->stack->maxdepth) &&
       InList(cs->stack->processes, cs->process) & (MATCHED|INCLUDE))
-    switch (InList(cs->stack->functions, cs->func)) {
+    switch(InList(cs->stack->functions, cs->func)) {
     case INCLUDE|SUBDIR:  return ENABLE_TRACE;
     case INCLUDE:         return DO_TRACE;
     case MATCHED|SUBDIR:

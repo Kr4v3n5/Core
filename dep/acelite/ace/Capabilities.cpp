@@ -139,7 +139,7 @@ ACE_Capabilities::fillent (const ACE_TCHAR *buf)
             buf++;
           continue;
         }
-      while (*buf && *buf != ACE_TEXT ('=')
+      while(*buf && *buf != ACE_TEXT ('=')
             && *buf!= ACE_TEXT ('#')
             && *buf != ACE_TEXT (','))
         name += *buf++;
