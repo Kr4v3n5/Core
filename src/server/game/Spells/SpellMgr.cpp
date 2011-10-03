@@ -3383,6 +3383,10 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellEffect->EffectImplicitTargetB = TARGET_UNIT_TARGET_ANY;
                 spellEffect->Effect = 0;
                 break;
+            case 86150: // Guardian of Ancient Kings
+                spellEffect->EffectTriggerSpell = 86698;
+                spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER;
+                break;
             default:
                 break;
         }
