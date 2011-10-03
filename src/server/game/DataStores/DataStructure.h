@@ -2105,15 +2105,15 @@ struct TalentEntry
 struct TalentTabEntry
 {
     uint32  TalentTabID;                                    // 0
-    //DBCString name;                                           // 1        m_name_lang
+    //DBCString name;                                       // 1        m_name_lang
     //unit32  spellicon;                                    // 2        m_spellIconID
     uint32  ClassMask;                                      // 3        m_classMask
     uint32  petTalentMask;                                  // 4        m_petTalentMask
     uint32  tabpage;                                        // 5        m_orderIndex
-    //DBCString internalname;                                   // 6        m_backgroundFile
-    //DBCString description;                                    // 7
-    //uint32 rolesMask;                                     // 8 4.0.0
-    //uint32 spellIds[2];                                   // 9-10 passive mastery bonus spells?
+    //DBCString internalname;                               // 6        m_backgroundFile
+    //DBCString description;                                // 7
+    //uint32 rolesMask;                                     // 8        4.0.0
+    uint32 masterySpells[2];                                // 9-10     passive mastery bonus spells?
 };
 
 struct TalentTreePrimarySpellsEntry
