@@ -921,7 +921,7 @@ struct FactionEntry
     // helpers
     bool CanHaveReputation() const
     {
-        return reputationListID >=0;
+        return reputationListID >= 0;
     }
 };
 

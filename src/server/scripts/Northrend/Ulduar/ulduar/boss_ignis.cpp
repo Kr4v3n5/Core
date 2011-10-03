@@ -277,6 +277,8 @@ class boss_ignis : public CreatureScript
                 }
 
                 DoMeleeAttackIfReady();
+
+                EnterEvadeIfOutOfCombatArea(diff);
             }
 
         private:

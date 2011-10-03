@@ -562,7 +562,7 @@ enum CombatRating
     CR_WEAPON_SKILL_RANGED      = 22,
     CR_ARMOR_PENETRATION        = 23,
     CR_EXPERTISE                = 24,
-    CR_MASTERY	                = 25	
+    CR_MASTERY	                = 25
 };
 
 #define MAX_COMBAT_RATING         26
@@ -1471,8 +1471,9 @@ class Unit : public WorldObject
         void HandleEmoteCommand(uint32 anim_id);
         void AttackerStateUpdate (Unit *pVictim, WeaponAttackType attType = BASE_ATTACK, bool extra = false);
 
-        void CalculateMeleeDamage(Unit *pVictim, uint32 damage, CalcDamageInfo *damageInfo, WeaponAttackType attackType = BASE_ATTACK);
-        void DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss);
+        void CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* damageInfo, WeaponAttackType attackType = BASE_ATTACK);
+        void DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss);
+        void HandleProcExtraAttackFor(Unit* victim);
 
         void CalculateSpellDamageTaken(SpellNonMeleeDamage *damageInfo, int32 damage, SpellInfo const *spellInfo, WeaponAttackType attackType = BASE_ATTACK, bool crit = false);
         void DealSpellDamage(SpellNonMeleeDamage *damageInfo, bool durabilityLoss);
