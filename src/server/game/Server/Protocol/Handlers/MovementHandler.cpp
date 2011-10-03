@@ -159,7 +159,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         {
             if (mapDiff->resetTime)
             {
-                if (time_t timeReset = sInstanceSaveMgr->GetResetTimeFor(mEntry->MapID, diff))
+                if (time_t timeReset = sInstanceSaveMgr->GetResetTimefor (mEntry->MapID, diff))
                 {
                     uint32 timeleft = uint32(timeReset - time(NULL));
                     GetPlayer()->SendInstanceResetWarning(mEntry->MapID, diff, timeleft);
@@ -431,7 +431,7 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 
     static char const* move_type_name[MAX_MOVE_TYPE] = {  "Walk", "Run", "RunBack", "Swim", "SwimBack", "TurnRate", "Flight", "FlightBack", "PitchRate" };
 
-    switch(opcode)
+    switch (opcode)
     {
         case CMSG_FORCE_WALK_SPEED_CHANGE_ACK:          move_type = MOVE_WALK;          force_move_type = MOVE_WALK;        break;
         case CMSG_FORCE_RUN_SPEED_CHANGE_ACK:           move_type = MOVE_RUN;           force_move_type = MOVE_RUN;         break;
@@ -591,13 +591,13 @@ void WorldSession::ReadMovementInfo(WorldPacket &data, MovementInfo *mi)
         HaveSpline = false;
 
     MovementStatusElements *sequence = GetMovementStatusElementsSequence(data.GetOpcode());
-    if(sequence == NULL)
+    if (sequence == NULL)
         return;
     uint8 guid[8];
     uint8 tguid[8];
     *(uint64*)guid = 0;
     *(uint64*)tguid = 0;
-    for(uint32 i=0; i < MSE_COUNT; i++)
+    for (uint32 i=0; i < MSE_COUNT; i++)
     {
         MovementStatusElements element = sequence[i];
 
@@ -754,11 +754,11 @@ void WorldSession::WriteMovementInfo(WorldPacket &data, MovementInfo *mi)
         HaveSpline = false;
 
     MovementStatusElements *sequence = GetMovementStatusElementsSequence(data.GetOpcode());
-    if(!sequence)
+    if (!sequence)
         return;
     uint8 *guid = (uint8 *)&mi->guid;
     uint8 *tguid = (uint8 *)&mi->t_guid;
-    for(uint32 i=0; i < MSE_COUNT; i++)
+    for (uint32 i=0; i < MSE_COUNT; i++)
     {
         MovementStatusElements element = sequence[i];
 

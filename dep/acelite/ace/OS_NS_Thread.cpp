@@ -664,7 +664,7 @@ TSS_Cleanup_Instance::TSS_Cleanup_Instance (Purpose purpose)
     ptr_ = instance_;
     ++reference_count_;
   }
-  else if(purpose == DESTROY)
+  else if (purpose == DESTROY)
   {
     if (instance_ != 0)
     {
@@ -786,7 +786,7 @@ ACE_TSS_Cleanup::thread_exit (void)
     // applications should not count on this behavior because platforms which
     // do not use ACE_TSS_Cleanup may delete objects in other orders.
     unsigned int key_index = ACE_DEFAULT_THREAD_KEYS;
-    while( key_index > 0)
+    while ( key_index > 0)
       {
         --key_index;
         ACE_TSS_Info & info = this->table_[key_index];
@@ -794,7 +794,7 @@ ACE_TSS_Cleanup::thread_exit (void)
         if (info.key_in_use () && this_thread_keys->is_set(info.key_))
           {
             // defer deleting the in-use key until all others have been deleted
-            if(info.key_ != this->in_use_)
+            if (info.key_ != this->in_use_)
               {
                 destructor[d_count] = 0;
                 tss_obj[d_count] = 0;
@@ -2843,7 +2843,7 @@ ACE_OS::event_pulse (ACE_event_t *event)
           }
 
         if (result == 0)
-          while(event->eventdata_->signal_count_!=0 && event->eventdata_->waiting_threads_!=0)
+          while (event->eventdata_->signal_count_!=0 && event->eventdata_->waiting_threads_!=0)
             ACE_OS::thr_yield ();
 # endif
       }
@@ -5251,7 +5251,7 @@ add_to_argv (int& argc, char** argv, int max_args, char* string)
                 }
 
               // Skip over whitespace in between arguments
-              for(++i; i < length && ACE_OS::ace_isspace (string[i]); ++i)
+              for (++i; i < length && ACE_OS::ace_isspace (string[i]); ++i)
                 {
                 }
 
@@ -5412,7 +5412,7 @@ vx_execae (FUNCPTR entry, char* arg, int prio, int opt, int stacksz, ...)
   if (ret == ERROR)
     return 255;
 
-  while( ret > 0 && ::taskIdVerify (ret) != ERROR )
+  while ( ret > 0 && ::taskIdVerify (ret) != ERROR )
     ::taskDelay (3 * ::sysClkRateGet ());
 
   // ::taskSpawn () returns the taskID on success: return _vx_call_rc instead if

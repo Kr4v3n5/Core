@@ -1833,7 +1833,7 @@ void SpellMgr::LoadSpellProcs()
         baseProcEntry.cooldown        = uint32(cooldown);
         baseProcEntry.charges         = fields[14].GetUInt32();
 
-        while(true)
+        while (true)
         {
             if (mSpellProcMap.find(spellId) != mSpellProcMap.end())
             {

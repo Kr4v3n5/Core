@@ -262,7 +262,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
             continue;
 
         // check if target is globally visible for player
-        if (!(itr->second->IsVisibleGloballyFor(_player)))
+        if (!(itr->second->IsVisibleGloballyfor (_player)))
             continue;
 
         // check if target's level is in level range
@@ -578,7 +578,7 @@ void WorldSession::HandleAddFriendOpcodeCallBack(QueryResult result, std::string
                 else
                 {
                     Player* pFriend = ObjectAccessor::FindPlayer(friendGuid);
-                    if (pFriend && pFriend->IsInWorld() && pFriend->IsVisibleGloballyFor(GetPlayer()))
+                    if (pFriend && pFriend->IsInWorld() && pFriend->IsVisibleGloballyfor (GetPlayer()))
                         friendResult = FRIEND_ADDED_ONLINE;
                     else
                         friendResult = FRIEND_ADDED_OFFLINE;
@@ -1034,7 +1034,7 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
     }
     else
     {
-        switch(type)
+        switch (type)
         {
             case ACTION_BUTTON_MACRO:
             case ACTION_BUTTON_CMACRO:
@@ -1287,7 +1287,7 @@ void WorldSession::HandleComplainOpcode(WorldPacket & recv_data)
     std::string description = "";
     recv_data >> spam_type;                                 // unk 0x01 const, may be spam type (mail/chat)
     recv_data >> spammer_guid;                              // player guid
-    switch(spam_type)
+    switch (spam_type)
     {
         case 0:
             recv_data >> unk1;                              // const 0
@@ -1340,7 +1340,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket & recv_data)
     uint8 apply;
     recv_data >> apply;
 
-    switch(apply)
+    switch (apply)
     {
         case 0:
             sLog->outDebug(LOG_FILTER_NETWORKIO, "Player %u set vision to self", _player->GetGUIDLow());

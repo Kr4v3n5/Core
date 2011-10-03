@@ -147,12 +147,12 @@ class InstanceSaveManager
         void LoadInstances();
 
         void LoadResetTimes();
-        time_t GetResetTimeFor(uint32 mapid, Difficulty d) const
+        time_t GetResetTimefor (uint32 mapid, Difficulty d) const
         {
             ResetTimeByMapDifficultyMap::const_iterator itr  = m_resetTimeByMapDifficulty.find(MAKE_PAIR32(mapid, d));
             return itr != m_resetTimeByMapDifficulty.end() ? itr->second : 0;
         }
-        void SetResetTimeFor(uint32 mapid, Difficulty d, time_t t)
+        void SetResetTimefor (uint32 mapid, Difficulty d, time_t t)
         {
             m_resetTimeByMapDifficulty[MAKE_PAIR32(mapid, d)] = t;
         }

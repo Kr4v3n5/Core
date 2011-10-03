@@ -971,7 +971,7 @@ public:
 
         // make some emotes
         char lastchar = args[strlen(args) - 1];
-        switch(lastchar)
+        switch (lastchar)
         {
         case '?':   creature->HandleEmoteCommand(EMOTE_ONESHOT_QUESTION);      break;
         case '!':   creature->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);   break;
@@ -1186,7 +1186,7 @@ public:
             return false;
 
         uint32 leaderGUID = (uint32) atoi(ldrGUID);
-        
+
         char* cmt = strtok(NULL, "");
         char* commentText = "";
 
@@ -1216,9 +1216,9 @@ public:
         Player* chr = handler->GetSession()->GetPlayer();
 
         memberGUID = creature->GetDBTableGUIDLow();
-        follow_dist = sqrtf(pow(chr->GetPositionX() - creature->GetPositionX(),int(2))+pow(chr->GetPositionY()-creature->GetPositionY(),int(2))); 
+        follow_dist = sqrtf(pow(chr->GetPositionX() - creature->GetPositionX(),int(2))+pow(chr->GetPositionY()-creature->GetPositionY(),int(2)));
         follow_angle = (creature->GetAngle(chr) - chr->GetOrientation()) * 180 / M_PI;
-        
+
         if (follow_angle < 0)
             follow_angle = follow_angle + 360;
 
@@ -1262,7 +1262,7 @@ public:
                 handler->PSendSysMessage("You should set the Leader for this Formation first.");
                 return false;
             }
-           
+
             stmt = WorldDatabase.GetPreparedStatement(WORLD_ADD_CREFORMATIONS);
             stmt->setUInt32(0, leaderGUID);
             stmt->setUInt8(1, formationAI);
@@ -1272,7 +1272,7 @@ public:
 
             stmt = WorldDatabase.GetPreparedStatement(WORLD_LOAD_CREFORMATIONS_MAXID);
             PreparedQueryResult result_newFormationId = WorldDatabase.Query(stmt);
-             
+
             formationId = result_newFormationId->Fetch()->GetInt32();
 
             FormationInfo *formation_info;
@@ -1294,19 +1294,19 @@ public:
         }
 
         FormationData *formation_data;
-        
+
         formation_data                        = new FormationData;
         formation_data->formationId           = formationId;
-        formation_data->follow_dist           = follow_dist; 
-        formation_data->follow_angle          = follow_angle; 
-        
+        formation_data->follow_dist           = follow_dist;
+        formation_data->follow_angle          = follow_angle;
+
         if (memberGUID == leaderGUID) {
-            formation_data->follow_dist       = 0; 
-            formation_data->follow_angle      = 0; 
+            formation_data->follow_dist       = 0;
+            formation_data->follow_angle      = 0;
         }
 
         CreatureFormationDataMap[memberGUID] = formation_data;
-        creature->SearchFormation();    
+        creature->SearchFormation();
 
         return true;
     }
@@ -1320,21 +1320,21 @@ public:
 
         if (!ldrGUID)
             return false;
- 
+
         uint32 leaderGUID = (uint32) atoi(ldrGUID);
-        
+
         char* cmt = strtok(NULL, "");
         char* commentText = "";
- 
+
         if (cmt)
             commentText = handler->extractQuotedArg(cmt);
- 
+
         char* grpType = strtok(NULL, " ");
         uint8 groupType = 0;
 
         if (grpType)
             groupType = (uint8) atoi(grpType);
- 
+
         uint32 groupId = 0;
         uint32 memberGUID = 0;
 
@@ -1397,7 +1397,7 @@ public:
 
             stmt = WorldDatabase.GetPreparedStatement(WORLD_LOAD_CREGROUPS_MAXID);
             PreparedQueryResult result_newGroupId = WorldDatabase.Query(stmt);
-             
+
             groupId = result_newGroupId->Fetch()->GetInt32();
 
             GroupInfo *group_member;
@@ -1493,7 +1493,7 @@ public:
         bool added = false;
         if (tmpItem)
         {
-            switch(SlotID)
+            switch (SlotID)
             {
                 case 1:
                     creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, ItemID);

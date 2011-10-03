@@ -237,7 +237,7 @@ int my_fclose(FILE *fd, myf MyFlags)
 #else
   err= my_win_fclose(fd);
 #endif
-  if(err < 0)
+  if (err < 0)
   {
     my_errno=errno;
     if (MyFlags & (MY_FAE | MY_WME))
@@ -303,7 +303,7 @@ FILE *my_fdopen(File Filedes, const char *name, int Flags, myf MyFlags)
 } /* my_fdopen */
 
 
-/*   
+/*
   Make a fopen() typestring from a open() type bitmap
 
   SYNOPSIS
@@ -312,47 +312,47 @@ FILE *my_fdopen(File Filedes, const char *name, int Flags, myf MyFlags)
     flag	Flag used by open()
 
   IMPLEMENTATION
-    This routine attempts to find the best possible match 
-    between  a numeric option and a string option that could be 
-    fed to fopen.  There is not a 1 to 1 mapping between the two.  
-  
+    This routine attempts to find the best possible match
+    between  a numeric option and a string option that could be
+    fed to fopen.  There is not a 1 to 1 mapping between the two.
+
   NOTE
     On Unix, O_RDONLY is usually 0
 
   MAPPING
-    r  == O_RDONLY   
-    w  == O_WRONLY|O_TRUNC|O_CREAT  
-    a  == O_WRONLY|O_APPEND|O_CREAT  
-    r+ == O_RDWR  
-    w+ == O_RDWR|O_TRUNC|O_CREAT  
+    r  == O_RDONLY
+    w  == O_WRONLY|O_TRUNC|O_CREAT
+    a  == O_WRONLY|O_APPEND|O_CREAT
+    r+ == O_RDWR
+    w+ == O_RDWR|O_TRUNC|O_CREAT
     a+ == O_RDWR|O_APPEND|O_CREAT
 */
 
 static void make_ftype(register char * to, register int flag)
 {
-  /* check some possible invalid combinations */  
+  /* check some possible invalid combinations */
   DBUG_ASSERT((flag & (O_TRUNC | O_APPEND)) != (O_TRUNC | O_APPEND));
   DBUG_ASSERT((flag & (O_WRONLY | O_RDWR)) != (O_WRONLY | O_RDWR));
 
-  if ((flag & (O_RDONLY|O_WRONLY)) == O_WRONLY)    
-    *to++= (flag & O_APPEND) ? 'a' : 'w';  
-  else if (flag & O_RDWR)          
+  if ((flag & (O_RDONLY|O_WRONLY)) == O_WRONLY)
+    *to++= (flag & O_APPEND) ? 'a' : 'w';
+  else if (flag & O_RDWR)
   {
-    /* Add '+' after theese */    
-    if (flag & (O_TRUNC | O_CREAT))      
-      *to++= 'w';    
-    else if (flag & O_APPEND)      
-      *to++= 'a';    
-    else      
+    /* Add '+' after theese */
+    if (flag & (O_TRUNC | O_CREAT))
+      *to++= 'w';
+    else if (flag & O_APPEND)
+      *to++= 'a';
+    else
       *to++= 'r';
-    *to++= '+';  
-  }  
-  else    
+    *to++= '+';
+  }
+  else
     *to++= 'r';
 
-#if FILE_BINARY            /* If we have binary-files */  
-  if (flag & FILE_BINARY)    
+#if FILE_BINARY            /* If we have binary-files */
+  if (flag & FILE_BINARY)
     *to++='b';
-#endif  
+#endif
   *to='\0';
 } /* make_ftype */

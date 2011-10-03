@@ -687,7 +687,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
 
     try
     {
-        switch(opcode)
+        switch (opcode)
         {
             case MSG_CHECK_CONNECTION:
                 sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));

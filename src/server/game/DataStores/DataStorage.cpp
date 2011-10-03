@@ -696,8 +696,8 @@ void LoadDataStorages(const std::string& dataPath)
     LoadData(availableDbcLocales, bad_dbc_files, sVehicleSeatStore,            storagesPath, "VehicleSeat.dbc");
 
     LoadData(availableDbcLocales, bad_dbc_files, sWMOAreaTableStore,           storagesPath, "WMOAreaTable.dbc");
-    for(uint32 i = 0; i < sWMOAreaTableStore.GetNumRows(); ++i)
-        if(WMOAreaTableEntry const* entry = sWMOAreaTableStore.LookupEntry(i))
+    for (uint32 i = 0; i < sWMOAreaTableStore.GetNumRows(); ++i)
+        if (WMOAreaTableEntry const* entry = sWMOAreaTableStore.LookupEntry(i))
             sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(entry->rootId, entry->adtId, entry->groupId), entry));
     LoadData(availableDbcLocales, bad_dbc_files, sWorldMapAreaStore,           storagesPath, "WorldMapArea.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sWorldMapOverlayStore,        storagesPath, "WorldMapOverlay.dbc");
@@ -798,7 +798,7 @@ int32 GetAreaFlagByAreaID(uint32 area_id)
 WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid)
 {
     WMOAreaInfoByTripple::iterator i = sWMOAreaInfoByTripple.find(WMOAreaTableTripple(rootid, adtid, groupid));
-        if(i == sWMOAreaInfoByTripple.end())
+        if (i == sWMOAreaInfoByTripple.end())
             return NULL;
         return i->second;
 }
@@ -864,7 +864,7 @@ ContentLevels GetContentLevelsForMapAndZone(uint32 mapid, uint32 zoneId)
     if (zoneId == 5034 || zoneId == 4922 || zoneId == 616 || zoneId == 5146 || zoneId == 5042)
         return CONTENT_81_85;
 
-    switch(mapEntry->Expansion())
+    switch (mapEntry->Expansion())
     {
         default: return CONTENT_1_60;
         case 1:  return CONTENT_61_70;

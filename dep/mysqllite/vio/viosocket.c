@@ -158,7 +158,7 @@ int vio_blocking(Vio * vio __attribute__((unused)), my_bool set_blocking_mode,
 #endif /* !defined(NO_FCNTL_NONBLOCK) */
 #else /* !defined(__WIN__) */
   if (vio->type != VIO_TYPE_NAMEDPIPE && vio->type != VIO_TYPE_SHARED_MEMORY)
-  { 
+  {
     ulong arg;
     int old_fcntl=vio->fcntl_mode;
     if (set_blocking_mode)
@@ -730,7 +730,7 @@ static size_t pipe_complete_io(Vio* vio, char* buf, size_t size, DWORD timeout_m
     WaitForSingleObjects will normally return WAIT_OBJECT_O (success, IO completed)
     or WAIT_TIMEOUT.
   */
-  if(ret != WAIT_OBJECT_0)
+  if (ret != WAIT_OBJECT_0)
   {
     CancelIo(vio->hPipe);
     DBUG_PRINT("error",("WaitForSingleObject() returned  %d", ret));
@@ -739,7 +739,7 @@ static size_t pipe_complete_io(Vio* vio, char* buf, size_t size, DWORD timeout_m
 
   if (!GetOverlappedResult(vio->hPipe,&(vio->pipe_overlapped),&length, FALSE))
   {
-    DBUG_PRINT("error",("GetOverlappedResult() returned last error  %d", 
+    DBUG_PRINT("error",("GetOverlappedResult() returned last error  %d",
       GetLastError()));
     DBUG_RETURN((size_t)-1);
   }
@@ -785,7 +785,7 @@ size_t vio_write_pipe(Vio * vio, const uchar* buf, size_t size)
   DBUG_PRINT("enter", ("sd: %d  buf: 0x%lx  size: %u", vio->sd, (long) buf,
                        (uint) size));
 
-  if (WriteFile(vio->hPipe, buf, (DWORD)size, &bytes_written, 
+  if (WriteFile(vio->hPipe, buf, (DWORD)size, &bytes_written,
       &(vio->pipe_overlapped)))
   {
     retval= bytes_written;
@@ -839,7 +839,7 @@ void vio_win32_timeout(Vio *vio, uint which , uint timeout_sec)
 {
     DWORD timeout_ms;
     /*
-      Windows is measuring timeouts in milliseconds. Check for possible int 
+      Windows is measuring timeouts in milliseconds. Check for possible int
       overflow.
     */
     if (timeout_sec > UINT_MAX/1000)
@@ -848,7 +848,7 @@ void vio_win32_timeout(Vio *vio, uint which , uint timeout_sec)
       timeout_ms= timeout_sec * 1000;
 
     /* which == 1 means "write", which == 0 means "read".*/
-    if(which)
+    if (which)
       vio->write_timeout_ms= timeout_ms;
     else
       vio->read_timeout_ms= timeout_ms;
@@ -991,7 +991,7 @@ int vio_close_shared_memory(Vio * vio)
       Close all handlers. UnmapViewOfFile and CloseHandle return non-zero
       result if they are success.
     */
-    if (UnmapViewOfFile(vio->handle_map) == 0) 
+    if (UnmapViewOfFile(vio->handle_map) == 0)
     {
       error_count++;
       DBUG_PRINT("vio_error", ("UnmapViewOfFile() failed"));

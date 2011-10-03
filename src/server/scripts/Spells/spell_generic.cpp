@@ -103,7 +103,7 @@ class spell_gen_av_drekthar_presence : public SpellScriptLoader
 
             bool CheckAreaTarget(Unit* target)
             {
-                switch(target->GetEntry())
+                switch (target->GetEntry())
                 {
                     // alliance
                     case 14762: // Dun Baldar North Marshal
@@ -1269,8 +1269,8 @@ public:
         PrepareSpellScript(spell_gen_oracle_wolvar_reputation_SpellScript)
 
         void HandleDummy(SpellEffIndex effIndex)
-        {                 
-            
+        {
+
             if (Player* player = GetCaster()->ToPlayer())
             {
 
@@ -1289,7 +1289,7 @@ public:
 
                 // EFFECT_INDEX_2 most likely update at war state, we already handle this in SetReputation
             }
-              
+
         }
 
         void Register()

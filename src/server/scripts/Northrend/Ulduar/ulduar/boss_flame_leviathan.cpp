@@ -659,7 +659,7 @@ class boss_flame_leviathan_defense_cannon : public CreatureScript
                 if (NapalmTimer <= diff)
                 {
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                        if(CanAIAttack(target))
+                        if (CanAIAttack(target))
                             DoCast(target, SPELL_NAPALM, true);
 
                     NapalmTimer = 5000;
@@ -1233,7 +1233,7 @@ public:
     //bool OnGossipSelect(Player* player, Creature* creature, uint32 uiSender, uint32 uiAction)
     //{
     //    player->PlayerTalkClass->ClearMenus();
-    //    switch(uiAction)
+    //    switch (uiAction)
     //    {
     //        case GOSSIP_ACTION_INFO_DEF+1:
     //            if (player)
@@ -1664,7 +1664,7 @@ class spell_pursue : public SpellScriptLoader
 
             void FilterTargets(std::list<Unit*>& targets)
             {
-                targets.remove_if(FlameLeviathanPursuedTargetSelector(GetCaster()));
+                targets.remove_if (FlameLeviathanPursuedTargetSelector(GetCaster()));
                 if (targets.empty())
                     if (Creature* caster = GetCaster()->ToCreature())
                         caster->AI()->EnterEvadeMode();
@@ -1677,7 +1677,7 @@ class spell_pursue : public SpellScriptLoader
                     return;
 
                 caster->AI()->AttackStart(GetHitUnit());    // Chase target
-                
+
                 for (SeatMap::const_iterator itr = caster->GetVehicleKit()->Seats.begin(); itr != caster->GetVehicleKit()->Seats.end(); ++itr)
                 {
                     if (IS_PLAYER_GUID(itr->second.Passenger))

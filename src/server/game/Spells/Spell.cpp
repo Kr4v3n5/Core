@@ -571,7 +571,7 @@ m_caster((info->AttributesEx6 & SPELL_ATTR6_CAST_BY_CHARMER && caster->GetCharme
 Spell::~Spell()
 {
     // unload scripts
-    while(!m_loadedScripts.empty())
+    while (!m_loadedScripts.empty())
     {
         std::list<SpellScript *>::iterator itr = m_loadedScripts.begin();
         (*itr)->_Unload();
@@ -1841,7 +1841,7 @@ void Spell::SearchChainTarget(std::list<Unit*> &TagUnitMap, float max_range, uin
                 break;
 
             // Check if (*next) is a valid chain target. If not, don't add to TagUnitMap, and repeat loop.
-            // If you want to add any conditions to exclude a target from TagUnitMap, add condition in this while() loop.
+            // If you want to add any conditions to exclude a target from TagUnitMap, add condition in this while () loop.
             while ((m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MELEE
                 && !m_caster->isInFrontInMap(*next, max_range))
                 || !m_caster->canSeeOrDetect(*next)
@@ -2937,7 +2937,7 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
         return;
     }
 
-    if (DisableMgr::IsDisabledFor(DISABLE_TYPE_SPELL, m_spellInfo->Id, m_caster))
+    if (DisableMgr::IsDisabledfor (DISABLE_TYPE_SPELL, m_spellInfo->Id, m_caster))
     {
         SendCastResult(SPELL_FAILED_SPELL_UNAVAILABLE);
         finish(false);
@@ -3450,7 +3450,7 @@ void Spell::_handle_finish_phase()
     }
 
     if (m_caster->m_extraAttacks && GetSpellInfo()->HasEffect(SPELL_EFFECT_ADD_EXTRA_ATTACKS))
-        m_caster->HandleProcExtraAttackFor(m_caster->getVictim());
+        m_caster->HandleProcExtraAttackfor (m_caster->getVictim());
 
     // TODO: trigger proc phase finish here
 }
@@ -5091,12 +5091,12 @@ SpellCastResult Spell::CheckCast(bool strict)
             // RETURN HERE
             case SPELL_EFFECT_SUMMON_RAF_FRIEND:
             {
-                if(m_caster->GetTypeId() != TYPEID_PLAYER)
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 Player* playerCaster = m_caster->ToPlayer();
                     //
-                if(!(playerCaster->GetSelection()))
+                if (!(playerCaster->GetSelection()))
                     return SPELL_FAILED_BAD_TARGETS;
 
                 Player* target = ObjectAccessor::FindPlayer(playerCaster->GetSelection());
@@ -5995,7 +5995,7 @@ SpellCastResult Spell::CheckItems()
                 if (m_targets.GetItemTarget()->GetCount() < 5)
                     return SPELL_FAILED_NEED_MORE_ITEMS;
 
-                if (!LootTemplates_Prospecting.HaveLootFor(m_targets.GetItemTargetEntry()))
+                if (!LootTemplates_Prospecting.HaveLootfor (m_targets.GetItemTargetEntry()))
                     return SPELL_FAILED_CANT_BE_PROSPECTED;
 
                 break;
@@ -6018,7 +6018,7 @@ SpellCastResult Spell::CheckItems()
                 if (m_targets.GetItemTarget()->GetCount() < 5)
                     return SPELL_FAILED_NEED_MORE_ITEMS;
 
-                if (!LootTemplates_Milling.HaveLootFor(m_targets.GetItemTargetEntry()))
+                if (!LootTemplates_Milling.HaveLootfor (m_targets.GetItemTargetEntry()))
                     return SPELL_FAILED_CANT_BE_MILLED;
 
                 break;

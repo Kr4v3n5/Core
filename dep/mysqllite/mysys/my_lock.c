@@ -97,11 +97,11 @@ static int win_lock(File fd, int locktype, my_off_t start, my_off_t length,
       DBUG_RETURN(0);
     goto error;
   }
-  
+
   dwFlags|= LOCKFILE_FAIL_IMMEDIATELY;
   timeout_millis= timeout_sec * 1000;
   /* Try lock in a loop, until the lock is acquired or timeout happens */
-  for(i= 0; ;i+= WIN_LOCK_SLEEP_MILLIS)
+  for (i= 0; ;i+= WIN_LOCK_SLEEP_MILLIS)
   {
     if (LockFileEx(hFile, dwFlags, 0, liLength.LowPart, liLength.HighPart, &ov))
      DBUG_RETURN(0);
@@ -126,8 +126,8 @@ error:
 
 
 
-/* 
-  Lock a part of a file 
+/*
+  Lock a part of a file
 
   RETURN VALUE
     0   Success

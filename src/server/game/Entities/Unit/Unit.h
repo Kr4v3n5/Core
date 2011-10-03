@@ -1461,7 +1461,7 @@ class Unit : public WorldObject
         int32 DealHeal(Unit *pVictim, uint32 addhealth);
 
         void ProcDamageAndSpell(Unit *pVictim, uint32 procAttacker, uint32 procVictim, uint32 procEx, uint32 amount, WeaponAttackType attType = BASE_ATTACK, SpellInfo const *procSpell = NULL, SpellInfo const* procAura = NULL);
-        void ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellInfo const* procSpell, uint32 damage , SpellInfo const* procAura = NULL);
+        void ProcDamageAndSpellfor (bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellInfo const* procSpell, uint32 damage , SpellInfo const* procAura = NULL);
 
         void GetProcAurasTriggeredOnEvent(std::list<AuraApplication*>& aurasTriggeringProc, std::list<AuraApplication*>* procAuras, ProcEventInfo eventInfo);
         void TriggerAurasProcOnEvent(CalcDamageInfo& damageInfo);
@@ -1473,7 +1473,7 @@ class Unit : public WorldObject
 
         void CalculateMeleeDamage(Unit* pVictim, uint32 damage, CalcDamageInfo* damageInfo, WeaponAttackType attackType = BASE_ATTACK);
         void DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss);
-        void HandleProcExtraAttackFor(Unit* victim);
+        void HandleProcExtraAttackfor (Unit* victim);
 
         void CalculateSpellDamageTaken(SpellNonMeleeDamage *damageInfo, int32 damage, SpellInfo const *spellInfo, WeaponAttackType attackType = BASE_ATTACK, bool crit = false);
         void DealSpellDamage(SpellNonMeleeDamage *damageInfo, bool durabilityLoss);
@@ -1498,7 +1498,7 @@ class Unit : public WorldObject
         int32 GetMechanicResistChance(const SpellInfo *spell);
         bool CanUseAttackType(uint8 attacktype) const
         {
-            switch(attacktype)
+            switch (attacktype)
             {
                 case BASE_ATTACK: return !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISARMED);
                 case OFF_ATTACK: return !HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_DISARM_OFFHAND);
@@ -1571,7 +1571,7 @@ class Unit : public WorldObject
 
         virtual bool IsInWater() const;
         virtual bool IsUnderWater() const;
-        bool isInAccessiblePlaceFor(Creature const* c) const;
+        bool isInAccessiblePlacefor (Creature const* c) const;
 
         void SendHealSpellLog(Unit* pVictim, uint32 SpellID, uint32 Damage, uint32 OverHeal, uint32 Absorb, bool critical = false);
         int32 HealBySpell(Unit* pVictim, SpellInfo const* spellInfo, uint32 addHealth, bool critical = false);
@@ -2343,12 +2343,12 @@ class Unit : public WorldObject
 
         uint32 m_unitTypeMask;
 
-        bool isAlwaysVisibleFor(WorldObject const* seer) const;
+        bool isAlwaysVisiblefor (WorldObject const* seer) const;
         bool canSeeAlways(WorldObject const* obj) const { return WorldObject::canSeeAlways(obj); }
 
         bool isVisibleForInState(WorldObject const* seer) const { return WorldObject::isVisibleForInState(seer); };
 
-        bool isAlwaysDetectableFor(WorldObject const* seer) const;
+        bool isAlwaysDetectablefor (WorldObject const* seer) const;
     private:
         bool IsTriggeredAtSpellProcEvent(Unit *pVictim, Aura * aura, SpellInfo const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const *& spellProcEvent);
         bool HandleDummyAuraProc(Unit *pVictim, uint32 damage, AuraEffect* triggeredByAura, SpellInfo const *procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);

@@ -125,7 +125,7 @@ my_bool dynstr_trunc(DYNAMIC_STRING *str, size_t n)
 /*
   Concatenates any number of strings, escapes any OS quote in the result then
   surround the whole affair in another set of quotes which is finally appended
-  to specified DYNAMIC_STRING.  This function is especially useful when 
+  to specified DYNAMIC_STRING.  This function is especially useful when
   building strings to be executed with the system() function.
 
   @param str Dynamic String which will have addtional strings appended.
@@ -158,7 +158,7 @@ my_bool dynstr_append_os_quoted(DYNAMIC_STRING *str, const char *append, ...)
     const char *next_pos= cur_pos;
 
     /* Search for quote in each string and replace with escaped quote */
-    while(*(next_pos= strcend(cur_pos, quote_str[0])) != '\0')
+    while (*(next_pos= strcend(cur_pos, quote_str[0])) != '\0')
     {
       ret&= dynstr_append_mem(str, cur_pos, (uint) (next_pos - cur_pos));
       ret&= dynstr_append_mem(str ,"\\", 1);

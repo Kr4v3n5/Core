@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "ScriptPCH.h"
 #include "bastion_of_twilight.h"
 
@@ -44,24 +44,24 @@ class boss_feludius : public CreatureScript
 
             void UpdateAI(const uint32 uiDiff)
             {
-                if(uiHydrolanceTimer <= uiDiff)
+                if (uiHydrolanceTimer <= uiDiff)
                 {
                     uiHydrolanceTimer = 11000;
                     Unit * Victim = SelectTarget(SELECT_TARGET_RANDOM);
                     DoCast(Victim,SPELL_HYDROLANCE);
                 } else uiHydrolanceTimer -= uiDiff;
-                if(uiWaterBombTimer <= uiDiff)
+                if (uiWaterBombTimer <= uiDiff)
                 {
                     uiHydrolanceTimer = 11000;
                     DoCast(SPELL_WATERBOMB);
                 } else uiWaterBombTimer -= uiDiff;
-                if(uiHeartofIceTimer <= uiDiff)
+                if (uiHeartofIceTimer <= uiDiff)
                 {
                     uiHeartofIceTimer = 39000;
                     Unit * Victim = SelectTarget(SELECT_TARGET_RANDOM);
                     DoCast(Victim,SPELL_HEART_OF_ICE);
                 } else uiHeartofIceTimer -= uiDiff;
-                if(uiGlaciateTimer <= uiDiff)
+                if (uiGlaciateTimer <= uiDiff)
                 {
                     uiGlaciateTimer = 32000;
                     DoCast(SPELL_GLACIATE);

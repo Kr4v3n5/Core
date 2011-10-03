@@ -39,13 +39,13 @@ ACE_U_LongLong::as_string (ACE_TCHAR *output,
     }
   else
     {
-      switch(base)
+      switch (base)
         {
           case 8:
             {
               unsigned int index = 0;
               int bshift = 31;
-              while(bshift >= 1)
+              while (bshift >= 1)
                 {
                   unsigned int sval = (this->h_ () >> bshift) & 7;
                   if (sval > 0 || index != 0)
@@ -56,7 +56,7 @@ ACE_U_LongLong::as_string (ACE_TCHAR *output,
                   bshift -= 3;
                 }
               bshift = 30;
-              while(bshift >= 0)
+              while (bshift >= 0)
                 {
                   unsigned int sval = (this->l_ () >> bshift) & 7;
                   // Combine the last bit of hi with the first 3-bit digit

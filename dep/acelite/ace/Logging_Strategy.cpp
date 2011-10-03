@@ -452,7 +452,7 @@ ACE_Logging_Strategy::handle_timeout (const ACE_Time_Value &,
 
       // Set the number of digits of the log_files labels.
       int digits = 1, res = count_;
-      while((res = (res / 10))>0)
+      while ((res = (res / 10))>0)
         digits++;
 
       if (ACE_OS::strlen (this->filename_) + digits <= MAXPATHLEN)

@@ -1869,7 +1869,7 @@ class Player : public Unit, public GridObject<Player>
         void DuelComplete(DuelCompleteType type);
         void SendDuelCountdown(uint32 counter);
 
-        bool IsGroupVisibleFor(Player const* p) const;
+        bool IsGroupVisiblefor (Player const* p) const;
         bool IsInSameGroupWith(Player const* p) const;
         bool IsInSameRaidWith(Player const* p) const { return p == this || (GetGroup() != NULL && GetGroup() == p->GetGroup()); }
         void UninviteFromGroup();
@@ -2418,7 +2418,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool isValid() const;
 
-        bool IsVisibleGloballyFor(Player* pl) const;
+        bool IsVisibleGloballyfor (Player* pl) const;
 
         void SendInitialVisiblePackets(Unit* target);
         void UpdateObjectVisibility(bool forced = true);
@@ -2843,7 +2843,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool canSeeAlways(WorldObject const* obj) const;
 
-        bool isAlwaysDetectableFor(WorldObject const* seer) const;
+        bool isAlwaysDetectablefor (WorldObject const* seer) const;
 
         uint8 m_grantableLevels;
 

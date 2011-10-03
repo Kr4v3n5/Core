@@ -128,10 +128,10 @@ void reset_root_defaults(MEM_ROOT *mem_root, size_t block_size,
       /* Allocate new prealloc block and add it to the end of free list */
       if ((mem= (USED_MEM *) my_malloc(size, MYF(0))))
       {
-        mem->size= size; 
+        mem->size= size;
         mem->left= pre_alloc_size;
         mem->next= *prev;
-        *prev= mem_root->pre_alloc= mem; 
+        *prev= mem_root->pre_alloc= mem;
       }
       else
       {
@@ -154,7 +154,7 @@ void *alloc_root(MEM_ROOT *mem_root, size_t length)
 
   DBUG_ASSERT(alloc_root_inited(mem_root));
 
-  DBUG_EXECUTE_IF("simulate_out_of_memory",
+  DBUG_EXECUTE_if ("simulate_out_of_memory",
                   {
                     if (mem_root->error_handler)
                       (*mem_root->error_handler)();
@@ -184,7 +184,7 @@ void *alloc_root(MEM_ROOT *mem_root, size_t length)
   DBUG_PRINT("enter",("root: 0x%lx", (long) mem_root));
   DBUG_ASSERT(alloc_root_inited(mem_root));
 
-  DBUG_EXECUTE_IF("simulate_out_of_memory",
+  DBUG_EXECUTE_if ("simulate_out_of_memory",
                   {
                     /* Avoid reusing an already allocated block */
                     if (mem_root->error_handler)

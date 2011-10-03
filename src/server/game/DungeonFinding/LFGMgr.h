@@ -268,7 +268,7 @@ class LFGMgr
 
         // Reward
         void LoadRewards();
-        void RewardDungeonDoneFor(const uint32 dungeonId, Player* player);
+        void RewardDungeonDonefor (const uint32 dungeonId, Player* player);
         LfgReward const* GetRandomDungeonReward(uint32 dungeon, uint8 level);
 
         // Queue

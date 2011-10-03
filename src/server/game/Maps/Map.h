@@ -386,7 +386,7 @@ class Map : public GridRefManager<NGridType>
         virtual void DelayedUpdate(const uint32 diff);
 
         void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
-        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair);
+        void UpdateObjectsVisibilityfor (Player* player, Cell cell, CellPair cellpair);
 
         void resetMarkedCells() { marked_cells.reset(); }
         bool isCellMarked(uint32 pCellId) { return marked_cells.test(pCellId); }

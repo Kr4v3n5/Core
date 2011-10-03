@@ -279,7 +279,7 @@ void GameObject::Update(uint32 diff)
     {
         case GO_NOT_READY:
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
                 case GAMEOBJECT_TYPE_TRAP:
                 {
@@ -487,7 +487,7 @@ void GameObject::Update(uint32 diff)
         }
         case GO_ACTIVATED:
         {
-            switch(GetGoType())
+            switch (GetGoType())
             {
                 case GAMEOBJECT_TYPE_DOOR:
                 case GAMEOBJECT_TYPE_BUTTON:
@@ -848,9 +848,9 @@ void GameObject::SaveRespawnTime()
         sObjectMgr->SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), m_respawnTime);
 }
 
-bool GameObject::isAlwaysVisibleFor(WorldObject const* seer) const
+bool GameObject::isAlwaysVisiblefor (WorldObject const* seer) const
 {
-    if (WorldObject::isAlwaysVisibleFor(seer))
+    if (WorldObject::isAlwaysVisiblefor (seer))
         return true;
 
     if (IsTransport())
@@ -1542,7 +1542,7 @@ void GameObject::Use(Unit* user)
                 GameObjectTemplate const* info = GetGOInfo();
                 if (info)
                 {
-                    switch(info->entry)
+                    switch (info->entry)
                     {
                         case 179785:                        // Silverwing Flag
                             // check if it's correct bg

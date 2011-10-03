@@ -749,7 +749,7 @@ void PlayerMenu::SendQuestGiverRequestItems(Quest const *quest, uint64 npcGUID, 
     // Added in 4.0.1
     uint32 counter = 0;
     data << counter;
-    for(uint32 i = 0; i < counter; i++)
+    for (uint32 i = 0; i < counter; i++)
     {
         data << uint32(0);
         data << uint32(0);
