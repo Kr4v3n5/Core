@@ -2987,6 +2987,9 @@ void SpellMgr::LoadDbcDataCorrections()
             case 36350: //They Must Burn Bomb Aura (self)
                 spellEffect->EffectTriggerSpell = 36325; // They Must Burn Bomb Drop (DND)
                 break;
+            case 2643: // Multi-Shot no-target Effect 0 fix.
+                spellEffect->EffectImplicitTargetA = TARGET_DEST_TARGET_ENEMY;
+                break;
             case 49838: // Stop Time
                 spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;
                 break;
