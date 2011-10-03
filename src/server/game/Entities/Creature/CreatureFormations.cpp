@@ -30,7 +30,10 @@
 CreatureFormationInfoType   CreatureFormationMap;
 CreatureFormationDataType   CreatureFormationDataMap;
 
-void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creature* member)
+namespace FormationMgr
+{
+
+void AddCreatureToFormation(uint32 formationId, Creature* member)
 {
     Map* map = member->FindMap();
     if (!map)
@@ -54,7 +57,7 @@ void CreatureFormationManager::AddCreatureToFormation(uint32 formationId, Creatu
     }
 }
 
-void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *formation, Creature *member)
+void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *member)
 {
     sLog->outDebug(LOG_FILTER_UNITS, "Deleting member pointer to GUID: %u from formation %u", formation->GetId(), member->GetDBTableGUIDLow());
     formation->RemoveMember(member);
@@ -71,7 +74,7 @@ void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *fo
     }
 }
 
-void CreatureFormationManager::LoadCreatureFormations()
+void LoadCreatureFormations()
 {
     uint32 oldMSTime = getMSTime();
 
@@ -198,6 +201,8 @@ void CreatureFormationManager::LoadCreatureFormations()
     sLog->outString(">> Loaded %u formations and %u creatures in formations in %u ms", formation_count, member_count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
 }
+
+} // Namespace
 
 void CreatureFormation::AddMember(Creature *member)
 {

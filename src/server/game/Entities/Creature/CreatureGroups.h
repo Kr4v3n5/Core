@@ -22,8 +22,11 @@
 #ifndef _GROUPS_H
 #define _GROUPS_H
 
-#include "Common.h"
+#include "Define.h"
+#include "UnorderedMap.h"
+#include <map>
 
+class Creature;
 class CreatureGroup;
 
 struct GroupInfo
@@ -32,16 +35,12 @@ struct GroupInfo
     uint8  groupType;
 };
 
-class CreatureGroupManager
+namespace CreatureGroupMgr
 {
-    friend class ACE_Singleton<CreatureGroupManager, ACE_Null_Mutex>;
-    public:
-        void AddCreatureToGroup(uint32 group_id, Creature *creature);
-        void RemoveCreatureFromGroup(CreatureGroup* group, Creature *creature);
-        void LoadCreatureGroups();
+    void AddCreatureToGroup(uint32 group_id, Creature *creature);
+    void RemoveCreatureFromGroup(CreatureGroup* group, Creature *creature);
+    void LoadCreatureGroups();
 };
-
-#define sCreatureGroupMgr ACE_Singleton<CreatureGroupManager, ACE_Null_Mutex>::instance()
 
 typedef UNORDERED_MAP<uint32/*groupId*/, GroupInfo*>   CreatureGroupInfoType;
 typedef UNORDERED_MAP<uint32/*memberGUID*/, uint32/*groupId*/>   CreatureGroupDataType;
@@ -60,7 +59,7 @@ class CreatureGroup
     public:
         //Group cannot be created empty
         explicit CreatureGroup(uint32 id) : m_groupID(id) {}
-        ~CreatureGroup() { sLog->outDebug(LOG_FILTER_UNITS, "Destroying group"); }
+        ~CreatureGroup() { }
 
         uint32 GetId() const { return m_groupID; }
         bool isEmpty() const { return m_members.empty(); }

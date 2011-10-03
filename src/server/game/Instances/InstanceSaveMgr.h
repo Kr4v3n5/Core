@@ -121,6 +121,7 @@ class InstanceSaveManager
 {
     friend class ACE_Singleton<InstanceSaveManager, ACE_Thread_Mutex>;
     friend class InstanceSave;
+    private:
         InstanceSaveManager() : lock_instLists(false) {};
         ~InstanceSaveManager();
 
@@ -178,7 +179,6 @@ class InstanceSaveManager
         static uint16 ResetTimeDelay[];
 
     private:
-
         void _ResetOrWarnAll(uint32 mapid, Difficulty difficulty, bool warn, time_t resetTime);
         void _ResetInstance(uint32 mapid, uint32 instanceId);
         void _ResetSave(InstanceSaveHashMap::iterator &itr);

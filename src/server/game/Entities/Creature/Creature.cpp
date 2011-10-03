@@ -201,7 +201,7 @@ void Creature::RemoveFromWorld()
         if (m_zoneScript)
             m_zoneScript->OnCreatureRemove(this);
         if (m_formation)
-            sFormationMgr->RemoveCreatureFromFormation(m_formation, this);
+            FormationMgr::RemoveCreatureFromFormation(m_formation, this);
         Unit::RemoveFromWorld();
         sObjectAccessor->RemoveObject(this);
     }
@@ -228,7 +228,7 @@ void Creature::SearchFormation()
 
     CreatureFormationDataType::iterator frmdata = CreatureFormationDataMap.find(lowguid);
     if (frmdata != CreatureFormationDataMap.end())
-        sFormationMgr->AddCreatureToFormation(frmdata->second->formationId, this);
+        FormationMgr::AddCreatureToFormation(frmdata->second->formationId, this);
 }
 
 void Creature::SearchGroup()
@@ -242,7 +242,7 @@ void Creature::SearchGroup()
 
     CreatureGroupDataType::iterator grpdata = CreatureGroupDataMap.find(lowguid);
     if (grpdata != CreatureGroupDataMap.end())
-        sCreatureGroupMgr->AddCreatureToGroup(grpdata->second, this);
+        CreatureGroupMgr::AddCreatureToGroup(grpdata->second, this);
 }
 
 void Creature::RemoveCorpse(bool setSpawnTime)

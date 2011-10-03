@@ -851,6 +851,8 @@ void Spell::SelectEffectTypeImplicitTargets(uint8 effIndex)
                 if (Guardian* pet = m_caster->GetGuardianPet())
                     AddUnitTarget(pet, 1 << effIndex, false);
             break;
+        default:
+            break;
     }
 }
 
