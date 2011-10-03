@@ -102,12 +102,10 @@ class boss_theralion : public CreatureScript
                     switch (id)
                     {
                         case POINT_THERALION_TAKEOFF:
-                            me->SetFlying(true);
-                            me->SetSpeed(MOVE_FLIGHT, 1.0f);
-                            me->GetMotionMaster()->MovePoint(POINT_THERALION_PLACE,Positions[0].GetPositionX(),Positions[0].GetPositionY(),Positions[0].GetPositionZ());
-                        case POINT_THERALION_PLACE:
                             me->GetMotionMaster()->Clear(false);
                             me->GetMotionMaster()->MoveIdle();
+                        //case POINT_THERALION_LAND:
+                            
                     }
                 }
             }
@@ -248,11 +246,8 @@ class boss_valiona : public CreatureScript
                 {
                     switch (id)
                     {
+                        
                         case POINT_VALIONA_TAKEOFF:
-                            me->SetFlying(true);
-                            me->SetSpeed(MOVE_FLIGHT, 1.0f);
-                            me->GetMotionMaster()->MovePoint(POINT_THERALION_PLACE,Positions[1].GetPositionX(),Positions[1].GetPositionY(),Positions[1].GetPositionZ());
-                        case POINT_VALIONA_PLACE:
                             me->GetMotionMaster()->Clear(false);
                             me->GetMotionMaster()->MoveIdle();
                     }
@@ -353,6 +348,7 @@ class spell_dazzling_destruction : public SpellScriptLoader
 
             void Register()
             {
+                OnEffect += SpellEffectFn(spell_dazzling_destructionSpellScript::HandleDummy,EFFECT_0,SPELL_EFFECT_DUMMY);
                 OnEffectHitTarget += SpellEffectFn(spell_dazzling_destructionSpellScript::HandleDummy,EFFECT_0,SPELL_EFFECT_DUMMY);
                 OnHit += SpellHitFn(spell_dazzling_destructionSpellScript::HandleOnHit);
             }
