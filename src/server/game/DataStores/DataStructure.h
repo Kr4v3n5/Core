@@ -507,11 +507,11 @@ struct AchievementCriteriaEntry
 
     DBCString name;                                         // 9        m_description_lang
     uint32  completionFlag;                                 // 10       m_flags
-    uint32  timedCriteriaStartType;                         // 11       m_timer_start_event Only appears with timed achievements, seems to be the type of starting a timed Achievement, only type 1 and some of type 6 need manual starting
+    uint32  timedType;                                      // 11       m_timer_start_event Only appears with timed achievements, seems to be the type of starting a timed Achievement, only type 1 and some of type 6 need manual starting
                                                             //              1: ByEventId(?) (serverside IDs),    2: ByQuestId,   5: ByCastSpellId(?)
                                                             //              6: BySpellIdTarget(some of these are unknown spells, some not, some maybe spells)
                                                             //              7: ByKillNpcId,  9: ByUseItemId
-    uint32  timedCriteriaMiscId;                            // 12       m_timer_asset_id Alway appears with timed events, used internally to start the achievement, store
+    uint32  timerStartEvent;                                // 12       m_timer_asset_id Alway appears with timed events, used internally to start the achievement, store
     uint32  timeLimit;                                      // 13       m_timer_time time limit in seconds
     uint32  showOrder;                                      // 14       m_ui_order  also used in achievement shift-links as index in state bitmask
     //uint32 unk1;                                          // 15 only one value, still unknown
@@ -2118,9 +2118,9 @@ struct TalentTabEntry
 
 struct TalentTreePrimarySpellsEntry
 {
-    uint32 ID;          // 0
-    uint32 TalentTab;   // 1
-    uint32 Spell;       // 2
+    uint32 Id;                                              // 0
+    uint32 TalentTab;                                     // 1
+    uint32 Spell;                                         // 2
 };
 
 struct TaxiNodesEntry
@@ -2133,8 +2133,8 @@ struct TaxiNodesEntry
     DBCString name;                                         // 5        m_Name_lang
     uint32    MountCreatureID[2];                           // 6-7      m_MountCreatureID[2]
     //uint32  Unk0                                          // 8        4.2.0(Unknown)
-    //uint32  Unk1                                          // 9        4.2.0(Unknown)
-    //uint32  Unk2                                          // 10       4.2.0(Unknown)
+    //float  Unk1                                          // 9        4.2.0(Unknown)
+    //float  Unk2                                          // 10       4.2.0(Unknown)
 };
 
 struct TaxiPathEntry

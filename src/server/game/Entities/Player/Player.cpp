@@ -4499,9 +4499,9 @@ bool Player::resetTalents(bool no_cost)
 
     RemovePet(NULL, PET_SLOT_ACTUAL_PET_SLOT, true);
 
-    for (uint32 j = 0; j < sTalentTreePrimarySpells.GetNumRows(); ++j)
+    for (uint32 j = 0; j < sTalentTreePrimarySpellsStore.GetNumRows(); ++j)
     {
-        TalentTreePrimarySpellsEntry const *talentTreeInfo = sTalentTreePrimarySpells.LookupEntry(j);
+        TalentTreePrimarySpellsEntry const *talentTreeInfo = sTalentTreePrimarySpellsStore.LookupEntry(j);
 
         if (talentTreeInfo->TalentTab != TalentBranchSpec(m_activeSpec) || !talentTreeInfo)
             continue;
@@ -17025,11 +17025,9 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     }
 
     _LoadCurrency(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADCURRENCY));
-
-    _LoadTalentBranchSpecs(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADBRANCHSPECS));
     _LoadTalents(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADTALENTS));
+    _LoadTalentBranchSpecs(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADBRANCHSPECS));
     _LoadSpells(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADSPELLS));
-
     _LoadGlyphs(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADGLYPHS));
     _LoadAuras(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADAURAS), time_diff);
     _LoadGlyphAuras();
@@ -24596,9 +24594,9 @@ void Player::ActivateSpec(uint8 spec)
         }
     }
 
-    for (uint32 i = 0; i < sTalentTreePrimarySpells.GetNumRows(); ++i)
+    for (uint32 i = 0; i < sTalentTreePrimarySpellsStore.GetNumRows(); ++i)
     {
-        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpells.LookupEntry(i);
+        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpellsStore.LookupEntry(i);
 
         if (!talentInfo || talentInfo->TalentTab != TalentBranchSpec(m_activeSpec))
             continue;
@@ -24647,9 +24645,9 @@ void Player::ActivateSpec(uint8 spec)
         }
     }
 
-    for (uint32 i = 0; i < sTalentTreePrimarySpells.GetNumRows(); ++i)
+    for (uint32 i = 0; i < sTalentTreePrimarySpellsStore.GetNumRows(); ++i)
     {
-        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpells.LookupEntry(i);
+        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpellsStore.LookupEntry(i);
 
         if (!talentInfo || talentInfo->TalentTab != TalentBranchSpec(spec))
             continue;

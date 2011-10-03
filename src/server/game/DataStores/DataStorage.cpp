@@ -203,7 +203,7 @@ DataStorage <SummonPropertiesEntry> sSummonPropertiesStore(SummonPropertiesfmt);
 DataStorage <TalentEntry> sTalentStore(TalentEntryfmt);
 TalentSpellPosMap sTalentSpellPosMap;
 DataStorage <TalentTabEntry> sTalentTabStore(TalentTabEntryfmt);
-DataStorage <TalentTreePrimarySpellsEntry> sTalentTreePrimarySpells(TalentTreeSpellsfmt);
+DataStorage <TalentTreePrimarySpellsEntry> sTalentTreePrimarySpellsStore(TalentTreePrimarySpellsfmt);
 
 // store absolute bit position for first rank for talent inspect
 static uint32 sTalentTabPages[MAX_CLASSES][3];
@@ -579,7 +579,7 @@ void LoadDataStorages(const std::string& dataPath)
 
     LoadData(availableDbcLocales, bad_dbc_files, sTalentStore,                 storagesPath, "Talent.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sTalentTabStore,              storagesPath, "TalentTab.dbc");
-    LoadData(availableDbcLocales, bad_dbc_files, sTalentTreePrimarySpells,     storagesPath, "TalentTreePrimarySpells.dbc");
+    LoadData(availableDbcLocales, bad_dbc_files, sTalentTreePrimarySpellsStore,storagesPath, "TalentTreePrimarySpells.dbc");
 
     // prepare fast data access to bit pos of talent ranks for use at inspecting
     {
