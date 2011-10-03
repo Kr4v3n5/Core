@@ -94,7 +94,7 @@ extern int main(int argc, char **argv)
         ++c;
     }
 
-    if (!ConfigMgr::SetSource(cfg_file))
+    if (!ConfigMgr::Load(cfg_file))
     {
         sLogMgr->WriteLn(SERVER_LOG, LOGL_ERROR, "Invalid or missing configuration file : %s", cfg_file);
         sLogMgr->WriteLn(SERVER_LOG, LOGL_ERROR, "Verify that the file exists and has \'[authserver]\' written in the top of the file!");
