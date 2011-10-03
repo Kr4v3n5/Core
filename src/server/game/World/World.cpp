@@ -1400,7 +1400,7 @@ void World::SetInitialWorldSettings()
     sObjectMgr->LoadLinkedRespawn();                             // must be after LoadCreatures(), LoadGameObjects()
 
     sLog->outString("Loading Weather Data...");
-    sWeatherMgr->LoadWeatherData();
+    WeatherMgr::LoadWeatherData();
 
     sLog->outString("Loading Quests...");
     sObjectMgr->LoadQuests();                                    // must be loaded after DBCs, creature_template, item_template, gameobject tables
@@ -2394,7 +2394,7 @@ void World::Update(uint32 diff)
     if (m_timers[WUPDATE_WEATHERS].Passed())
     {
         m_timers[WUPDATE_WEATHERS].Reset();
-        sWeatherMgr->Update(uint32(m_timers[WUPDATE_WEATHERS].GetInterval()));
+        WeatherMgr::Update(uint32(m_timers[WUPDATE_WEATHERS].GetInterval()));
     }
 
     /// <li> Update uptime table
