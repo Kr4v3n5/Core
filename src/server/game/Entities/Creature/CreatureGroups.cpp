@@ -30,7 +30,10 @@
 CreatureGroupInfoType   CreatureGroupMap;
 CreatureGroupDataType   CreatureGroupDataMap;
 
-void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature* member)
+namespace CreatureGroupMgr
+{
+
+void AddCreatureToGroup(uint32 groupId, Creature* member)
 {
     Map *map = member->FindMap();
     if (!map)
@@ -54,7 +57,7 @@ void CreatureGroupManager::AddCreatureToGroup(uint32 groupId, Creature* member)
     }
 }
 
-void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup* group, Creature* member)
+void RemoveCreatureFromGroup(CreatureGroup* group, Creature* member)
 {
     sLog->outDebug(LOG_FILTER_UNITS, "Deleting member pointer to GUID: %u from group %u", group->GetId(), member->GetDBTableGUIDLow());
     group->RemoveMember(member);
@@ -71,7 +74,7 @@ void CreatureGroupManager::RemoveCreatureFromGroup(CreatureGroup* group, Creatur
     }
 }
 
-void CreatureGroupManager::LoadCreatureGroups()
+void LoadCreatureGroups()
 {
     uint32 oldMSTime = getMSTime();
 
@@ -194,6 +197,8 @@ void CreatureGroupManager::LoadCreatureGroups()
     sLog->outString(">> Loaded %u creatures in %u groups in %u ms", member_count, group_count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
 }
+
+} // Namespace
 
 void CreatureGroup::AddMember(Creature* member)
 {

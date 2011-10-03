@@ -8,13 +8,12 @@ TODO-List for TrilliumEMU Developer #
 // Core Developer:
 1. Fix the Vendors, they dont show any items.
 2. Implement Wintergrasp Battlefield.
-3. Implement the new Battlegrounds.
+3. Implement the new Battlegrounds. What new bg are added in 420?
 4. Begin to fix spells (only casting and damage works)
 5. Begin to fix guilds.
 6. Begin to fix groups.
 7. Research the Battleground Packets, some updates added to this packets.
 8. Update all Opcodes for 422, so we can to 422 in master.
-9. Implement a New Terrain System.
 
 // Database Developer:
 1. Fix old spawns and duplicates from old WotLK

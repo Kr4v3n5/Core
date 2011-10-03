@@ -53,7 +53,7 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
         if (sWorld->getBoolConfig(CONFIG_CHAT_FAKE_MESSAGE_PREVENTING))
             stripLineInvisibleChars(msg);
 
-        if (!sConfig->GetBoolDefault("Log.Chat.Enable", true) &&     // To prevent double checking (if chat log is used, message is automatically validated)
+        if (!ConfigMgr::GetBoolDefault("Log.Chat.Enable", true) &&     // To prevent double checking (if chat log is used, message is automatically validated)
             sWorld->getIntConfig(CONFIG_CHAT_STRICT_LINK_CHECKING_SEVERITY) && AccountMgr::IsPlayerAccount(GetSecurity()) &&
             !ChatHandler(this).isValidChatMessage(msg.c_str()))
         {
@@ -228,7 +228,7 @@ void WorldSession::HandleMessageChatOpcode(WorldPacket & recv_data, uint32 type)
                 lang = LANG_UNIVERSAL;
             else
             {
-                switch(type)
+                switch (type)
                 {
                     case CHAT_MSG_PARTY:
                     case CHAT_MSG_PARTY_LEADER:
@@ -585,7 +585,7 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data)
 
     uint32 emote_anim = em->textid;
 
-    switch(emote_anim)
+    switch (emote_anim)
     {
         case EMOTE_STATE_SLEEP:
         case EMOTE_STATE_SIT:

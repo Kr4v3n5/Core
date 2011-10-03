@@ -1833,7 +1833,7 @@ void SpellMgr::LoadSpellProcs()
         baseProcEntry.cooldown        = uint32(cooldown);
         baseProcEntry.charges         = fields[14].GetUInt32();
 
-        while(true)
+        while (true)
         {
             if (mSpellProcMap.find(spellId) != mSpellProcMap.end())
             {
@@ -2987,6 +2987,9 @@ void SpellMgr::LoadDbcDataCorrections()
             case 36350: //They Must Burn Bomb Aura (self)
                 spellEffect->EffectTriggerSpell = 36325; // They Must Burn Bomb Drop (DND)
                 break;
+            case 2643: // Multi-Shot no-target Effect 0 fix.
+                spellEffect->EffectImplicitTargetA = TARGET_DEST_TARGET_ENEMY;
+                break;
             case 49838: // Stop Time
                 spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;
                 break;
@@ -3146,6 +3149,9 @@ void SpellMgr::LoadDbcDataCorrections()
             case 47569: // Improved Shadowform (Rank 1)
                 // with this spell atrribute aura can be stacked several times
                 spellInfo->Attributes &= ~SPELL_ATTR0_NOT_SHAPESHIFT;
+                break;
+            case 64904: //Hymn of Hope
+                spellEffect->EffectApplyAuraName = SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT;
                 break;
             case 30421: // Nether Portal - Perseverence
                 spellEffect->EffectBasePoints += 30000;
@@ -3379,6 +3385,10 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellEffect->EffectImplicitTargetA = TARGET_DEST_TARGET_ANY;
                 spellEffect->EffectImplicitTargetB = TARGET_UNIT_TARGET_ANY;
                 spellEffect->Effect = 0;
+                break;
+            case 86150: // Guardian of Ancient Kings
+                spellEffect->EffectTriggerSpell = 86698;
+                spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER;
                 break;
             default:
                 break;

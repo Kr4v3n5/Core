@@ -131,7 +131,7 @@ inline void Quadmap::Visit(float x, float y, float radius, uint32 phase, NOTIFIE
     GetList(x, y, radius, phase, l);  //generate target list
     for (std::list<WorldObject*>::iterator itr = l.begin(); itr!=l.end();++itr)
     {
-        switch(GetType(*itr))
+        switch (GetType(*itr))
         {
             case TYPE_UNIT:
                 notifier.VisitUnit(*itr);

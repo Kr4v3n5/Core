@@ -133,14 +133,17 @@ extern DataStorage <ItemLimitCategoryEntry>       sItemLimitCategoryStore;
 extern DataStorage <ItemRandomPropertiesEntry>    sItemRandomPropertiesStore;
 extern DataStorage <ItemRandomSuffixEntry>        sItemRandomSuffixStore;
 extern DataStorage <ItemSetEntry>                 sItemSetStore;
+extern DataStorage <ItemReforgeEntry>             sItemReforgeStore;
 extern DataStorage <LFGDungeonEntry>              sLFGDungeonStore;
 extern DataStorage <LockEntry>                    sLockStore;
 extern DataStorage <MailTemplateEntry>            sMailTemplateStore;
 extern DataStorage <MapEntry>                     sMapStore;
 extern DataStorage <PhaseEntry>                   sPhaseStore;
 //extern DataStorage <MapDifficultyEntry>           sMapDifficultyStore; -- use GetMapDifficultyData insteed
-extern MapDifficultyMap                          sMapDifficultyMap;
+extern MapDifficultyMap                           sMapDifficultyMap;
 extern DataStorage <MovieEntry>                   sMovieStore;
+extern DataStorage <MountCapabilityEntry>         sMountCapabilityStore;
+extern DataStorage <MountTypeEntry>               sMountTypeStore;
 extern DataStorage <OverrideSpellDataEntry>       sOverrideSpellDataStore;
 extern DataStorage <QuestSortEntry>               sQuestSortStore;
 extern DataStorage <QuestXPEntry>                 sQuestXPStore;

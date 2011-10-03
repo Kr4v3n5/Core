@@ -22,8 +22,11 @@
 #ifndef _FORMATIONS_H
 #define _FORMATIONS_H
 
-#include "Common.h"
+#include "Define.h"
+#include "UnorderedMap.h"
+#include <map>
 
+class Creature;
 class CreatureFormation;
 
 struct FormationInfo
@@ -47,17 +50,12 @@ struct Formation
     uint8 formationAI;
 };
 
-
-class CreatureFormationManager
+namespace FormationMgr
 {
-    friend class ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>;
-    public:
-        void AddCreatureToFormation(uint32 formation_id, Creature *creature);
-        void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
-        void LoadCreatureFormations();
+    void AddCreatureToFormation(uint32 formation_id, Creature *creature);
+    void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
+    void LoadCreatureFormations();
 };
-
-#define sFormationMgr ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>::instance()
 
 typedef UNORDERED_MAP<uint32/*formationId*/, FormationInfo*>   CreatureFormationInfoType;
 typedef UNORDERED_MAP<uint32/*memberGUID*/, FormationData*>   CreatureFormationDataType;
@@ -78,7 +76,7 @@ class CreatureFormation
     public:
         //Formation cannot be created empty
         explicit CreatureFormation(uint32 id) : m_leader(NULL), m_formationID(id), m_Formed(false) {}
-        ~CreatureFormation() { sLog->outDebug(LOG_FILTER_UNITS, "Destroying formation"); }
+        ~CreatureFormation() { }
 
         Creature* getLeader() const { return m_leader; }
         uint32 GetId() const { return m_formationID; }

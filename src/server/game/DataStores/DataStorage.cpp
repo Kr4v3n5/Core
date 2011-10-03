@@ -132,19 +132,22 @@ DataStorage <ItemLimitCategoryEntry>       sItemLimitCategoryStore(ItemLimitCate
 DataStorage <ItemRandomPropertiesEntry>    sItemRandomPropertiesStore(ItemRandomPropertiesfmt);
 DataStorage <ItemRandomSuffixEntry>        sItemRandomSuffixStore(ItemRandomSuffixfmt);
 DataStorage <ItemSetEntry>                 sItemSetStore(ItemSetEntryfmt);
-
+DataStorage <ItemReforgeEntry>             sItemReforgeStore(ItemReforgefmt);
 DataStorage <LFGDungeonEntry>              sLFGDungeonStore(LFGDungeonEntryfmt);
 
-DataStorage <LockEntry> sLockStore(LockEntryfmt);
+DataStorage <LockEntry>                    sLockStore(LockEntryfmt);
 
-DataStorage <MailTemplateEntry> sMailTemplateStore(MailTemplateEntryfmt);
-DataStorage <MapEntry> sMapStore(MapEntryfmt);
+DataStorage <MailTemplateEntry>            sMailTemplateStore(MailTemplateEntryfmt);
+DataStorage <MapEntry>                     sMapStore(MapEntryfmt);
 
 // DBC used only for initialization sMapDifficultyMap at startup.
 DataStorage <MapDifficultyEntry> sMapDifficultyStore(MapDifficultyEntryfmt); // only for loading
 MapDifficultyMap sMapDifficultyMap;
 
 DataStorage <MovieEntry> sMovieStore(MovieEntryfmt);
+
+DataStorage <MountCapabilityEntry> sMountCapabilityStore(MountCapabilityfmt);
+DataStorage <MountTypeEntry> sMountTypeStore(MountTypefmt);
 
 DataStorage <OverrideSpellDataEntry> sOverrideSpellDataStore(OverrideSpellDatafmt);
 
@@ -423,7 +426,7 @@ void LoadDataStorages(const std::string& dataPath)
     LoadData(availableDbcLocales, bad_dbc_files,sItemDamageTwoHandStore,          storagesPath,"ItemDamageTwoHand.dbc");
     LoadData(availableDbcLocales, bad_dbc_files,sItemDamageTwoHandCasterStore,    storagesPath,"ItemDamageTwoHandCaster.dbc");
     LoadData(availableDbcLocales, bad_dbc_files,sItemDamageWandStore,             storagesPath,"ItemDamageWand.dbc");
-
+    LoadData(availableDbcLocales, bad_dbc_files, sItemReforgeStore,               storagesPath, "ItemReforge.dbc");
 
     LoadData(availableDbcLocales, bad_dbc_files, sLFGDungeonStore,             storagesPath, "LFGDungeons.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sLockStore,                   storagesPath, "Lock.dbc");
@@ -436,15 +439,13 @@ void LoadDataStorages(const std::string& dataPath)
     for (uint32 i = 1; i < sMapDifficultyStore.GetNumRows(); ++i)
         if (MapDifficultyEntry const* entry = sMapDifficultyStore.LookupEntry(i))
             sMapDifficultyMap[MAKE_PAIR32(entry->MapId, entry->Difficulty)] = MapDifficulty(entry->resetTime, entry->maxPlayers, entry->areaTriggerText > 0);
-
     sMapDifficultyMap[MAKE_PAIR32(0, 0)] = MapDifficulty(0, 0, 0 > 0);
-
     sMapDifficultyStore.Clear();
 
     LoadData(availableDbcLocales, bad_dbc_files, sMovieStore,                  storagesPath, "Movie.dbc");
-
+    LoadData(availableDbcLocales, bad_dbc_files, sMountCapabilityStore,        storagesPath, "MountCapability.dbc");
+    LoadData(availableDbcLocales, bad_dbc_files, sMountTypeStore,              storagesPath, "MountType.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sOverrideSpellDataStore,      storagesPath, "OverrideSpellData.dbc");
-
     LoadData(availableDbcLocales, bad_dbc_files, sPvPDifficultyStore,          storagesPath, "PvpDifficulty.dbc");
     for (uint32 i = 0; i < sPvPDifficultyStore.GetNumRows(); ++i)
         if (PvPDifficultyEntry const* entry = sPvPDifficultyStore.LookupEntry(i))
@@ -696,8 +697,8 @@ void LoadDataStorages(const std::string& dataPath)
     LoadData(availableDbcLocales, bad_dbc_files, sVehicleSeatStore,            storagesPath, "VehicleSeat.dbc");
 
     LoadData(availableDbcLocales, bad_dbc_files, sWMOAreaTableStore,           storagesPath, "WMOAreaTable.dbc");
-    for(uint32 i = 0; i < sWMOAreaTableStore.GetNumRows(); ++i)
-        if(WMOAreaTableEntry const* entry = sWMOAreaTableStore.LookupEntry(i))
+    for (uint32 i = 0; i < sWMOAreaTableStore.GetNumRows(); ++i)
+        if (WMOAreaTableEntry const* entry = sWMOAreaTableStore.LookupEntry(i))
             sWMOAreaInfoByTripple.insert(WMOAreaInfoByTripple::value_type(WMOAreaTableTripple(entry->rootId, entry->adtId, entry->groupId), entry));
     LoadData(availableDbcLocales, bad_dbc_files, sWorldMapAreaStore,           storagesPath, "WorldMapArea.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sWorldMapOverlayStore,        storagesPath, "WorldMapOverlay.dbc");
@@ -798,7 +799,7 @@ int32 GetAreaFlagByAreaID(uint32 area_id)
 WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid)
 {
     WMOAreaInfoByTripple::iterator i = sWMOAreaInfoByTripple.find(WMOAreaTableTripple(rootid, adtid, groupid));
-        if(i == sWMOAreaInfoByTripple.end())
+        if (i == sWMOAreaInfoByTripple.end())
             return NULL;
         return i->second;
 }
@@ -864,7 +865,7 @@ ContentLevels GetContentLevelsForMapAndZone(uint32 mapid, uint32 zoneId)
     if (zoneId == 5034 || zoneId == 4922 || zoneId == 616 || zoneId == 5146 || zoneId == 5042)
         return CONTENT_81_85;
 
-    switch(mapEntry->Expansion())
+    switch (mapEntry->Expansion())
     {
         default: return CONTENT_1_60;
         case 1:  return CONTENT_61_70;

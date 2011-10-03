@@ -517,7 +517,7 @@ struct AchievementCriteriaEntry
     //uint32 unk1;                                          // 15 only one value, still unknown
     //uint32 unk2;                                          // 16 all zeros
     //uint32 moreRequirement[3];                            // 17-19
-    //uint32 moreRequirementValue[3];                       // 20-22 
+    //uint32 moreRequirementValue[3];                       // 20-22
 };
 
 struct AreaTableEntry
@@ -547,7 +547,7 @@ struct AreaTableEntry
         if (zone == 4395) // Dalaran City
             return true;
         if (zone == 3703) // Shattrath City
-            return true;	    
+            return true;
         return (flags & AREA_FLAG_SANCTUARY);
     }
 };
@@ -645,10 +645,10 @@ struct BattlemasterListEntry
     uint32 HolidayWorldStateId;                             // 13 new 3.1
     uint32 minLevel;                                        // 14, min level (sync with PvPDifficulty.dbc content)
     uint32 maxLevel;                                        // 15, max level (sync with PvPDifficulty.dbc content)
-    //uint32 maxGroupSizeRated;                             // 16 4.0.1
-    //uint32 unk;                                           // 17 - 4.0.6.13596
-    //uint32 maxPlayers;                                    // 18 4.0.1
-    //uint32 unk1;                                          // 19 4.0.3, value 2 for Rated Battlegrounds
+    uint32 maxGroupSizeRated;                               // 16 4.0.1
+    uint32 maxPlayers;                                      // 17 4.0.1
+    uint32 minPlayers;                                      // 18 4.0.6
+    uint32 rated;                                           // 19 4.0.3 value 2 for Rated Battlegrounds
 };
 
 #define MAX_OUTFIT_ITEMS 24
@@ -921,7 +921,7 @@ struct FactionEntry
     // helpers
     bool CanHaveReputation() const
     {
-        return reputationListID >=0;
+        return reputationListID >= 0;
     }
 };
 
@@ -1333,6 +1333,15 @@ struct ItemRandomSuffixEntry
     uint32    prefix[5];                                    // 8-12     m_allocationPct
 };
 
+struct ItemReforgeEntry
+{
+    uint32    ID;                                           // 0
+    uint32    oldstat;                                      // 1
+    float     oldstat_coef;                                 // 2
+    uint32    newstat;                                      // 2
+    float     newstat_coef;                                 // 3
+};
+
 #define MAX_ITEM_SET_ITEMS 10
 #define MAX_ITEM_SET_SPELLS 8
 
@@ -1449,6 +1458,26 @@ struct MapDifficultyEntry
     uint32      resetTime;                                  // 4,       m_raidDuration in secs, 0 if no fixed reset time
     uint32      maxPlayers;                                 // 5,       m_maxPlayers some heroic versions have 0 when expected same amount as in normal version
     //DBCString       difficultyString;                     // 6        m_difficultystring
+};
+
+struct MountCapabilityEntry
+{
+    uint32  id;                                             // 0 index
+    uint32  flag;                                           // 1 some flag
+    uint32  reqSkillLevel;                                  // 2 skill level of riding required
+    //uint32 unk;                                           // 3 unk
+    //uint32 empty;                                         // 4 empty
+    uint32  reqSpell;                                       // 5 spell that has to be known to you
+    uint32  spell;                                          // 6 spell to cast to apply mount speed effects
+    uint32  map;                                            // 7 map where this is applicable
+};
+
+#define MAX_MOUNT_TYPE_COLUMN 17
+struct MountTypeEntry
+{
+    uint32  id;                                             // 0 index
+    uint32  capabilities[MAX_MOUNT_TYPE_COLUMN];            // 1-17 capability ids from MountCapability.dbc
+    //uint32  empty[7];                                     // 18-24 empty. maybe continues capabilities
 };
 
 struct MovieEntry
@@ -2076,15 +2105,15 @@ struct TalentEntry
 struct TalentTabEntry
 {
     uint32  TalentTabID;                                    // 0
-    //DBCString name;                                           // 1        m_name_lang
+    //DBCString name;                                       // 1        m_name_lang
     //unit32  spellicon;                                    // 2        m_spellIconID
     uint32  ClassMask;                                      // 3        m_classMask
     uint32  petTalentMask;                                  // 4        m_petTalentMask
     uint32  tabpage;                                        // 5        m_orderIndex
-    //DBCString internalname;                                   // 6        m_backgroundFile
-    //DBCString description;                                    // 7
-    //uint32 rolesMask;                                     // 8 4.0.0
-    //uint32 spellIds[2];                                   // 9-10 passive mastery bonus spells?
+    //DBCString internalname;                               // 6        m_backgroundFile
+    //DBCString description;                                // 7
+    //uint32 rolesMask;                                     // 8        4.0.0
+    uint32 masterySpells[2];                                // 9-10     passive mastery bonus spells?
 };
 
 struct TalentTreePrimarySpellsEntry
@@ -2092,7 +2121,6 @@ struct TalentTreePrimarySpellsEntry
     uint32 ID;          // 0
     uint32 TalentTab;   // 1
     uint32 Spell;       // 2
-    //uint32 unk;       // 3    useless and unused (Instant 0)
 };
 
 struct TaxiNodesEntry
@@ -2321,10 +2349,10 @@ struct WorldStateSounds
 struct WorldStateUI
 {
     uint32    ID;                                           // 0
-    uint32    map_id;                                       // 1        Can be -1 to show up everywhere. 
-    uint32    zone;                                         // 2        Can be zero for "everywhere". 
+    uint32    map_id;                                       // 1        Can be -1 to show up everywhere.
+    uint32    zone;                                         // 2        Can be zero for "everywhere".
     uint32    phaseMask;                                    // 3        Phase this WorldState is avaliable in
-    uint32    icon;                                         // 4        The icon that is used in the interface. 
+    uint32    icon;                                         // 4        The icon that is used in the interface.
     char*     textureFilename;                              // 5
     char*     text;                                         // 6-21     The worldstate text
     char*     description;                                  // 22-38    Text shown when hovering mouse on icon
