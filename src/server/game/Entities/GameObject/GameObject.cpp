@@ -1039,6 +1039,12 @@ void GameObject::Use(Unit* user)
     uint32 spellId = 0;
     bool triggered = false;
 
+    if (Player* player = user->ToPlayer())
+    {
+        if (player->GetEmoteState())
+            player->SetEmoteState(0);
+    }
+
     if (Player* playerUser = user->ToPlayer())
     {
         if (sScriptMgr->OnGossipHello(playerUser, this))

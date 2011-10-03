@@ -653,6 +653,7 @@ Player::Player (WorldSession *session): Unit(), m_achievementMgr(this), m_reputa
     m_petSlotUsed = 0;
     m_currentPetSlot = PET_SAVE_AS_DELETED;
 
+    m_emote = 0;
     m_objectType |= TYPEMASK_PLAYER;
     m_objectTypeId = TYPEID_PLAYER;
 
@@ -665,7 +666,6 @@ Player::Player (WorldSession *session): Unit(), m_achievementMgr(this), m_reputa
     m_ExtraFlags = 0;
 
     m_spellModTakingSpell = NULL;
-    //m_pad = 0;
 
     // players always accept
     if (AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()))
@@ -24342,6 +24342,13 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
             break;
         }
     }
+}
+
+void Player::SetEmoteState(uint32 anim_id)
+{
+    HandleEmoteCommand(anim_id); // Fall back
+
+    m_emote = anim_id;
 }
 
 void Player::RemoveAtLoginFlag(AtLoginFlags f, bool in_db_also /*= false*/)

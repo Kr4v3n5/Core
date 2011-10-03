@@ -2179,6 +2179,9 @@ class Player : public Unit, public GridObject<Player>
         void SetEquipmentSet(uint32 index, EquipmentSet eqset);
         void DeleteEquipmentSet(uint64 setGuid);
 
+        void SetEmoteState(uint32 anim_id);
+        uint32 GetEmoteState() { return m_emote; }
+
         void SendInitWorldStates(uint32 zone, uint32 area);
         void SendUpdateWorldState(uint32 Field, uint32 Value);
         void SendDirectMessage(WorldPacket *data);
@@ -2737,6 +2740,8 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_branchSpec[MAX_TALENT_SPECS];              // tabId of the main talent branch
         uint32 m_talentSpec[MAX_TALENT_TABS];               // S[1,MAX_TALENT_TABS] { (numTalentsInTab << (tabPageIndex*8) }
         uint32 m_freeTalentPoints;
+
+        uint32 m_emote;
 
         uint32 m_Glyphs[MAX_TALENT_SPECS][MAX_GLYPH_SLOT_INDEX];
 
