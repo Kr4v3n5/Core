@@ -1340,6 +1340,12 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                     m_caster->CastCustomSpell(unitTarget, 23885, &damage, NULL, NULL, true, NULL);
                     return;
                 }
+                // Rallying Cry
+                case 97463:
+                {
+                    m_caster->CastCustomSpell(m_caster, 97463, NULL, NULL, NULL, true);
+                    return;
+                }
             }
             break;
         case SPELLFAMILY_WARLOCK:
