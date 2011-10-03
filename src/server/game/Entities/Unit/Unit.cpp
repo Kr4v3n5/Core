@@ -3109,8 +3109,7 @@ bool Unit::CanCastWhileWalking(SpellInfo const* const sp)
     for (AuraEffectList::const_iterator i = alist.begin(); i != alist.end(); ++i)
     {
         // check that spell mask matches
-        if (!((*i)->GetSpellInfo()->EffectSpellClassMask[(*i)->GetEffIndex()] &
-            sp->SpellFamilyFlags))
+        if (!((*i)->GetSpellInfo()->Effects[(*i)->GetEffIndex()].SpellClassMask & sp->SpellFamilyFlags))
             continue;
         return true;
     }
