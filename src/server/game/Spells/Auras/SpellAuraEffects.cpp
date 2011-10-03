@@ -6922,7 +6922,6 @@ void AuraEffect::HandleRaidProcFromChargeAuraProc(AuraApplication* aurApp, ProcE
     target->CastSpell(target, triggerSpellId, true, NULL, this, GetCasterGUID());
 }
 
-
 void AuraEffect::HandleRaidProcFromChargeWithValueAuraProc(AuraApplication* aurApp, ProcEventInfo& /*eventInfo*/)
 {
     Unit* target = aurApp->GetTarget();
@@ -6963,12 +6962,11 @@ void AuraEffect::HandleRaidProcFromChargeWithValueAuraProc(AuraApplication* aurA
     target->CastCustomSpell(target, triggerSpellId, &value, NULL, NULL, true, NULL, this, GetCasterGUID());
 }
 
-
 void AuraEffect::HandleMastery(AuraApplication const* aurApp, uint8 mode, bool apply) const
 {
     Player* player = aurApp->GetBase()->GetOwner()->ToPlayer();
     uint32 mastery;
-    switch (plr->GetActiveSpec())
+    switch (player->GetActiveSpec())
     {
         case PALADIN_HOLY:          mastery = 76669; break;
         case PALADIN_PROTECTION:    mastery = 76671; break;
