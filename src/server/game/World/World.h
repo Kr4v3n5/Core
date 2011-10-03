@@ -201,6 +201,8 @@ enum WorldIntConfigs
     CONFIG_START_PLAYER_LEVEL,
     CONFIG_START_HEROIC_PLAYER_LEVEL,
     CONFIG_START_PLAYER_MONEY,
+    CONFIG_MAX_CONQUEST_POINTS,
+    CONFIG_START_CONQUEST_POINTS,
     CONFIG_MAX_HONOR_POINTS,
     CONFIG_START_HONOR_POINTS,
     CONFIG_MAX_JUSTICE_POINTS,
@@ -269,6 +271,7 @@ enum WorldIntConfigs
     CONFIG_ARENA_START_RATING,
     CONFIG_ARENA_START_PERSONAL_RATING,
     CONFIG_ARENA_START_MATCHMAKER_RATING,
+    CONFIG_ARENA_CONQUEST_POINTS_REWARD,
     CONFIG_MAX_WHO,
     CONFIG_HONOR_AFTER_DUEL,
     CONFIG_PVP_TOKEN_MAP_TYPE,
@@ -353,6 +356,7 @@ enum Rates
     RATE_AUCTION_DEPOSIT,
     RATE_AUCTION_CUT,
     RATE_HONOR,
+    RATE_CONQUEST_POINTS_WEEK_LIMIT,
     RATE_MINING_AMOUNT,
     RATE_MINING_NEXT,
     RATE_TALENT,
@@ -439,7 +443,8 @@ enum RealmZone
 enum WorldStates
 {
     WS_WEEKLY_QUEST_RESET_TIME = 20002,                      // Next weekly reset time
-    WS_BG_DAILY_RESET_TIME     = 20003                       // Next daily BG reset time
+    WS_BG_DAILY_RESET_TIME     = 20003,                      // Next daily BG reset time
+    WS_CURRENCY_RESET_TIME     = 20004                       // Next currency week cap reset time
 };
 
 // DB scripting commands
@@ -764,9 +769,11 @@ class World
         void InitDailyQuestResetTime();
         void InitWeeklyQuestResetTime();
         void InitRandomBGResetTime();
+        void InitCurrencyResetTime();
         void ResetDailyQuests();
         void ResetWeeklyQuests();
         void ResetRandomBG();
+        void ResetCurrencyWeekCap();
 
         CharactersMap mCharacters;
     private:
@@ -829,6 +836,7 @@ class World
         time_t m_NextDailyQuestReset;
         time_t m_NextWeeklyQuestReset;
         time_t m_NextRandomBGReset;
+        time_t m_NextCurrencyReset;
 
         //Player Queue
         Queue m_QueuedPlayer;

@@ -306,7 +306,7 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *quest, uint64 npcGUID, 
     std::string questEndText    = quest->GetEndText();
     std::string questTargetTextWindow = quest->GetQuestGiverPortraitText();
     std::string questTargetName  = quest->GetQuestGiverPortraitUnk();
-    std::string unk        = "";
+    std::string unk              = "";
 
     int32 locale = _session->GetSessionDbLocaleIndex();
     if (locale >= 0)

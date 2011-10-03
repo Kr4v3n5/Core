@@ -1490,6 +1490,7 @@ class Player : public Unit, public GridObject<Player>
         void SetWeeklyQuestStatus(uint32 quest_id);
         void ResetDailyQuestStatus();
         void ResetWeeklyQuestStatus();
+        void ResetCurrencyWeekCap();
 
         uint16 FindQuestSlot(uint32 quest_id) const;
         uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET); }
@@ -2706,7 +2707,8 @@ class Player : public Unit, public GridObject<Player>
         Item* m_items[PLAYER_SLOTS_COUNT];
         uint32 m_currentBuybackSlot;
         PlayerCurrenciesMap m_currencies;
-        uint32 _GetCurrencyWeekCap(const CurrencyTypesEntry* currency) const;
+        uint32 _GetCurrencyWeekCap(CurrencyTypesEntry const* currency) const;
+        uint32 _GetCurrencyTotalCap(CurrencyTypesEntry const* currency) const;
 
         std::vector<Item*> m_itemUpdateQueue;
         bool m_itemUpdateQueueBlocked;
