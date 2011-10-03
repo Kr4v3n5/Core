@@ -135,18 +135,18 @@ class boss_ignacious : public CreatureScript
                 uiAegisofFlameTimer = 54000;
             }
 
-            void DoAction(uint32 action)
-            {
-                switch(action)
-                {
-                    ACTION_IGNACIOUS_JUMP:
-                        Unit * Target = SelectTarget(SELECT_TARGET_RANDOM,NULL,40.0f);
-                        me->GetMotionMaster()->MoveJump(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ(),1.0f,0.9f);
-                    //ACTION_IGNACIOUS_CHARGE:
-                        //Unit * Target = summons.
-                        //me->GetMotionMaster()->MoveCharge(
-                }
-            }
+            //void DoAction(uint32 action)
+            //{
+            //    switch(action)
+            //    {
+            //        //case ACTION_IGNACIOUS_JUMP:
+            //        //    Unit * Target = SelectTarget(SELECT_TARGET_RANDOM,NULL,40.0f);
+            //        //    me->GetMotionMaster()->MoveJump(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ(),1.0f,0.9f);
+            //        //case ACTION_IGNACIOUS_CHARGE:
+            //            //Unit * Target = summons.
+            //            //me->GetMotionMaster()->MoveCharge(
+            //    }
+            //}
 
             void MovementInform(uint32 type, uint32 id)
             {
@@ -158,7 +158,7 @@ class boss_ignacious : public CreatureScript
                             me->GetMotionMaster()->Clear(false);
                             me->GetMotionMaster()->MoveIdle();
                         //case POINT_THERALION_LAND:
-                            
+
                     }
                 }
             }
@@ -221,7 +221,7 @@ class spell_inferno_ping : public SpellScriptLoader
         void HandlerDummy()
         {
             Summon(GetCaster());
-            
+
         }
 
         void Register()
