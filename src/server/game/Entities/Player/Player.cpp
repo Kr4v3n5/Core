@@ -2542,13 +2542,12 @@ void Player::Regenerate(Powers power)
     {
         case POWER_MANA:
         {
-            bool recentCast = IsUnderLastManaUseEffect();
             float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
 
             if (getLevel() < 15)
                 ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA) * (2.066f - (getLevel() * 0.066f));
 
-            if (recentCast) // Trillium Updates Mana in intervals of 2s, which is correct
+            if (isInCombat()) // Trillium Updates Mana in intervals of 2s, which is correct
                 addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER) *  ManaIncreaseRate * 0.001f * m_regenTimer * haste;
             else
                 addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER) * ManaIncreaseRate * 0.001f * m_regenTimer * haste;
@@ -24620,7 +24619,7 @@ void Player::ActivateSpec(uint8 spec)
         if (!talentInfo || talentInfo->TalentTab != TalentBranchSpec(m_activeSpec))
             continue;
 
-        removeSpell(talentInfo->Spell, true);
+        removeSpell(talentInfo->Spell, false);
     }
 
     // set glyphs
