@@ -64,7 +64,6 @@
 #include "InstanceSaveMgr.h"
 #include "Util.h"
 #include "Language.h"
-#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "Transport.h"
 #include "ScriptMgr.h"
@@ -1576,9 +1575,6 @@ void World::SetInitialWorldSettings()
 
     sLog->outString("Loading Creature Formations...");
     FormationMgr::LoadCreatureFormations();
-
-    sLog->outString("Loading Creature Groups...");
-    CreatureGroupMgr::LoadCreatureGroups();
 
     sLog->outString("Loading Conditions...");
     sConditionMgr->LoadConditions();

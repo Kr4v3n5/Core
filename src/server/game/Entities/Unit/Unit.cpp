@@ -49,7 +49,6 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "Path.h"
-#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "PetAI.h"
 #include "PassiveAI.h"
@@ -12166,9 +12165,6 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             }
             if (creature->GetFormation())
                 creature->GetFormation()->MemberAttackStart(creature, enemy);
-
-            if (creature->GetGroup())
-                creature->GetGroup()->MemberAttackStart(this->ToCreature(), enemy);
         }
 
         if (isPet())

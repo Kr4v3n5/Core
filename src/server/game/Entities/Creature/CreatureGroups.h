@@ -19,8 +19,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GROUPS_H
-#define _GROUPS_H
+#ifndef _FORMATIONS_H
+#define _FORMATIONS_H
 
 #include "Define.h"
 #include "UnorderedMap.h"
@@ -29,46 +29,51 @@
 class Creature;
 class CreatureGroup;
 
-struct GroupInfo
+struct FormationInfo
 {
     uint32 leaderGUID;
-    uint8  groupType;
+    float follow_dist;
+    float follow_angle;
+    uint8 groupAI;
 };
 
-namespace CreatureGroupMgr
+namespace FormationMgr
 {
-    void AddCreatureToGroup(uint32 group_id, Creature *creature);
-    void RemoveCreatureFromGroup(CreatureGroup* group, Creature *creature);
-    void LoadCreatureGroups();
+    void AddCreatureToGroup(uint32 group_id, Creature* creature);
+    void RemoveCreatureFromGroup(CreatureGroup* group, Creature* creature);
+    void LoadCreatureFormations();
 };
 
-typedef UNORDERED_MAP<uint32/*groupId*/, GroupInfo*>   CreatureGroupInfoType;
-typedef UNORDERED_MAP<uint32/*memberGUID*/, uint32/*groupId*/>   CreatureGroupDataType;
+typedef UNORDERED_MAP<uint32/*memberDBGUID*/, FormationInfo*>   CreatureGroupInfoType;
 
-extern CreatureGroupInfoType    CreatureGroupMap;
-extern CreatureGroupDataType    CreatureGroupDataMap;
+extern CreatureGroupInfoType CreatureGroupMap;
 
 class CreatureGroup
 {
     private:
-        typedef std::map<Creature*, GroupInfo*>  CreatureGroupMemberType;
+        Creature* m_leader; //Important do not forget sometimes to work with pointers instead synonims :D:D
+        typedef std::map<Creature*, FormationInfo*>  CreatureGroupMemberType;
         CreatureGroupMemberType m_members;
 
         uint32 m_groupID;
+        bool m_Formed;
 
     public:
         //Group cannot be created empty
-        explicit CreatureGroup(uint32 id) : m_groupID(id) {}
-        ~CreatureGroup() { }
+        explicit CreatureGroup(uint32 id) : m_leader(NULL), m_groupID(id), m_Formed(false) {}
+        ~CreatureGroup() {}
 
+        Creature* getLeader() const { return m_leader; }
         uint32 GetId() const { return m_groupID; }
         bool isEmpty() const { return m_members.empty(); }
+        bool isFormed() const { return m_Formed; }
 
         void AddMember(Creature* member);
         void RemoveMember(Creature* member);
+        void FormationReset(bool dismiss);
 
+        void LeaderMoveTo(float x, float y, float z);
         void MemberAttackStart(Creature* member, Unit* target);
-        bool IsAllowedToRespawn(Creature *member);
 };
 
 #endif
