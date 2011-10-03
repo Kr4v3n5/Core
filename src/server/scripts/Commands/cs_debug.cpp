@@ -898,7 +898,8 @@ public:
             return false;
 
         uint32 PhaseShift = atoi(args);
-        handler->GetSession()->SendSetPhaseShift(PhaseShift);
+        uint32 MapID = atoi(args);
+        handler->GetSession()->SendSetPhaseShift(PhaseShift, MapID);
         return true;
     }
 
