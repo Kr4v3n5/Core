@@ -374,7 +374,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNoImmediateEffect,                         //315 SPELL_AURA_UNDERWATER_WALKING todo
     &AuraEffect::HandleNoImmediateEffect,                         //316 SPELL_AURA_PERIODIC_HASTE implemented in AuraEffect::CalculatePeriodic
     &AuraEffect::HandleNULL,                                      //317
-    &AuraEffect::HandleNULL,                                      //318 SPELL_AURA_MASTERY
+    &AuraEffect::HandleMastery,                                      //318 SPELL_AURA_MASTERY
     &AuraEffect::HandleNULL,                                      //319
     &AuraEffect::HandleNULL,                                      //320
     &AuraEffect::HandleNULL,                                      //321
@@ -6935,4 +6935,18 @@ void AuraEffect::HandleRaidProcFromChargeWithValueAuraProc(AuraApplication* aurA
 
     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::HandleRaidProcFromChargeWithValueAuraProc: Triggering spell %u from aura %u proc", triggerSpellId, GetId());
     target->CastCustomSpell(target, triggerSpellId, &value, NULL, NULL, true, NULL, this, GetCasterGUID());
+}
+
+
+void AuraEffect::HandleMastery(AuraApplication const* aurApp, uint8 mode, bool apply) const
+{
+    Player * plr = aurApp->GetBase()->GetOwner()->ToPlayer();
+    uint32 mastery;
+    switch(plr->GetActiveSpec())
+    {
+        case PALADIN_HOLY:          mastery = 76669; break;
+        case PALADIN_PROTECTION:    mastery = 76671; break;
+        case PALADIN_RETRIBUTION:   mastery = 76672; break;
+    }
+    plr->CastCustomSpell(plr,mastery,NULL,NULL,NULL,false);
 }
