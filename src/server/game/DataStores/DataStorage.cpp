@@ -146,6 +146,9 @@ MapDifficultyMap sMapDifficultyMap;
 
 DataStorage <MovieEntry> sMovieStore(MovieEntryfmt);
 
+DataStorage <MountCapabilityEntry> sMountCapabilityStore(MountCapabilityfmt);
+DataStorage <MountTypeEntry> sMountTypeStore(MountTypefmt);
+
 DataStorage <OverrideSpellDataEntry> sOverrideSpellDataStore(OverrideSpellDatafmt);
 
 DataStorage <PvPDifficultyEntry> sPvPDifficultyStore(PvPDifficultyfmt);
@@ -436,15 +439,13 @@ void LoadDataStorages(const std::string& dataPath)
     for (uint32 i = 1; i < sMapDifficultyStore.GetNumRows(); ++i)
         if (MapDifficultyEntry const* entry = sMapDifficultyStore.LookupEntry(i))
             sMapDifficultyMap[MAKE_PAIR32(entry->MapId, entry->Difficulty)] = MapDifficulty(entry->resetTime, entry->maxPlayers, entry->areaTriggerText > 0);
-
     sMapDifficultyMap[MAKE_PAIR32(0, 0)] = MapDifficulty(0, 0, 0 > 0);
-
     sMapDifficultyStore.Clear();
 
     LoadData(availableDbcLocales, bad_dbc_files, sMovieStore,                  storagesPath, "Movie.dbc");
-
+    LoadData(availableDbcLocales, bad_dbc_files, sMountCapabilityStore,        storagesPath, "MountCapability.dbc");
+    LoadData(availableDbcLocales, bad_dbc_files, sMountTypeStore,              storagesPath, "MountType.dbc");
     LoadData(availableDbcLocales, bad_dbc_files, sOverrideSpellDataStore,      storagesPath, "OverrideSpellData.dbc");
-
     LoadData(availableDbcLocales, bad_dbc_files, sPvPDifficultyStore,          storagesPath, "PvpDifficulty.dbc");
     for (uint32 i = 0; i < sPvPDifficultyStore.GetNumRows(); ++i)
         if (PvPDifficultyEntry const* entry = sPvPDifficultyStore.LookupEntry(i))
