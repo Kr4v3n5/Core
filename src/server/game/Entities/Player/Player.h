@@ -63,6 +63,7 @@ typedef std::deque<Mail*> PlayerMails;
 #define PLAYER_MAX_SKILLS           127
 #define PLAYER_MAX_DAILY_QUESTS     25
 #define PLAYER_EXPLORED_ZONES_SIZE  144
+#define PLAYER_DEFAULT_CONQUEST_POINTS_WEEK_CAP 1350
 
 // Note: SPELLMOD_* values is aura types in fact
 enum SpellModType
@@ -872,6 +873,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADINSTANCELOCKTIMES    = 31,
     PLAYER_LOGIN_QUERY_LOADCURRENCY             = 32,
     PLAYER_LOGIN_QUERY_LOADPETSLOT              = 33,
+    PLAYER_LOGIN_QUERY_LOAD_CP_WEEK_CAP         = 34,
     MAX_PLAYER_LOGIN_QUERY,
 };
 
@@ -959,6 +961,13 @@ enum PlayerRestState
     REST_STATE_RESTED                                = 0x01,
     REST_STATE_NOT_RAF_LINKED                        = 0x02,
     REST_STATE_RAF_LINKED                            = 0x06
+};
+
+enum ConquestPointsSources
+{
+    CP_SOURCE_ARENA     = 0,
+    CP_SOURCE_RATED_BG  = 1,
+    CP_SOURCE_MAX
 };
 
 class PlayerTaxi
@@ -1491,6 +1500,7 @@ class Player : public Unit, public GridObject<Player>
         void ResetDailyQuestStatus();
         void ResetWeeklyQuestStatus();
         void ResetCurrencyWeekCap();
+        void UpdateMaxWeekRating(ConquestPointsSources source, uint8 slot);
 
         uint16 FindQuestSlot(uint32 quest_id) const;
         uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET); }
@@ -2647,9 +2657,10 @@ class Player : public Unit, public GridObject<Player>
         void _LoadEquipmentSets(PreparedQueryResult result);
         void _LoadBGData(PreparedQueryResult result);
         void _LoadGlyphs(PreparedQueryResult result);
-        void _LoadCurrency(PreparedQueryResult result);
         void _LoadTalentBranchSpecs(PreparedQueryResult result);
         void _LoadTalents(PreparedQueryResult result);
+        void _LoadCurrency(PreparedQueryResult result);
+        void _LoadConquestPointsWeekCap(PreparedQueryResult result);
         void _LoadInstanceTimeRestrictions(PreparedQueryResult result);
 
         /*********************************************************/
@@ -2672,6 +2683,7 @@ class Player : public Unit, public GridObject<Player>
         void _SaveTalents(SQLTransaction& trans);
         void _SaveStats(SQLTransaction& trans);
         void _SaveCurrency(SQLTransaction& trans);
+        void _SaveConquestPointsWeekCap();
         void _SaveInstanceTimeRestrictions(SQLTransaction& trans);
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
@@ -2709,6 +2721,9 @@ class Player : public Unit, public GridObject<Player>
         PlayerCurrenciesMap m_currencies;
         uint32 _GetCurrencyWeekCap(CurrencyTypesEntry const* currency) const;
         uint32 _GetCurrencyTotalCap(CurrencyTypesEntry const* currency) const;
+
+        uint16 m_maxWeekRating[CP_SOURCE_MAX];
+        uint16 m_conquestPointsWeekCap[CP_SOURCE_MAX]; // without *PLAYER_CURRENCY_PRECISION!
 
         std::vector<Item*> m_itemUpdateQueue;
         bool m_itemUpdateQueueBlocked;

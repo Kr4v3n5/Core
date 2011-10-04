@@ -829,6 +829,10 @@ Player::Player (WorldSession *session): Unit(), m_achievementMgr(this), m_reputa
 
     // Honor System
     m_lastHonorUpdateTime = time(NULL);
+    m_maxWeekRating[CP_SOURCE_ARENA] = 0;
+    m_maxWeekRating[CP_SOURCE_RATED_BG] = 0;
+    m_conquestPointsWeekCap[CP_SOURCE_ARENA] = PLAYER_DEFAULT_CONQUEST_POINTS_WEEK_CAP;
+    m_conquestPointsWeekCap[CP_SOURCE_RATED_BG] = uint16(PLAYER_DEFAULT_CONQUEST_POINTS_WEEK_CAP * 1.222f); // +22,2%
 
     m_IsBGRandomWinner = false;
 
@@ -11077,7 +11081,7 @@ void Player::SendCurrencies() const
         packet << uint32(itr->second.weekCount / PLAYER_CURRENCY_PRECISION);
         packet << uint8(0);                     // unknown
         packet << uint32(entry->ID);
-        packet << uint32(sWorld->GetNextWeeklyQuestsResetTime() - 1*WEEK);
+        packet << uint32(sWorld->GetNextCurrencyResetTime() - WEEK);
         packet << uint32(_GetCurrencyWeekCap(entry) / PLAYER_CURRENCY_PRECISION);
         packet << uint32(itr->second.totalCount / PLAYER_CURRENCY_PRECISION);
     }
@@ -11178,8 +11182,8 @@ uint32 Player::_GetCurrencyWeekCap(const CurrencyTypesEntry* currency) const
     switch (currency->ID)
     {
         case CURRENCY_TYPE_CONQUEST_POINTS:
-            cap = uint32(1343 * PLAYER_CURRENCY_PRECISION * sWorld->getRate(RATE_CONQUEST_POINTS_WEEK_LIMIT)); // todo: (1.4326 * (1511.26 / (1 + 1639.28 / exp(0.00412 * rating))) + 850.15)
-            break;
+        cap = uint32(m_conquestPointsWeekCap[CP_SOURCE_ARENA] * PLAYER_CURRENCY_PRECISION * sWorld->getRate(RATE_CONQUEST_POINTS_WEEK_LIMIT));
+        break;
         case CURRENCY_TYPE_JUSTICE_POINTS:
         {
             uint32 justicecap = sWorld->getIntConfig(CONFIG_MAX_JUSTICE_POINTS) * PLAYER_CURRENCY_PRECISION;
@@ -17038,6 +17042,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     }
 
     _LoadCurrency(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADCURRENCY));
+    _LoadConquestPointsWeekCap(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_CP_WEEK_CAP));
     _LoadTalents(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADTALENTS));
     _LoadTalentBranchSpecs(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADBRANCHSPECS));
     _LoadSpells(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADSPELLS));
@@ -17950,6 +17955,29 @@ void Player::_LoadCurrency(PreparedQueryResult result)
     }
 }
 
+void Player::_LoadConquestPointsWeekCap(PreparedQueryResult result)
+{
+    //           0         1            2
+    // "SELECT source, maxWeekRating, weekCap FROM character_cp_weekcap WHERE guid = ?"
+
+    if (result)
+    {
+        do
+        {
+            Field *fields = result->Fetch();
+
+            uint16 source = fields[0].GetUInt16();
+            if (source != CP_SOURCE_ARENA && source != CP_SOURCE_RATED_BG)
+                continue;
+            
+            m_maxWeekRating[source] = fields[1].GetUInt16();
+            m_conquestPointsWeekCap[source] = fields[2].GetUInt16();
+
+        }
+        while(result->NextRow());
+    }
+}
+
 void Player::_LoadSpells(PreparedQueryResult result)
 {
     //QueryResult *result = CharacterDatabase.PQuery("SELECT spell, active, disabled FROM character_spell WHERE guid = '%u'", GetGUIDLow());
@@ -18552,7 +18580,6 @@ void Player::SaveToDB()
     _SaveWeeklyQuestStatus(trans);
     _SaveTalents(trans);
     _SaveTalentBranchSpecs(trans);
-    _SaveCurrency(trans);
     _SaveSpells(trans);
     _SaveSpellCooldowns(trans);
     _SaveActions(trans);
@@ -18563,8 +18590,9 @@ void Player::SaveToDB()
     _SaveEquipmentSets(trans);
     GetSession()->SaveTutorialsData(trans);                 // changed only while character in game
     _SaveGlyphs(trans);
-    _SaveCurrency(trans);
     _SaveInstanceTimeRestrictions(trans);
+    _SaveCurrency(trans);
+    _SaveConquestPointsWeekCap();
 
     // check if stats should only be saved on logout
     // save stats can be out of transaction
@@ -19009,6 +19037,16 @@ void Player::_SaveCurrency(SQLTransaction& trans)
             itr->second.state = PLAYERCURRENCY_UNCHANGED;
             ++itr;
         }
+    }
+}
+
+void Player::_SaveConquestPointsWeekCap()
+{
+    CharacterDatabase.PExecute("DELETE FROM character_cp_weekcap WHERE guid = '%u'", GetGUIDLow());
+    for (uint8 source = 0; source < CP_SOURCE_MAX; source++)
+    {
+        CharacterDatabase.PExecute("INSERT INTO character_cp_weekcap (guid, source, maxWeekRating, weekCap) VALUES ('%u','%u','%u','%u')",
+            GetGUIDLow(), source, m_maxWeekRating[source], m_conquestPointsWeekCap[source] );
     }
 }
 
@@ -22079,6 +22117,42 @@ void Player::ResetCurrencyWeekCap()
 {
     for (PlayerCurrenciesMap::iterator itr = m_currencies.begin(); itr != m_currencies.end(); ++itr)
         itr->second.weekCount = 0;                  // no need to change state here as sWorld resets currencies in DB
+
+    // Calculating week cap for conquest points
+    CharacterDatabase.Execute("UPDATE character_cp_weekcap SET weekCap = ROUND(1.4326 * (1511.26 / (1 + 1639.28 / exp(0.00412 * `maxWeekRating`))) + 857.15) WHERE `source`=0 AND `maxWeekRating` BETWEEN 1500 AND 3000");
+    CharacterDatabase.PExecute("UPDATE character_cp_weekcap SET weekCap = '%u' WHERE `source`=0 AND `maxWeekRating` < 1500", PLAYER_DEFAULT_CONQUEST_POINTS_WEEK_CAP);
+    CharacterDatabase.Execute("UPDATE character_cp_weekcap SET weekCap =3000 WHERE `source`=0 AND `maxWeekRating` > 3000");
+    CharacterDatabase.Execute("UPDATE character_cp_weekcap SET maxWeekRating=0");
+    
+    if (m_maxWeekRating[CP_SOURCE_ARENA] <= 1500)
+        m_conquestPointsWeekCap[CP_SOURCE_ARENA] = PLAYER_DEFAULT_CONQUEST_POINTS_WEEK_CAP;
+    else if (m_maxWeekRating[CP_SOURCE_ARENA] > 3000)
+        m_conquestPointsWeekCap[CP_SOURCE_ARENA] = 3000;
+    else
+        m_conquestPointsWeekCap[CP_SOURCE_ARENA] = uint16(1.4326 * (1511.26 / (1 + 1639.28 / exp(0.00412 * m_maxWeekRating[CP_SOURCE_ARENA]))) + 857.15);
+    
+    m_maxWeekRating[CP_SOURCE_ARENA] = 0; // player must win at least 1 arena for week to change m_conquestPointsWeekCap
+
+    _SaveConquestPointsWeekCap();
+    _SaveCurrency();
+    SendCurrencies();
+
+    // Arena Teams
+    for (uint32 arena_slot = 0; arena_slot < MAX_ARENA_SLOT; ++arena_slot)
+    {
+        uint32 arena_team_id = GetArenaTeamId(arena_slot);
+        if (!arena_team_id)
+            continue;
+        ArenaTeam* arenaTeam = sArenaTeamMgr->GetArenaTeamById(arena_team_id);
+        arenaTeam->FinishWeek();
+        arenaTeam->SaveToDB();
+        arenaTeam->NotifyStatsChanged();
+    }
+}
+
+void Player::UpdateMaxWeekRating(ConquestPointsSources source, uint8 slot)
+{
+    m_maxWeekRating[source] = std::max( m_maxWeekRating[source], (uint16)GetArenaPersonalRating(slot) );
 }
 
 Battleground* Player::GetBattleground() const
