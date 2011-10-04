@@ -3153,6 +3153,10 @@ void SpellMgr::LoadDbcDataCorrections()
             case 64904: //Hymn of Hope
                 spellEffect->EffectApplyAuraName = SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT;
                 break;
+            case 8145: // Tremor Totem (instant pulse)
+            case 6474: // Earthbind Totem (instant pulse)
+                spellInfo->AttributesEx5 |= SPELL_ATTR5_START_PERIODIC_AT_APPLY;
+                break;
             case 30421: // Nether Portal - Perseverence
                 spellEffect->EffectBasePoints += 30000;
                 break;
