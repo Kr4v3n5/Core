@@ -3029,6 +3029,10 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER_AREA_PARTY;
                 spellEffect->EffectRadiusIndex = 45;
                 break;
+            case 64844: // Divine Hymn 
+            case 64904: // Hymn of Hope
+                spellInfo->AttributesEx &= ~SPELL_ATTR1_NEGATIVE;
+                break;
             case 44978: case 45001: case 45002: // Wild Magic
             case 45004: case 45006: case 45010: // Wild Magic
             case 31347: // Doom
