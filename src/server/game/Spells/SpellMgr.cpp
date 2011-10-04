@@ -3029,6 +3029,9 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER_AREA_PARTY;
                 spellEffect->EffectRadiusIndex = 45;
                 break;
+            case 61607: // Mark of Blood
+                spellInfo->AttributesEx |= SPELL_ATTR1_NO_THREAT;
+                break;
             case 64844: // Divine Hymn 
             case 64904: // Hymn of Hope
                 spellInfo->AttributesEx &= ~SPELL_ATTR1_NEGATIVE;
