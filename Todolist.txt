@@ -7,7 +7,7 @@ TODO-List for TrilliumEMU Developer #
 
 // Core Developer:
 1. Fix the Vendors, they dont show any items.
-2. Implement Wintergrasp Battlefield.
+2. Implement Tol Barad Battlefield.
 3. Implement the new Battlegrounds. What new bg are added in 420?
 4. Begin to fix spells (only casting and damage works)
 5. Begin to fix guilds.
