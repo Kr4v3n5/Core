@@ -22134,7 +22134,7 @@ void Player::ResetCurrencyWeekCap()
     m_maxWeekRating[CP_SOURCE_ARENA] = 0; // player must win at least 1 arena for week to change m_conquestPointsWeekCap
 
     _SaveConquestPointsWeekCap();
-    _SaveCurrency();
+    /*_SaveCurrency();*/ //Temp build fix.
     SendCurrencies();
 
     // Arena Teams
