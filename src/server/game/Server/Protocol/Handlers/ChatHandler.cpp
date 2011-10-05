@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2005 - 2011 MaNGOS <http://www.getmangos.org/>
  *
  * Copyright (C) 2008 - 2011 TrinityCore <http://www.trinitycore.org/>
@@ -27,7 +27,6 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "DatabaseEnv.h"
-
 #include "CellImpl.h"
 #include "Chat.h"
 #include "ChannelMgr.h"
@@ -73,8 +72,6 @@ void WorldSession::HandleMessageChatOpcode(WorldPacket & recv_data)
     uint32 type = 0;
     uint32 lang;
 
-    // Les types sont maintenant ger�s par opcode, un opcode par type
-    // Changement en place depuis la 4.0.1 13164
     switch (recv_data.GetOpcode())
     {
         case CMSG_MESSAGECHAT_SAY:
