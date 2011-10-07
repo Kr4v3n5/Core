@@ -4754,7 +4754,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 
-                    if (canFly && v_map == 0 && v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
+                    if (canFly && v_map == 0 || v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
                         canFly = false;
 
                     float x, y, z;
@@ -4802,7 +4802,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 
-                    if (canFly && v_map == 0 && v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
+                    if (canFly && v_map == 0 || v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
                         canFly = false;
 
                     float x, y, z;
@@ -5121,7 +5121,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 
-                    if (canFly && v_map == 0 && v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
+                    if (canFly && v_map == 0 || v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
                         canFly = false;
 
                     float x, y, z;
@@ -5170,7 +5170,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 
-                    if (canFly && v_map == 0 && v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
+                    if (canFly && v_map == 0 || v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
                         canFly = false;
 
                     float x, y, z;
@@ -5236,7 +5236,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 
-                    if (canFly && v_map == 0 && v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
+                    if (canFly && v_map == 0 || v_map == 1 && !unitTarget->ToPlayer()->HasSpell(90267))
                         canFly = false;
 
                     float x, y, z;
