@@ -24,7 +24,6 @@
 */
 
 #include "Opcodes.h"
-#include "WorldSession.h"
 
 OpcodeHandler* opcodeTable[NUM_OPCODE_HANDLERS] = { };
 
@@ -32,8 +31,9 @@ OpcodeHandler* opcodeTable[NUM_OPCODE_HANDLERS] = { };
 void InitOpcodes()
 {
 #define DEFINE_OPCODE_HANDLER(opcode, status, processing, handler)                              \
-    if (opcode < NUM_OPCODE_HANDLERS)                                                           \
-    {                                                                                           \
+    if (opcode == 0)                                                                            \
+        sLog->outError("Opcode %s got value 0", #opcode);                                       \
+    if (opcode < NUM_OPCODE_HANDLERS) {                                                         \
         if (opcodeTable[opcode] != NULL)                                                        \
         {                                                                                       \
             sLog->outError("Tried to override handler of %s with %s (opcode %u)",               \
@@ -1278,7 +1278,7 @@ void InitOpcodes()
     DEFINE_OPCODE_HANDLER( CMSG_RETURN_TO_GRAVEYARD,                     STATUS_NEVER,    PROCESS_INPLACE,       &WorldSession::Handle_NULL                     );
     DEFINE_OPCODE_HANDLER( CMSG_VIOLENCE_LEVEL,                          STATUS_UNHANDLED,PROCESS_INPLACE,       &WorldSession::Handle_NULL                     );
     DEFINE_OPCODE_HANDLER( CMSG_LOG_DISCONNECT,                          STATUS_NEVER,    PROCESS_INPLACE,       &WorldSession::Handle_NULL                     );
-    DEFINE_OPCODE_HANDLER( MSG_CHECK_CONNECTION,                         STATUS_NEVER,    PROCESS_INPLACE,       &WorldSession::Handle_EarlyProccess            );
+    DEFINE_OPCODE_HANDLER( MSG_VERIFY_CONNECTIVITY,                      STATUS_NEVER,    PROCESS_INPLACE,       &WorldSession::Handle_EarlyProccess            );
     DEFINE_OPCODE_HANDLER( SMSG_COMPRESSED_CHAR_ENUM,                    STATUS_NEVER,    PROCESS_INPLACE,       &WorldSession::Handle_ServerSide               );
     DEFINE_OPCODE_HANDLER( CMSG_UNREGISTER_ALL_ADDON_PREFIXES,           STATUS_UNHANDLED,PROCESS_INPLACE,       &WorldSession::Handle_NULL                     );
     DEFINE_OPCODE_HANDLER( CMSG_REQUEST_CATEGORY_COOLDOWNS,              STATUS_UNHANDLED,PROCESS_INPLACE,       &WorldSession::Handle_NULL                     );

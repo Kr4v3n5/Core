@@ -39,7 +39,6 @@
 #include "Path.h"
 #include "WorldPacket.h"
 #include "DataStorage.h"
-#include "DataStructure.h"
 #include "Timer.h"
 #include <list>
 

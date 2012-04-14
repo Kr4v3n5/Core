@@ -24,17 +24,12 @@
 
 #include "Common.h"
 
-// Note: this include need for be sure have full definition of class WorldSession
-//       if this class definition not complete then VS for x64 release use different size for
-//       struct OpcodeHandler in this header and Opcode.cpp and get totally wrong data from
-//       table opcodeTable in source when Opcode.h included but WorldSession.h not included
-#include "WorldSession.h"
-
 /// List of Opcodes
 enum Opcodes
 {
     NUM_OPCODE_HANDLERS                              = (0xFFFF+1),
     UNKNOWN_OPCODE                                   = NUM_OPCODE_HANDLERS,
+    NULL_OPCODE                                      = 0,
 
     /* OPCODE LEGEND:
         //              =    UNKNOWN
@@ -920,8 +915,8 @@ enum Opcodes
     CMSG_MAELSTROM_INVALIDATE_CACHE                  = 0x01A2, //
     SMSG_FLIGHT_SPLINE_SYNC                          = 0xFEF2, // 14480
     CMSG_SET_TAXI_BENCHMARK_MODE                     = 0x7E3F, // 14480
-    SMSG_REALM_SPLIT                                 = 0xA266, // 14480
-    CMSG_REALM_SPLIT                                 = 0xB6E2, // 14480
+    SMSG_REALM_SPLIT                                 = 0x1AF2, // 14545
+    CMSG_REALM_SPLIT                                 = 0xDC66, // 14545
     CMSG_MOVE_CHNG_TRANSPORT                         = 0x01A3, //
     MSG_PARTY_ASSIGNMENT                             = 0xA22A, // 14480
     SMSG_OFFER_PETITION_ERROR                        = 0x267B, // 14480
@@ -1308,7 +1303,7 @@ enum Opcodes
     CMSG_RETURN_TO_GRAVEYARD                         = 0xB8EB, // 14480
     CMSG_VIOLENCE_LEVEL                              = 0x8842, // 14480
     CMSG_LOG_DISCONNECT                              = 0x0920, // 14480
-    MSG_CHECK_CONNECTION                             = 0x4F57, // 14480
+    MSG_VERIFY_CONNECTIVITY                          = 0x4F57, // 14545
     SMSG_COMPRESSED_CHAR_ENUM                        = 0xF645, // 14480
     CMSG_UNREGISTER_ALL_ADDON_PREFIXES               = 0x1115, // 14480
     CMSG_REQUEST_CATEGORY_COOLDOWNS                  = 0xB8E3, // 14480
