@@ -8,12 +8,13 @@ TODO-List for TrilliumEMU Developer #
 // Core Developer:
 1. Fix the Vendors, they dont show any items.
 2. Implement Tol Barad Battlefield.
-3. Implement the new Battlegrounds. What new bg are added in 420?
-4. Begin to fix spells (only casting and damage works)
-5. Begin to fix guilds.
-6. Begin to fix groups.
-7. Research the Battleground Packets, some updates added to this packets.
-8. Update all Opcodes for 422, so we can to 422 in master.
+3. Implement Wintergrasp
+4. Rewrite Movement System. Including mmaps.
+5. Implement the new Battlegrounds.
+5. Begin to fix spells (only casting and damage works)
+6. Begin to fix guilds.
+7. Begin to fix groups.
+8. Research the Battleground Packets, some updates added to this packets.
 
 // Database Developer:
 1. Fix old spawns and duplicates from old WotLK
@@ -25,8 +26,3 @@ TODO-List for TrilliumEMU Developer #
 6. Spawn all creatures not spawned from 4.2.0+
 7. Update WDBverified column with correct data
 8. Clean console errors
-
-What need to merged:
-1. Merge Trinity to last Head (Venugh does this).
-
-If you Fix anything from this List, remove it.
