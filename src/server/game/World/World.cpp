@@ -77,7 +77,6 @@
 #include "CreatureTextMgr.h"
 #include "SmartAI.h"
 #include "Channel.h"
-#include "ItemInfoMgr.h"
 #include "TransportMgr.h"
 
 volatile bool World::m_stopEvent = false;
@@ -1373,9 +1372,6 @@ void World::SetInitialWorldSettings()
 
     sLog->outString("Loading Items...");                         // must be after LoadRandomEnchantmentsTable and LoadPageTexts
     sObjectMgr->LoadItemTemplates();
-
-    sLog->outString("Loading Items Info...");
-    sItemInfoMgr->LoadItemInfo();
 
     sLog->outString("Loading Creature Model Based Info Data...");
     sObjectMgr->LoadCreatureModelInfo();

@@ -48,8 +48,6 @@
 #include "ScriptMgr.h"
 #include "SpellScript.h"
 #include "PoolMgr.h"
-#include "ItemInfo.h"
-#include "ItemInfoMgr.h"
 
 ScriptMapMap sQuestEndScripts;
 ScriptMapMap sQuestStartScripts;
@@ -1038,7 +1036,7 @@ void ObjectMgr::LoadEquipmentTemplates()
             if (!equipmentInfo.ItemEntry[i])
                 continue;
 
-            ItemInfo const* itemInfo = sItemInfoMgr->GetItemInfo(equipmentInfo.ItemEntry[i]);
+            ItemEntry const* itemInfo = sItemStore.LookupEntry(equipmentInfo.ItemEntry[i]);
 
             if (!itemInfo)
             {
