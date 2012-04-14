@@ -53,6 +53,7 @@ enum DebugLogFilters
     LOG_FILTER_LOOT                     = 0x00100000,   // Loot related
     LOG_FILTER_GUILD                    = 0x00200000,   // Guild related
     LOG_FILTER_TRANSPORTS               = 0x00400000,   // Transport related
+    LOG_FILTER_OPCODES                  = 0x00800000,   // OpCodes
 };
 
 class Log
@@ -74,6 +75,7 @@ class Log
         void outStaticDebug(const char* fmt, ...)               ATTR_PRINTF(2, 3);
         void outDebugInLine(const char* fmt, ...)               ATTR_PRINTF(2, 3);
         void outErrorDb(const char* fmt, ...)                   ATTR_PRINTF(2, 3);
+        void outOpCode(uint32 op, const char * name, bool smsg = true);
 
         bool IsOutDebug() const;
     private:

@@ -122,8 +122,6 @@ class WorldSocket : public WorldHandler
         /// things called by ACE framework.
 
         /// Called on open , the void* is the acceptor.
-        int SendAuthConnection();
-        int HandleAuthConnection(WorldPacket& recvPacket);
         virtual int open (void *);
 
         /// Called on failures inside of the acceptor, don't call from your code.
@@ -166,6 +164,10 @@ class WorldSocket : public WorldHandler
         /// Called by ProcessIncoming() on CMSG_PING.
         int HandlePing (WorldPacket& recvPacket);
 
+        /// Called by CMSG_VERIFY_CONNECTIVITY_RESPONSE
+        int HandleSendAuthSession();
+
+        /// Called by Log
         void _LogPacket(const WorldPacket& pct, bool isServer) const;
     private:
         /// Time in which the last ping was received

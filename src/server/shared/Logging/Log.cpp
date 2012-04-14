@@ -30,6 +30,13 @@ Log::Log()
 
 Log::~Log() { }
 
+void Log::outOpCode(uint32 op, const char * name, bool smsg)
+{
+    if (!(m_DebugLogMask & LOG_FILTER_OPCODES))
+        return;
+    outString("%s: %s 0x%.4X (%u)", smsg ? "S->C" : "C->S", name, op, op);
+}
+
 void Log::outString(const char* fmt, ...)
 {
     va_list lst;
