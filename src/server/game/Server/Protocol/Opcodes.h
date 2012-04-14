@@ -33,8 +33,8 @@
 /// List of Opcodes
 enum Opcodes
 {
-    NUM_OPCODE_HANDLERS                              = (0xFFFF+1),  // last unknown opcode + 1.
-    UNKNOWN_OPCODE = NUM_OPCODE_HANDLERS,                           // must be >= NUM_OPCODE_HANDLERS
+    NUM_OPCODE_HANDLERS                              = (0xFFFF+1),
+    UNKNOWN_OPCODE                                   = NUM_OPCODE_HANDLERS,
 
     /* OPCODE LEGEND:
         //              =    UNKNOWN
@@ -50,8 +50,8 @@ enum Opcodes
     SMSG_PETGODMODE                                  = 0x72FA, // 14480
     SMSG_GODMODE                                     = 0x76E7, // 14480
     SMSG_DESTRUCTIBLE_BUILDING_DAMAGE                = 0xBA6E, // 14480
-    CMSG_CHAR_CREATE                                 = 0x2A22, // 4.2.0a:14480
-    CMSG_CHAR_ENUM                                   = 0x1091, // 4.2.0a:14480
+    CMSG_CHAR_CREATE                                 = 0x1AC6, // 4.2.2a:14545
+    CMSG_CHAR_ENUM                                   = 0x4A8B, // 4.2.0a:14545
     CMSG_CHAR_DELETE                                 = 0x6E32, // 4.2.0a:14480
     SMSG_CHAR_CREATE                                 = 0x3E36, // 4.2.0a:14480
     SMSG_CHAR_ENUM                                   = 0xC727, // 4.2.0a:14480
@@ -512,9 +512,9 @@ enum Opcodes
     MSG_GM_SUMMON                                    = 0x00D6, //
     SMSG_ITEM_TIME_UPDATE                            = 0x763E, // 14480
     SMSG_ITEM_ENCHANT_TIME_UPDATE                    = 0x362A, // 14480
-    SMSG_AUTH_CHALLENGE                              = 0x8C10, // 14480
-    CMSG_AUTH_SESSION                                = 0x29A0, // 14480
-    SMSG_AUTH_RESPONSE                               = 0xBEFB, // 14480
+    SMSG_AUTH_CHALLENGE                              = 0x1181, // 14545
+    CMSG_AUTH_SESSION                                = 0x1019, // 14545
+    SMSG_AUTH_RESPONSE                               = 0x8867, // 14545
     MSG_GM_SHOWLABEL                                 = 0x00D9, //
     CMSG_PET_CAST_SPELL                              = 0xB66B, // 14480
     MSG_SAVE_GUILD_EMBLEM                            = 0x6A36, // 14480

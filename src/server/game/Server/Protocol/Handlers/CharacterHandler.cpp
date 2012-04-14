@@ -228,86 +228,84 @@ void WorldSession::HandleCharEnum(QueryResult result)
 
         do
         {
-            uint32 guidlow = (*result)[0].GetUInt32();
-            uint32 atLoginFlags = (*result)[15].GetUInt32();
-            guidsVect.push_back(std::make_pair(guidlow, atLoginFlags));
-            sLog->outDetail("Loading char guid %u from account %u.", guidlow, GetAccountId());
+            uint32 GuidLow = (*result)[0].GetUInt32();
+            uint64 GuildGuid = (*result)[13].GetUInt32();//TODO: store as uin64
+
+            guidsVect.push_back(std::make_pair(GuidLow, GuildGuid));
+
+            sLog->outDetail("Loading char guid %u from account %u.", GuidLow, GetAccountId());
+
             if (!Player::BuildEnumData(result, &buffer))
             {
                 sLog->outError("Building enum data for SMSG_CHAR_ENUM has failed, aborting");
                 return;
             }
-            _allowedCharsToLogin.insert(guidlow);
+            _allowedCharsToLogin.insert(GuidLow);
         }
         while (result->NextRow());
 
-        uint8 curRes = 0;
-        uint8 curPos = 0;
-
         for (std::vector<Guids>::iterator itr = guidsVect.begin(); itr != guidsVect.end(); ++itr)
         {
-            uint32 guid = (*itr).first;
-            uint32 loginFlags = (*itr).second;
+            uint32 GuidLow = (*itr).first;
+            uint64 GuildGuid = (*itr).second;
+
+            uint8 Guid0 = uint8(GuidLow);
+            uint8 Guid1 = uint8(GuidLow >> 8);
+            uint8 Guid2 = uint8(GuidLow >> 16);
+            uint8 Guid3 = uint8(GuidLow >> 24);
 
             for (uint8 i = 0; i < 17; ++i)
             {
-                if (curPos == 8)
+                switch(i)
                 {
-                    data << curRes;
-                    curRes = 0;
-                    curPos = 0;
-                }
-
-                ++curPos;
-                uint8 offset = 8 - curPos;
-
-                switch (i)
-                {
+                    //case 14:
+                    //    data.writeBit(1);//unk
+                    //    break;
+                    case 11: data.writeBit(Guid0 ? 1 : 0); break;
+                    case 12: data.writeBit(Guid1 ? 1 : 0); break;
+                    case 9: data.writeBit(Guid2 ? 1 : 0); break;
+                    case 8: data.writeBit(Guid3 ? 1 : 0); break;
+                    /*case 15:
+                        if(uint8(GuildGuid))
+                            data.writeBit(1);
+                        break;
+                    case 4:
+                        if(uint8(GuildGuid >> 8))
+                            data.writeBit(1);
+                        break;
+                    case 13:
+                        if(uint8(GuildGuid >> 16))
+                            data.writeBit(1);
+                        break;
+                    case 2:
+                        if(uint8(GuildGuid >> 24))
+                            data.writeBit(1);
+                        break;*/
+                    /*case 0:
+                        if(uint8(GuildGuid >> 32))
+                            data.writeBit(1);
+                        break;
                     case 0:
-                    {
-                        if (uint8(guid) != 0)
-                            curRes |= (1 << offset);
-
+                        if(uint8(GuildGuid >> 40))
+                            data.writeBit(1);
+                        break;*/
+                    /*case 5:
+                        if(uint8(GuildGuid >> 48))
+                            data.writeBit(1);
+                       break;
+                    case 3:
+                        if(uint8(GuildGuid >> 56))
+                            data.writeBit(1);
+                        break;*/
+                    default:
+                        data.writeBit(0);
                         break;
-                    }
-                    case 1:
-                    {
-                        if (loginFlags & AT_LOGIN_FIRST)
-                            curRes |= (1 << offset);
-
-                        break;
-                    }
-                    case 7:
-                    {
-                        if (uint8(guid >> 8) != 0)
-                            curRes |= (1 << offset);
-
-                        break;
-                    }
-                    case 11:
-                    {
-                        if (uint8(guid >> 24) != 0)
-                            curRes |= (1 << offset);
-
-                        break;
-                    }
-                    case 12:
-                    {
-                        if (uint8(guid >> 16) != 0)
-                            curRes |= (1 << offset);
-
-                        break;
-                    }
                 }
-                // Missing from packet: Player High GUID, Guild GUID (8 bytes)
             }
         }
-
-        if (curPos != 0)
-            data << curRes;
-
+        data.flushBits();
         data.append(buffer);
-        data.put<uint32>(5, guidsVect.size());
+        data.put<uint32>(1, guidsVect.size());
     }
 
     SendPacket(&data);

@@ -1892,12 +1892,14 @@ bool Player::BuildEnumData(QueryResult result, ByteBuffer* data)
 
     Field* fields = result->Fetch();
 
-    uint32 guid = fields[0].GetUInt32();
+    //uint64 GuildGuid = (*result)[13].GetUInt32();//TODO: store as uin64
+
+    uint32 GuidLow = fields[0].GetUInt32();
     uint8 playerRace = fields[2].GetUInt8();
     uint8 playerClass = fields[3].GetUInt8();
     uint8 gender = fields[4].GetUInt8();
-    uint32 playerBytes = fields[5].GetUInt32();
     uint8 level = fields[7].GetUInt8();
+    uint32 playerBytes = fields[5].GetUInt32();
     uint32 playerFlags = fields[14].GetUInt32();
     uint32 atLoginFlags = fields[15].GetUInt32();
     uint32 zone = fields[8].GetUInt32();
@@ -1917,32 +1919,58 @@ bool Player::BuildEnumData(QueryResult result, ByteBuffer* data)
         }
     }
 
-    *data << uint8(playerBytes >> 24);                    // Hair color
-    *data << uint8(gender);                               // Gender
-    *data << uint8(level);                                // Level
+    *data << fields[1].GetString();                       // name
+    *data << uint8(playerBytes >> 8);                     // face
+    *data << uint32(fields[9].GetUInt32());               // map
+
+    uint8 Guid0 = uint8(GuidLow);
+    uint8 Guid1 = uint8(GuidLow >> 8);
+    uint8 Guid2 = uint8(GuidLow >> 16);
+    uint8 Guid3 = uint8(GuidLow >> 24);
+
+    if (Guid1)
+        *data << uint8(Guid1^1);
+
+    //if (uint8(GuildGuid))
+    //    *data << uint8(GuildGuid^1);
+
+    *data << fields[10].GetFloat();                       // x
+    *data << fields[11].GetFloat();                       // y
+    *data << fields[12].GetFloat();                       // z
+
+    if (Guid0)
+        *data << uint8(Guid0^1);
 
     *data << uint32(zone);                                // Zone id
-    *data << uint32(petDisplayId);                        // Pet DisplayID
+    *data << uint32(petLevel);                            // pet level
 
-    if (uint8(guid >> 8) != 0)
-        *data << uint8(guid >> 8);
+    if (Guid3)
+        *data << uint8(Guid3^1);
+    
+    //*data << uint8(2);                  // unk, bit 14
 
-    *data << uint8(playerRace);                           // Race
-
-    if (uint8(guid >> 24) != 0)
-        *data << uint8(guid >> 24);
+    uint32 playerBytes2 = fields[6].GetUInt32();
+    *data << uint8(playerBytes2 & 0xFF);                  // facial hair
+    *data << uint8(playerBytes);                          // skin
+    *data << uint8(playerClass);                          // class
+    *data << uint32(petFamily);                           // Pet Family
 
     uint32 charFlags = 0;
     if (playerFlags & PLAYER_FLAGS_HIDE_HELM)
         charFlags |= CHARACTER_FLAG_HIDE_HELM;
+
     if (playerFlags & PLAYER_FLAGS_HIDE_CLOAK)
         charFlags |= CHARACTER_FLAG_HIDE_CLOAK;
+
     if (playerFlags & PLAYER_FLAGS_GHOST)
         charFlags |= CHARACTER_FLAG_GHOST;
+
     if (atLoginFlags & AT_LOGIN_RENAME)
         charFlags |= CHARACTER_FLAG_RENAME;
+
     if (fields[20].GetUInt32())
         charFlags |= CHARACTER_FLAG_LOCKED_BY_BILLING;
+
     if (sWorld->getBoolConfig(CONFIG_DECLINED_NAMES_USED))
     {
         if (!fields[21].GetString().empty())
@@ -1953,9 +1981,32 @@ bool Player::BuildEnumData(QueryResult result, ByteBuffer* data)
 
     *data << uint32(charFlags);                           // character flags
 
-    *data << uint32(petFamily);                           // Pet Family
-    *data << uint8(playerBytes >> 16);                    // Hair style
-    *data << uint8(0);                                    // character order id (used for char list positioning)
+    if (Guid2)
+        *data << uint8(Guid2^1);
+
+    *data << uint32(petDisplayId);                        // Pet DisplayID
+
+    //if (uint8(GuildGuid >> 56))
+    //    *data << uint8(GuildGuid^1 >> 56);
+    
+    *data << uint8(level);                                // Level
+   *data << uint8(playerBytes >> 16);                    // Hair style
+    
+    //if (uint8(GuildGuid >> 16))
+    //    *data << uint8(GuildGuid^1 >> 16);
+    
+    *data << uint8(playerRace);                           // Race
+    *data << uint8(playerBytes >> 24);                    // Hair color
+
+    //if (uint8(GuildGuid >> 48))
+    //    *data << uint8(GuildGuid^1 >> 48);
+    
+    *data << uint8(gender);                               // Gender
+
+    //if (uint8(GuildGuid >> 24))
+    //    *data << uint8(GuildGuid^1 >> 24);
+    
+    *data << uint8(0);                                    // character order id (used for char list positioning) TODO: implement
 
     Tokens equipment(fields[19].GetString(), ' ');
     for (uint8 slot = 0; slot < EQUIPMENT_SLOT_END; ++slot)
@@ -1986,50 +2037,31 @@ bool Player::BuildEnumData(QueryResult result, ByteBuffer* data)
                 break;
         }
 
-        *data << uint32(db2Item ? db2Item->DisplayId : proto->DisplayInfoID);
+        sLog->outError("entry %u aura %u invtype %u display %u", itemId, enchant ? enchant->aura_id : uint32(0), proto->InventoryType,db2Item->DisplayId);
         *data << uint32(enchant ? enchant->aura_id : 0);
         *data << uint8(proto->InventoryType);
+        *data << uint32(db2Item->DisplayId);
     }
 
     // Bags (not supported)
     for (uint32 i = 0; i < 4; ++i)
     {
-        *data << uint32(0); // displayid
         *data << uint32(0); // enchant
         *data << uint8(0); // invtype
+        *data << uint32(0); // displayid
     }
-
-    *data << uint8(playerBytes >> 8);                     // face
-
-    if (uint8(guid >> 16) != 0)
-        *data << uint8(guid >> 16); // + 298
-
-    *data << uint8(playerClass);                          // class
-
-    *data << fields[10].GetFloat();                       // x
-    *data << fields[11].GetFloat();                       // y
-    *data << fields[12].GetFloat();                       // z
-
-    if (uint8(guid) != 0)
-        *data << uint8(guid); // + 296
-
-    *data << fields[1].GetString();                       // name
-    *data << uint32(fields[9].GetUInt32());               // map
-    *data << uint32(petLevel);                            // pet level
 
     // character customize flags
     if (atLoginFlags & AT_LOGIN_CUSTOMIZE)
         *data << uint32(CHAR_CUSTOMIZE_FLAG_CUSTOMIZE);
+
     else if (atLoginFlags & AT_LOGIN_CHANGE_FACTION)
         *data << uint32(CHAR_CUSTOMIZE_FLAG_FACTION);
+
     else if (atLoginFlags & AT_LOGIN_CHANGE_RACE)
         *data << uint32(CHAR_CUSTOMIZE_FLAG_RACE);
     else
         *data << uint32(CHAR_CUSTOMIZE_FLAG_NONE);
-
-    uint32 playerBytes2 = fields[6].GetUInt32();
-    *data << uint8(playerBytes2 & 0xFF);                  // facial hair
-    *data << uint8(playerBytes);                          // skin
 
     return true;
 }
@@ -20531,10 +20563,10 @@ inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 c
     if (crItem->ExtendedCost)                            // case for new honor system
     {
         ItemExtendedCostEntry const* iece = sItemExtendedCostStore.LookupEntry(crItem->ExtendedCost);
-        for (int i = 0; i < MAX_ITEM_EXT_COST_ITEMS; ++i)
+        for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
         {
             if (iece->RequiredItem[i])
-                DestroyItemCount(iece->RequiredItem[i], (iece->RequiredItemCount[i] * count), true);
+                DestroyItemCount(iece->RequiredItem[i], iece->RequiredItem[i], true);
         }
 
         for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
@@ -20663,7 +20695,7 @@ bool Player::BuyItemFromVendorSlot(uint64 vendorguid, uint32 vendorslot, uint32 
         }
 
         // item base price
-        for (int i = 0; i < MAX_ITEM_EXT_COST_ITEMS; ++i)
+        for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
         {
             if (iece->RequiredItem[i] && !HasItemCount(iece->RequiredItem[i], (iece->RequiredItemCount[i] * count)))
             {
