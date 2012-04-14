@@ -38,7 +38,7 @@
 
 Pet::Pet(Player *owner, PetType type) : Guardian(NULL, owner),
 m_usedTalentCount(0), m_removed(false), m_owner(owner),
-m_happinessTimer(7500), m_petType(type), m_duration(0),
+m_petType(type), m_duration(0),
 m_auraRaidUpdateMask(0), m_loading(false), m_declinedname(NULL)
 {
     m_unitTypeMask |= UNIT_MASK_PET;
@@ -562,14 +562,6 @@ void Pet::Update(uint32 diff)
 
             if (getPetType() != HUNTER_PET)
                 break;
-
-            if (m_happinessTimer <= diff)
-            {
-                LoseHappiness();
-                m_happinessTimer = 7500;
-            }
-            else
-                m_happinessTimer -= diff;
 
             break;
         }

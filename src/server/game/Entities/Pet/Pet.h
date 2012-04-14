@@ -218,7 +218,6 @@ class Pet : public Guardian
         PetTalentType GetTalentType();
     protected:
         Player *m_owner;
-        uint32  m_happinessTimer;
         PetType m_petType;
         int32   m_duration;                                 // time until unsummon (used mostly for summoned guardians and not used for controlled pets)
         uint64  m_auraRaidUpdateMask;
