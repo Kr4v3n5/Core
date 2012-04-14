@@ -642,40 +642,40 @@ void WorldSession::ReadMovementInfo(WorldPacket &data, MovementInfo *mi)
         switch (element)
         {
             case MSEFlags:
-                mi->flags = data.readBits(30);
+                mi->flags = data.ReadBits(30);
                 break;
             case MSEFlags2:
-                mi->flags2 = data.readBits(12);
+                mi->flags2 = data.ReadBits(12);
                 break;
             case MSETimestamp:
                 data >> mi->time;
                 break;
             case MSEHavePitch:
-                HavePitch = data.readBit();
+                HavePitch = data.ReadBit();
                 break;
             case MSEHaveFallData:
-                HaveFallData = data.readBit();
+                HaveFallData = data.ReadBit();
                 break;
             case MSEHaveFallDirection:
                 if (HaveFallData)
-                    HaveFallDirection = data.readBit();
+                    HaveFallDirection = data.ReadBit();
                 break;
             case MSEHaveTransportData:
-                HaveTransportData = data.readBit();
+                HaveTransportData = data.ReadBit();
                 break;
             case MSETransportHaveTime2:
                 if (HaveTransportData)
-                    HaveTransportTime2 = data.readBit();
+                    HaveTransportTime2 = data.ReadBit();
                 break;
             case MSETransportHaveTime3:
                 if (HaveTransportData)
-                    HaveTransportTime3 = data.readBit();
+                    HaveTransportTime3 = data.ReadBit();
                 break;
             case MSEHaveSpline:
-                HaveSpline = data.readBit();
+                HaveSpline = data.ReadBit();
                 break;
             case MSEHaveSplineElev:
-                HaveSplineElevation = data.readBit();
+                HaveSplineElevation = data.ReadBit();
                 break;
             case MSEPositionX:
                 data >> mi->pos.PositionXYZStream();
@@ -803,40 +803,40 @@ void WorldSession::WriteMovementInfo(WorldPacket &data, MovementInfo *mi)
         switch (element)
         {
             case MSEFlags:
-                data.writeBits(mi->flags, 30);
+                data.WriteBits(mi->flags, 30);
                 break;
             case MSEFlags2:
-                data.writeBits(mi->flags2, 12);
+                data.WriteBits(mi->flags2, 12);
                 break;
             case MSETimestamp:
                 data << mi->time;
                 break;
             case MSEHavePitch:
-                data.writeBit(HavePitch);
+                data.WriteBit(HavePitch);
                 break;
             case MSEHaveFallData:
-                data.writeBit(HaveFallData);
+                data.WriteBit(HaveFallData);
                 break;
             case MSEHaveFallDirection:
                 if (HaveFallData)
-                    data.writeBit(HaveFallDirection);
+                    data.WriteBit(HaveFallDirection);
                 break;
             case MSEHaveTransportData:
-                data.writeBit(HaveTransportData);
+                data.WriteBit(HaveTransportData);
                 break;
             case MSETransportHaveTime2:
                 if (HaveTransportData)
-                    data.writeBit(HaveTransportTime2);
+                    data.WriteBit(HaveTransportTime2);
                 break;
             case MSETransportHaveTime3:
                 if (HaveTransportData)
-                    data.writeBit(HaveTransportTime3);
+                    data.WriteBit(HaveTransportTime3);
                 break;
             case MSEHaveSpline:
-                data.writeBit(HaveSpline);
+                data.WriteBit(HaveSpline);
                 break;
             case MSEHaveSplineElev:
-                data.writeBit(HaveSplineElevation);
+                data.WriteBit(HaveSplineElevation);
                 break;
             case MSEPositionX:
                 data << mi->pos.PositionXYZStream();

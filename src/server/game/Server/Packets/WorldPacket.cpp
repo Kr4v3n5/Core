@@ -23,10 +23,13 @@
 #include <zlib.h>
 #include "World.h"
 
-void WorldPacket::compress(Opcodes opcode)
+void WorldPacket::Compress(Opcodes opcode)
 {
-    if (opcode == UNKNOWN_OPCODE)
+    if (opcode == UNKNOWN_OPCODE || opcode == NULL_OPCODE)
+    {
+        sLog->outError("Tried to compress packet with unknown opcode (%u)", uint32(opcode));
         return;
+    }
 
     Opcodes uncompressedOpcode = GetOpcode();
     uint32 size = wpos();
@@ -34,7 +37,7 @@ void WorldPacket::compress(Opcodes opcode)
 
     std::vector<uint8> storage(destsize);
 
-    _compress(static_cast<void*>(&storage[0]), &destsize, static_cast<const void*>(contents()), size);
+    Compress(static_cast<void*>(&storage[0]), &destsize, static_cast<const void*>(contents()), size);
     if (destsize == 0)
         return;
 
@@ -48,7 +51,7 @@ void WorldPacket::compress(Opcodes opcode)
         uncompressedOpcode, size, opcode, destsize);
 }
 
-void WorldPacket::_compress(void* dst, uint32 *dst_size, const void* src, int src_size)
+void WorldPacket::Compress(void* dst, uint32 *dst_size, const void* src, int src_size)
 {
     z_stream c_stream;
 

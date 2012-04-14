@@ -68,7 +68,7 @@ bool UpdateData::BuildPacket(WorldPacket* packet)
     packet->append(m_data);
 
     if (packet->wpos() > 100)
-        packet->compress(SMSG_COMPRESSED_UPDATE_OBJECT);
+        packet->Compress(SMSG_COMPRESSED_UPDATE_OBJECT);
 
     return true;
 }

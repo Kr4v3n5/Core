@@ -2130,7 +2130,7 @@ void AchievementMgr::SendAllAchievementData() const
         data << uint32(iter->first);
 
     if (data.wpos() > 100)
-        data.compress(SMSG_COMPRESSED_ACHIEVEMENT_DATA);
+        data.Compress(SMSG_COMPRESSED_ACHIEVEMENT_DATA);
 
     GetPlayer()->GetSession()->SendPacket(&data);
 }

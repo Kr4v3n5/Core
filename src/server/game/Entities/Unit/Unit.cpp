@@ -17196,26 +17196,26 @@ void Unit::BuildMovementPacket(ByteBuffer *data) const
             break;
     }
 
-    data->writeBits(GetUnitMovementFlags(), 30);
-    data->writeBits(m_movementInfo.flags2, 12);
+    data->WriteBits(GetUnitMovementFlags(), 30);
+    data->WriteBits(m_movementInfo.flags2, 12);
 
     // field mask
-    if (data->writeBit(GetUnitMovementFlags() & MOVEMENTFLAG_ONTRANSPORT))
+    if (data->WriteBit(GetUnitMovementFlags() & MOVEMENTFLAG_ONTRANSPORT))
     {
-        data->writeBit(m_movementInfo.flags2 & MOVEMENTFLAG2_INTERPOLATED_MOVEMENT);
-        data->writeBit(0); // Flag for time3. Not implemented.
+        data->WriteBit(m_movementInfo.flags2 & MOVEMENTFLAG2_INTERPOLATED_MOVEMENT);
+        data->WriteBit(0); // Flag for time3. Not implemented.
     }
 
-    data->writeBit((GetUnitMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING))
+    data->WriteBit((GetUnitMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING))
                    || (m_movementInfo.flags2 & MOVEMENTFLAG2_ALWAYS_ALLOW_PITCHING));
 
-    if (data->writeBit(m_movementInfo.flags2 & MOVEMENTFLAG2_INTERPOLATED_TURNING))
-        data->writeBit(GetUnitMovementFlags() & MOVEMENTFLAG_FALLING_SLOW);
+    if (data->WriteBit(m_movementInfo.flags2 & MOVEMENTFLAG2_INTERPOLATED_TURNING))
+        data->WriteBit(GetUnitMovementFlags() & MOVEMENTFLAG_FALLING_SLOW);
 
     /*data->writeBit(GetUnitMovementFlags() & MOVEMENTFLAG_SPLINE_ELEVATION);*/
 
     // has spline data
-    data->writeBit(0);
+    data->WriteBit(0);
 
     *data << uint64(GetGUID()); // added in 4.2.0
     *data << uint32(getMSTime());            // time
