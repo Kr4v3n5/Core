@@ -38,7 +38,7 @@ enum Opcodes
 
     /* OPCODE LEGEND:
         //              =    UNKNOWN
-        // 14545        =    14545 CLIENT
+        // 14545        =    14545 CLIENT        -> UNTESTED
         // 4.2.0a:14545 =    CLIENT 4.2.2a:14545 -> TESTED!
     */
 
@@ -51,11 +51,11 @@ enum Opcodes
     SMSG_GODMODE                                     = 0x76E7, // 14480
     SMSG_DESTRUCTIBLE_BUILDING_DAMAGE                = 0xBA6E, // 14480
     CMSG_CHAR_CREATE                                 = 0x1AC6, // 4.2.2a:14545
-    CMSG_CHAR_ENUM                                   = 0x4A8B, // 4.2.0a:14545
-    CMSG_CHAR_DELETE                                 = 0x6E32, // 4.2.0a:14480
-    SMSG_CHAR_CREATE                                 = 0x3E36, // 4.2.0a:14480
-    SMSG_CHAR_ENUM                                   = 0xC727, // 4.2.0a:14480
-    SMSG_CHAR_DELETE                                 = 0x3EFA, // 4.2.0a:14480
+    CMSG_CHAR_ENUM                                   = 0x4A8B, // 4.2.2a:14545
+    CMSG_CHAR_DELETE                                 = 0x1ED3, // 4.2.2a:14545
+    SMSG_CHAR_CREATE                                 = 19547,  // 4.2.2a:14545
+    SMSG_CHAR_ENUM                                   = 0xA05C, // 4.2.2a:14545
+    SMSG_CHAR_DELETE                                 = 0x48CE, // 4.2.2a:14545
     CMSG_PLAYER_LOGIN                                = 0x10D1, // 4.2.0a:14480
     SMSG_NEW_WORLD                                   = 0x0F01, // 4.2.0a:14480
     SMSG_TRANSFER_PENDING                            = 0x26EA, // 4.2.0a:14480
