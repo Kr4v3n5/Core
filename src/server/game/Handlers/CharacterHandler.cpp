@@ -848,14 +848,6 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket & recv_data)
     SendPacket(&data);
 }
 
-void WorldSession::HandleWorldLoginOpcode(WorldPacket& recv_data)
-{
-    sLog->outStaticDebug("WORLD: Recvd World Login Message");
-    uint32 unk;
-    uint8 unk1;
-    recv_data >> unk >> unk1;
-}
-
 void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
 {
     if (PlayerLoading() || GetPlayer() != NULL)
@@ -866,40 +858,25 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
 
     m_playerLoading = true;
     uint64 playerGuid = 0;
-    uint8 guidMark, byte;
 
     sLog->outStaticDebug("WORLD: Recvd Player Logon Message");
 
-    recv_data >> guidMark;
+    BitStream mask = recv_data.ReadBitStream(8);
 
-    // Bits are mixed up...
-    // Let's skip the highguid part -- it's 0x0000 for players anyway
-    if (guidMark & (1 << 2))
-    {
-        recv_data >> byte;
+    ByteBuffer bytes(8, true);
 
-        playerGuid |= uint64(byte << 8);
-    }
-    if (guidMark & (1 << 5))
-    {
-        recv_data >> byte;
+    recv_data.ReadXorByte(mask[6], bytes[5]);
+    recv_data.ReadXorByte(mask[0], bytes[0]);
+    recv_data.ReadXorByte(mask[4], bytes[3]);
+    recv_data.ReadXorByte(mask[1], bytes[4]);
+    recv_data.ReadXorByte(mask[2], bytes[7]);
+    recv_data.ReadXorByte(mask[5], bytes[2]);
+    recv_data.ReadXorByte(mask[7], bytes[6]);
+    recv_data.ReadXorByte(mask[3], bytes[1]);
 
-        playerGuid |= uint64(byte << 16);
-    }
-    if (guidMark & (1 << 6))
-    {
-        recv_data >> byte;
+    playerGuid = BitConverter::ToUInt64(bytes);
 
-        playerGuid |= uint64(byte);
-    }
-    if (guidMark & (1 << 4))
-    {
-        recv_data >> byte;
-
-        playerGuid |= uint64(byte << 24);
-    }
-
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "GUID Marker: %u GUID: %u", guidMark, playerGuid);
+    sLog->outDebug(LOG_FILTER_NETWORKIO, "Character (Guid: %u) logging in", GUID_LOPART(playerGuid));
 
     if (!CharCanLogin(GUID_LOPART(playerGuid)))
     {
@@ -917,6 +894,16 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
     }
 
     _charLoginCallback = CharacterDatabase.DelayQueryHolder((SQLQueryHolder*)holder);
+}
+
+void WorldSession::HandleLoadScreenOpcode(WorldPacket& recvPacket)
+{
+    sLog->outStaticDebug("WORLD: Recvd CMSG_LOAD_SCREEN");
+    uint8 unkMask; // Loading start: 0x80, loading end: 0x0
+    uint32 mapID;
+    recvPacket >> unkMask >> mapID;
+
+    // TODO: Do something with this packet
 }
 
 void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
