@@ -110,14 +110,8 @@ void WorldSession::HandleMessageChatOpcode(WorldPacket & recv_data)
         case CMSG_MESSAGECHAT_RAID:
             type = CHAT_MSG_RAID;
             break;
-        case CMSG_MESSAGECHAT_RAID_LEADER:
-            type = CHAT_MSG_RAID_LEADER;
-            break;
         case CMSG_MESSAGECHAT_BATTLEGROUND:
             type = CHAT_MSG_BATTLEGROUND;
-            break;
-        case CMSG_MESSAGECHAT_BATTLEGROUND_LEADER:
-            type = CHAT_MSG_BATTLEGROUND_LEADER;
             break;
         case CMSG_MESSAGECHAT_RAID_WARNING:
             type = CHAT_MSG_RAID_WARNING;

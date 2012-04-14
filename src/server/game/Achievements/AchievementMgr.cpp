@@ -2172,9 +2172,6 @@ void AchievementMgr::SendRespondInspectAchievements(Player* player) const
     for (CompletedAchievementMap::const_iterator iter = m_completedAchievements.begin(); iter!=m_completedAchievements.end(); ++iter)
         data << uint32(secsToTimeBitFields(iter->second.date));
 
-    if (data.wpos() > 100)
-        data.compress(SMSG_COMPRESSED_RESPOND_INSPECT_ACHIEVEMENTS);
-
     player->GetSession()->SendPacket(&data);
 }
 
