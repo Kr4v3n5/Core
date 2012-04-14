@@ -123,13 +123,12 @@ CREATE TABLE IF NOT EXISTS `realmlist` (
   `timezone` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `allowedSecurityLevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `population` float unsigned NOT NULL DEFAULT '0',
-  `gamebuild` int(11) unsigned NOT NULL DEFAULT '14480',
+  `gamebuild` int(11) unsigned NOT NULL DEFAULT '14545',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm System';
 
 # Data exporting was unselected.
-
 
 # Dumping structure for table auth.uptime
 DROP TABLE IF EXISTS `uptime`;
