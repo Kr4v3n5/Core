@@ -2193,7 +2193,7 @@ void ObjectMgr::LoadItemTemplates()
         }
 
         itemTemplate.ScalingStatDistribution = uint32(fields[47].GetUInt16());
-        itemTemplate.ScalingStatValue        = fields[48].GetInt32();
+        //itemTemplate.ScalingStatValue        = fields[48].GetInt32();
 
 		itemTemplate.damageType     = uint32(fields[122].GetUInt16());
         itemTemplate.Delay          = uint32(fields[49].GetUInt16());

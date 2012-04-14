@@ -322,7 +322,7 @@ enum ItemSubclassContainer // 4.20a 14480
 
 #define MAX_ITEM_SUBCLASS_CONTAINER               10
 
-enum ItemSubclassWeapon // 4.20a 14480
+enum ItemSubclassWeapon
 {
     ITEM_SUBCLASS_WEAPON_AXE                    = 0,
     ITEM_SUBCLASS_WEAPON_AXE2                   = 1,
@@ -331,13 +331,17 @@ enum ItemSubclassWeapon // 4.20a 14480
     ITEM_SUBCLASS_WEAPON_MACE                   = 4,
     ITEM_SUBCLASS_WEAPON_MACE2                  = 5,
     ITEM_SUBCLASS_WEAPON_POLEARM                = 6,
-    ITEM_SUBCLASS_WEAPON_SWORD                  = 7,
-    ITEM_SUBCLASS_WEAPON_SWORD2                 = 8,
+    ITEM_SUBCLASS_WEAPON_SWORD                  = 7,  // One-Handed Swords
+    ITEM_SUBCLASS_WEAPON_SWORD2                 = 8,  // Two-Handed Swords
+    ITEM_SUBCLASS_WEAPON_Obsolete               = 9,
     ITEM_SUBCLASS_WEAPON_STAFF                  = 10,
-    ITEM_SUBCLASS_WEAPON_FIST                   = 13,
-    ITEM_SUBCLASS_WEAPON_MISC                   = 14,
+    ITEM_SUBCLASS_WEAPON_EXOTIC                 = 11, // One-Handed Exotics
+    ITEM_SUBCLASS_WEAPON_EXOTIC2                = 12, // Two-Handed Exotics
+    ITEM_SUBCLASS_WEAPON_FIST_WEAPON            = 13,
+    ITEM_SUBCLASS_WEAPON_MISCELLANEOUS          = 14,
     ITEM_SUBCLASS_WEAPON_DAGGER                 = 15,
     ITEM_SUBCLASS_WEAPON_THROWN                 = 16,
+    ITEM_SUBCLASS_WEAPON_SPEAR                  = 17,
     ITEM_SUBCLASS_WEAPON_CROSSBOW               = 18,
     ITEM_SUBCLASS_WEAPON_WAND                   = 19,
     ITEM_SUBCLASS_WEAPON_FISHING_POLE           = 20
@@ -604,7 +608,6 @@ struct ItemTemplate
     uint32 ContainerSlots;
     _ItemStat ItemStat[MAX_ITEM_PROTO_STATS];
     uint32 ScalingStatDistribution;                         // id from ScalingStatDistribution.dbc
-    uint32 ScalingStatValue;                                // mask for selecting column in ScalingStatValues.dbc
     uint32 damageType;
     uint32 Delay;
     float  RangedModRange;
