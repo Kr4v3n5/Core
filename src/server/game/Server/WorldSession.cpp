@@ -46,19 +46,10 @@
 #include "ScriptMgr.h"
 #include "Transport.h"
 
-Opcodes PacketFilter::DropHighBytes(Opcodes opcode)
-{
-   if (opcode & 0xFFFF0000) // check if any High byte is present
-       return Opcodes(opcode >> 16);
-
-   else
-       return Opcodes(opcode);
-}
-
 bool MapSessionFilter::Process(WorldPacket* packet)
 {
     Opcodes opcode = DropHighBytes(packet->GetOpcode());
-    OpcodeHandler const* opHandle = opcodeTable[packet->GetOpcode()];
+    OpcodeHandler const* opHandle = opcodeTable[opcode];
 
     //let's check if our opcode can be really processed in Map::Update()
     if (opHandle->packetProcessing == PROCESS_INPLACE)
@@ -81,7 +72,7 @@ bool MapSessionFilter::Process(WorldPacket* packet)
 bool WorldSessionFilter::Process(WorldPacket* packet)
 {
     Opcodes opcode = DropHighBytes(packet->GetOpcode());
-    OpcodeHandler const* opHandle = opcodeTable[packet->GetOpcode()];
+    OpcodeHandler const* opHandle = opcodeTable[opcode];
     //check if packet handler is supposed to be safe
     if (opHandle->packetProcessing == PROCESS_INPLACE)
         return true;
@@ -91,12 +82,12 @@ bool WorldSessionFilter::Process(WorldPacket* packet)
         return true;
 
     //no player attached? -> our client! ^^
-    Player *plr = m_pSession->GetPlayer();
-    if (!plr)
+    Player* player = m_pSession->GetPlayer();
+    if (!player)
         return true;
 
     //lets process all packets for non-in-the-world player
-    return (plr->IsInWorld() == false);
+    return (player->IsInWorld() == false);
 }
 
 /// WorldSession constructor
@@ -162,11 +153,9 @@ void WorldSession::SendPacket(WorldPacket const *packet)
     if (!m_Socket)
         return;
 
-    if (packet->GetOpcode() == UNKNOWN_OPCODE)
+    if (packet->GetOpcode() == NULL_OPCODE || packet->GetOpcode() == UNKNOWN_OPCODE)
     {
-        sLog->outError("Sending unknown opcode - prevented. Trace:");
-        ACE_Stack_Trace trace;
-        sLog->outError("%s", trace.c_str());
+        sLog->outError("Prevented sending of %s", packet->GetOpcode() == NULL_OPCODE ? "NULL_OPCODE" : "UNKNOWN_OPCODE");
         return;
     }
 
@@ -244,10 +233,20 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
     ///- Retrieve packets from the receive queue and call the appropriate handlers
     /// not process packets if socket already closed
     WorldPacket* packet = NULL;
-    while (m_Socket && !m_Socket->IsClosed() && _recvQueue.next(packet, updater))
+    //! Delete packet after processing by default
+    bool deletePacket = true;
+    //! To prevent infinite loop
+    WorldPacket* firstDelayedPacket = NULL;
+    //! If _recvQueue.peek() == firstDelayedPacket it means that in this Update call, we've processed all
+    //! *properly timed* packets, and we're now at the part of the queue where we find
+    //! delayed packets that were re-enqueued due to improper timing. To prevent an infinite
+    //! loop caused by re-enqueueing the same packets over and over again, we stop updating this session
+    //! and continue updating others. The re-enqueued packets will be handled in the next Update call for this session.
+    while (m_Socket && !m_Socket->IsClosed() &&
+            !_recvQueue.empty() && _recvQueue.peek(true) != firstDelayedPacket &&
+            _recvQueue.next(packet, updater))
     {
         OpcodeHandler const* opHandle = opcodeTable[packet->GetOpcode()];
-        // !=NULL checked in WorldSocket
         try
         {
             switch (opHandle->status)
@@ -256,8 +255,20 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                     if (!_player)
                     {
                         // skip STATUS_LOGGEDIN opcode unexpected errors if player logout sometime ago - this can be network lag delayed packets
+                        //! If player didn't log out a while ago, it means packets are being sent while the server does not recognize
+                        //! the client to be in world yet. We will re-add the packets to the bottom of the queue and process them later.
                         if (!m_playerRecentlyLogout)
-                            LogUnexpectedOpcode(packet, "STATUS_LOGGEDIN", "the player has not logged in yet");
+                        {
+                            //! Prevent infinite loop
+                            if (!firstDelayedPacket)
+                                firstDelayedPacket = packet;
+                            //! Because checking a bool is faster than reallocating memory
+                            deletePacket = false;
+                            QueuePacket(packet);
+                            //! Log
+                            sLog->outDebug(LOG_FILTER_NETWORKIO, "Re-enqueueing packet with opcode %s (0x%.4X) with with status STATUS_LOGGEDIN. "
+                                "Player is currently not in world yet.", opHandle->name, packet->GetOpcode());
+                        }
                     }
                     else if (_player->IsInWorld())
                     {
@@ -335,7 +346,8 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
             }
         }
 
-        delete packet;
+        if (deletePacket)
+            delete packet;
     }
 
     ProcessQueryCallbacks();
@@ -683,8 +695,8 @@ void WorldSession::SetAccountData(AccountDataType type, time_t tm, std::string d
 
 void WorldSession::SendAccountDataTimes(uint32 mask)
 {
-    WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4 + 1 + 4 + 8 * 4); // changed in WotLK
-    data << uint32(time(NULL));                             // unix time of something
+    WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+NUM_ACCOUNT_DATA_TYPES*4);
+    data << uint32(time(NULL));                             // server time
     data << uint8(1);
     data << uint32(mask);                                   // type mask
     for (uint32 i = 0; i < NUM_ACCOUNT_DATA_TYPES; ++i)

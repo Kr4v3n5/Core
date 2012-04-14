@@ -221,7 +221,7 @@ void WorldSession::HandleCharEnum(QueryResult result)
 
     if (result)
     {
-        typedef std::pair<uint32, uint32> Guids;
+        typedef std::pair<uint32, uint64> Guids;
         std::vector<Guids> guidsVect;
         ByteBuffer buffer;
         _allowedCharsToLogin.clear();
