@@ -246,7 +246,9 @@ int WorldSocket::open(void *a)
 
     m_Address = remote_addr.get_host_addr();
 
-    WorldPacket packet(SMSG_VERIFY_CONNECTIVITY);
+    // not an opcode. this packet sends raw string WORLD OF WARCRAFT CONNECTION - SERVER TO CLIENT"
+    // because of our implementation, bytes "WO" become the opcode
+    WorldPacket packet(MSG_VERIFY_CONNECTIVITY);
     packet << "RLD OF WARCRAFT CONNECTION - SERVER TO CLIENT";
 
     if (SendPacket(packet) == -1)
@@ -261,14 +263,6 @@ int WorldSocket::open(void *a)
 
     // reactor takes care of the socket from now on
     remove_reference();
-
-    return 0;
-}
-
-int WorldSocket::HandleAuthConnection(WorldPacket& recvPacket)
-{
-    std::string ClientToServerMsg;
-    recvPacket >> ClientToServerMsg;
 
     return 0;
 }
@@ -681,10 +675,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
     {
         switch (opcode)
         {
-            case MSG_CHECK_CONNECTION:
-                sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));
-                return HandleAuthConnection(*new_pct);
-            case CMSG_PING:
+           case CMSG_PING:
                 return HandlePing (*new_pct);
             case CMSG_AUTH_SESSION:
                 if (m_Session)
@@ -696,17 +687,25 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
                 sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));
                 return HandleAuthSession (*new_pct);
             case CMSG_KEEP_ALIVE:
-                sLog->outStaticDebug ("CMSG_KEEP_ALIVE , size: " UI64FMTD, uint64(new_pct->size()));
+                sLog->outStaticDebug ("CMSG_KEEP_ALIVE, size: " UI64FMTD, uint64(new_pct->size()));
                 sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));
                 return 0;
             case CMSG_LOG_DISCONNECT:
                 sLog->outStaticDebug("CMSG_LOG_DISCONNECT , size: " UI64FMTD, uint64(new_pct->size()));
                 sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));
                 return 0;
-            case CMSG_VERIFY_CONNECTIVITY_RESPONSE:
-                sLog->outStaticDebug("CMSG_VERIFY_CONNECTIVITY_RESPONSE , size: " UI64FMTD, uint64(new_pct->size()));
+            // not an opcode, client sends string "WORLD OF WARCRAFT CONNECTION - CLIENT TO SERVER" without opcode
+            // first 4 bytes become the opcode (2 dropped)
+            case MSG_VERIFY_CONNECTIVITY:
+            {
+                sLog->outStaticDebug("MSG_VERIFY_CONNECTIVITY , size: " UI64FMTD, uint64(new_pct->size()));
                 sScriptMgr->OnPacketReceive(this, WorldPacket(*new_pct));
+                std::string str;
+                *new_pct >> str;
+                if (str != "D OF WARCRAFT CONNECTION - CLIENT TO SERVER")
+                    return -1;
                 return HandleSendAuthSession();
+            }
             default:
             {
                 ACE_GUARD_RETURN (LockType, Guard, m_SessionLock, -1);
@@ -722,7 +721,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
                     // Catches people idling on the login screen and any lingering ingame connections.
                     m_Session->ResetTimeOutTime();
 
-                    // OK , give the packet to WorldSession
+                    // OK, give the packet to WorldSession
                     aptr.release();
                     // WARNINIG here we call it with locks held.
                     // Its possible to cause deadlock if QueuePacket calls back

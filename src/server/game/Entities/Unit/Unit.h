@@ -38,7 +38,7 @@
 #include "SpellInfo.h"
 #include "Path.h"
 #include "WorldPacket.h"
-#include "DataStorage.h"
+#include "WorldSession.h"
 #include "Timer.h"
 #include <list>
 
@@ -2222,55 +2222,55 @@ class Unit : public WorldObject
 
         uint32 GetPowerIndexByClass(uint32 powerId, uint32 classId) const
         {
-            ChrClassesEntry const* m_class = sChrClassesStore.LookupEntry(classId);
+            //ChrClassesEntry const* m_class = sChrClassesStore.LookupEntry(classId);
 
-            ASSERT(m_class && "Class not found");
+            //ASSERT(m_class && "Class not found");
 
-            uint32 index = 0;
+            //uint32 index = 0;
 
-            for (uint32 i = 0; i <= sChrPowerTypesStore.GetNumRows(); i++)
-            {
-                ChrPowerTypesEntry const* cEntry = sChrPowerTypesStore.LookupEntry(i);
+            //for (uint32 i = 0; i <= sChrPowerTypesStore.GetNumRows(); i++)
+            //{
+            //    ChrPowerTypesEntry const* cEntry = sChrPowerTypesStore.LookupEntry(i);
 
-                if (!cEntry)
-                    continue;
+            //    if (!cEntry)
+            //        continue;
 
-                if (classId != cEntry->classId)
-                    continue;
+            //    if (classId != cEntry->classId)
+            //        continue;
 
-                if (powerId == cEntry->power)
-                    return index;
+            //    if (powerId == cEntry->power)
+            //        return index;
 
-                index++;
-            }
+            //    index++;
+            //}
             return 0;
         };
 
         uint32 GetPowerIdByIndex(uint32 index, uint32 classId) const
         {
-            ChrClassesEntry const* m_class = sChrClassesStore.LookupEntry(classId);
+            //ChrClassesEntry const* m_class = sChrClassesStore.LookupEntry(classId);
 
-            ASSERT(m_class && "Class not found");
+            //ASSERT(m_class && "Class not found");
 
-            ASSERT(index > 4 && "Not Existing Index");
+            //ASSERT(index > 4 && "Not Existing Index");
 
-            uint32 index2 = 0;
+            //uint32 index2 = 0;
 
-            for (uint32 i = 0; i <= sChrPowerTypesStore.GetNumRows(); i++)
-            {
-                ChrPowerTypesEntry const* cEntry = sChrPowerTypesStore.LookupEntry(i);
+            //for (uint32 i = 0; i <= sChrPowerTypesStore.GetNumRows(); i++)
+            //{
+            //    ChrPowerTypesEntry const* cEntry = sChrPowerTypesStore.LookupEntry(i);
 
-                if (!cEntry)
-                    continue;
+            //    if (!cEntry)
+            //        continue;
 
-                if (classId != cEntry->classId)
-                    continue;
+            //    if (classId != cEntry->classId)
+            //        continue;
 
-                if (index == index2)
-                    return cEntry->power;
+            //    if (index == index2)
+            //        return cEntry->power;
 
-                index2++;
-            }
+            //    index2++;
+            //}
             return 0;
         };
     protected:
