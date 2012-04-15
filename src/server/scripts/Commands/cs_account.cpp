@@ -68,7 +68,7 @@ public:
 
         char *szExp = strtok((char*)args, " ");
 
-        uint32 account_id = handler->GetSession()->GetAccountId();
+        uint32 accountId = handler->GetSession()->GetAccountId();
 
         int expansion = atoi(szExp);                                    //get int anyway (0 if error)
         if (expansion < 0 || uint8(expansion) > sWorld->getIntConfig(CONFIG_EXPANSION))
@@ -78,8 +78,13 @@ public:
             return false;
         }
 
-        // No SQL injection
-        LoginDatabase.PExecute("UPDATE account SET expansion = '%d' WHERE id = '%u'", expansion, account_id);
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_EXPANSION);
+
+        stmt->setUInt8(0, uint8(expansion));
+        stmt->setUInt32(1, accountId);
+
+        LoginDatabase.Execute(stmt);
+
         handler->PSendSysMessage(LANG_ACCOUNT_ADDON, expansion);
         return true;
     }

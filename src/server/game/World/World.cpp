@@ -2437,7 +2437,15 @@ void World::Update(uint32 diff)
         uint32 maxOnlinePlayers = GetMaxPlayerCount();
 
         m_timers[WUPDATE_UPTIME].Reset();
-        LoginDatabase.PExecute("UPDATE uptime SET uptime = %u, maxplayers = %u WHERE realmid = %u AND starttime = " UI64FMTD, tmpDiff, maxOnlinePlayers, realmID, uint64(m_startTime));
+
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_UPTIME_PLAYERS);
+
+        stmt->setUInt64(0, uint64(tmpDiff));
+        stmt->setUInt16(1, uint16(maxOnlinePlayers));
+        stmt->setUInt32(2, realmID);
+        stmt->setUInt64(3, uint64(m_startTime));
+
+        LoginDatabase.Execute(stmt);
     }
 
     /// <li> Clean logs table
@@ -2446,8 +2454,13 @@ void World::Update(uint32 diff)
         if (m_timers[WUPDATE_CLEANDB].Passed())
         {
             m_timers[WUPDATE_CLEANDB].Reset();
-            LoginDatabase.PExecute("DELETE FROM logs WHERE (time + %u) < "UI64FMTD";",
-                sWorld->getIntConfig(CONFIG_LOGDB_CLEARTIME), uint64(time(0)));
+
+            PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_DEL_OLD_LOGS);
+
+            stmt->setUInt32(0, sWorld->getIntConfig(CONFIG_LOGDB_CLEARTIME));
+            stmt->setUInt32(1, uint32(time(0)));
+
+            LoginDatabase.Execute(stmt);
         }
     }
 
