@@ -176,7 +176,7 @@ bool SQLQueryHolderTask::Execute()
             {
                 case SQL_ELEMENT_RAW:
                 {
-                    char const *sql = data->element.query;
+                    char const* sql = data->element.query;
                     if (sql)
                         m_holder->SetResult(i, m_conn->Query(sql));
                     break;

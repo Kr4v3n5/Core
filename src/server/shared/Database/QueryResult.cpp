@@ -23,13 +23,13 @@
 #include "Log.h"
 
 ResultSet::ResultSet(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount) :
-m_rowCount(rowCount),
-m_fieldCount(fieldCount),
-m_result(result),
-m_fields(fields)
+_rowCount(rowCount),
+_fieldCount(fieldCount),
+_result(result),
+_fields(fields)
 {
-    m_currentRow = new Field[m_fieldCount];
-    ASSERT(m_currentRow);
+    _currentRow = new Field[_fieldCount];
+    ASSERT(_currentRow);
 }
 
 PreparedResultSet::PreparedResultSet(MYSQL_STMT* stmt, MYSQL_RES *result, uint64 rowCount, uint32 fieldCount) :
@@ -90,9 +90,9 @@ m_length(NULL)
     if (mysql_stmt_bind_result(m_stmt, m_rBind))
     {
         sLogMgr->WriteLn(SQLDRIVER_LOG, "%s:mysql_stmt_bind_result, cannot bind result from MySQL server. Error: %s", __FUNCTION__, mysql_stmt_error(m_stmt));
-        delete [] m_rBind;
-        delete [] m_isNull;
-        delete [] m_length;
+        delete[] m_rBind;
+        delete[] m_isNull;
+        delete[] m_length;
         return;
     }
 
@@ -149,25 +149,22 @@ PreparedResultSet::~PreparedResultSet()
         delete[] m_rows[i];
 }
 
-// set no_cleanup to true if you don't want the query result to be deleted 
-// upon reaching the last row (for example if you wanna re-iterate the resultset)
-bool ResultSet::NextRow(bool no_cleanup)
+bool ResultSet::NextRow()
 {
     MYSQL_ROW row;
 
-    if (!m_result)
+    if (!_result)
         return false;
 
-    row = mysql_fetch_row(m_result);
+    row = mysql_fetch_row(_result);
     if (!row)
     {
-        if (!no_cleanup)
-            CleanUp();
+        CleanUp();
         return false;
     }
 
-    for (uint32 i = 0; i < m_fieldCount; i++)
-        m_currentRow[i].SetStructuredValue(row[i], m_fields[i].type);
+    for (uint32 i = 0; i < _fieldCount; i++)
+        _currentRow[i].SetStructuredValue(row[i], _fields[i].type);
 
     return true;
 }
@@ -202,16 +199,16 @@ bool PreparedResultSet::_NextRow()
 
 void ResultSet::CleanUp()
 {
-    if (m_currentRow)
+    if (_currentRow)
     {
-        delete [] m_currentRow;
-        m_currentRow = NULL;
+        delete [] _currentRow;
+        _currentRow = NULL;
     }
 
-    if (m_result)
+    if (_result)
     {
-        mysql_free_result(m_result);
-        m_result = NULL;
+        mysql_free_result(_result);
+        _result = NULL;
     }
 }
 

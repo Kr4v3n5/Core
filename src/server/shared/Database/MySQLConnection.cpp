@@ -62,7 +62,6 @@ MySQLConnection::~MySQLConnection()
 {
     ASSERT (m_Mysql); /// MySQL context must be present at this point
 
-    sLogMgr->WriteLn(SQLDRIVER_LOG, "MySQLConnection::~MySQLConnection()");
     for (size_t i = 0; i < m_stmts.size(); ++i)
         delete m_stmts[i];
 
@@ -72,7 +71,6 @@ MySQLConnection::~MySQLConnection()
     }
 
     mysql_close(m_Mysql);
-    Unlock();   /// Unlock while we die, how ironic
 }
 
 void MySQLConnection::Close()
@@ -531,9 +529,13 @@ bool MySQLConnection::_HandleMySQLErrno(uint32 errNo)
         // Query related errors - skip query
         case 1058:      // "Column count doesn't match value count"
         case 1062:      // "Duplicate entry '%s' for key '%d'"
-        case 1054:      // "Unknown column '%s' in 'order clause'"
             return false;
 
+        //// Outdated table or database structure - terminate core
+        //case 1054:      // "Unknown column '%s' in '%s'"
+        //case 1146:      // "Table '%s' doesn't exist"
+        //    WPFatal(!errNo, "Your database structure is not up to date. Please make sure you've executed all queries in the sql/updates folders.");
+        //    return false;
         default:
             sLogMgr->WriteLn(SQLDRIVER_LOG, "Unhandled MySQL errno %u. Unexpected behaviour possible.", errNo);
             return false;

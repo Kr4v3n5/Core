@@ -37,6 +37,7 @@ enum ConnectionFlags
 {
     CONNECTION_ASYNC = 0x1,
     CONNECTION_SYNCH = 0x2,
+    CONNECTION_BOTH = CONNECTION_ASYNC | CONNECTION_SYNCH,
 };
 
 struct MySQLConnectionInfo
@@ -63,13 +64,6 @@ struct MySQLConnectionInfo
     std::string database;
     std::string host;
     std::string port_or_socket;
-};
-
-struct PreparedStatementTable
-{
-    uint32 index;
-    const char* query;
-    ConnectionFlags type;
 };
 
 typedef std::map<uint32 /*index*/, std::pair<const char* /*query*/, ConnectionFlags /*sync/async*/> > PreparedStatementMap;
