@@ -325,17 +325,17 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         areaId = fields[7].GetUInt16();
     }
 
-    std::string username = GetTrilliumString(LANG_ERROR);
-    std::string email = GetTrilliumString(LANG_ERROR);
-    std::string last_ip = GetTrilliumString(LANG_ERROR);
-    uint32 security = 0;
+    std::string username   = GetTrilliumString(LANG_ERROR);
+    std::string email      = GetTrilliumString(LANG_ERROR);
+    std::string last_ip    = GetTrilliumString(LANG_ERROR);
+    uint32 security        = 0;
     std::string last_login = GetTrilliumString(LANG_ERROR);
 
-    QueryResult result = LoginDatabase.PQuery("SELECT a.username, aa.gmlevel, a.email, a.last_ip, a.last_login, a.mutetime "
-                                                "FROM account a "
-                                                "LEFT JOIN account_access aa "
-                                                "ON (a.id = aa.id) "
-                                                "WHERE a.id = '%u'", accId);
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_PINFO);
+    stmt->setInt32(0, int32(realmID));
+    stmt->setUInt32(1, accId);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
+
     if (result)
     {
         Field* fields = result->Fetch();
@@ -365,8 +365,11 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
 
     std::string bannedby = "unknown";
     std::string banreason = "";
-    if (QueryResult result2 = LoginDatabase.PQuery("SELECT unbandate, bandate = unbandate, bannedby, banreason FROM account_banned "
-                                                  "WHERE id = '%u' AND active ORDER BY bandate ASC LIMIT 1", accId))
+
+    stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_PINFO_BANS);
+    stmt->setUInt32(0, accId);
+    PreparedQueryResult result2 = LoginDatabase.Query(stmt);
+    if (!result2)
     {
         Field* fields = result2->Fetch();
         banTime = fields[1].GetBool() ? 0 : fields[0].GetUInt64();
@@ -683,16 +686,30 @@ bool ChatHandler::HandleCombatStopCommand(const char* args)
 
 bool ChatHandler::HandleLookupPlayerIpCommand(const char* args)
 {
+    std::string ip;
+    int32 limit;
+    char* limit_str;
+
+    Player *chr = getSelectedPlayer();
     if (!*args)
-        return false;
+    {
+        // NULL only if used from console
+        if (!chr || chr == GetSession()->GetPlayer())
+            return false;
 
-    std::string ip = strtok ((char*)args, " ");
-    char* limit_str = strtok (NULL, " ");
-    int32 limit = limit_str ? atoi (limit_str) : -1;
+        ip = chr->GetSession()->GetRemoteAddress();
+        limit = -1;
+    }
+    else
+    {
+        ip = strtok ((char*)args, " ");
+        limit_str = strtok (NULL, " ");
+        limit = limit_str ? atoi (limit_str) : -1;
+    }
 
-    LoginDatabase.EscapeString(ip);
-
-    QueryResult result = LoginDatabase.PQuery("SELECT id, username FROM account WHERE last_ip = '%s'", ip.c_str ());
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_BY_IP);
+    stmt->setString(0, ip);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
     return LookupPlayerSearchCommand(result, limit);
 }
@@ -709,11 +726,11 @@ bool ChatHandler::HandleLookupPlayerAccountCommand(const char* args)
     if (!AccountMgr::normalizeString (account))
         return false;
 
-    LoginDatabase.EscapeString (account);
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_LIST_BY_NAME);
+    stmt->setString(0, account);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
-    QueryResult result = LoginDatabase.PQuery ("SELECT id, username FROM account WHERE username = '%s'", account.c_str ());
-
-    return LookupPlayerSearchCommand (result, limit);
+    return LookupPlayerSearchCommand(result, limit);
 }
 
 bool ChatHandler::HandleLookupPlayerEmailCommand(const char* args)
@@ -726,14 +743,14 @@ bool ChatHandler::HandleLookupPlayerEmailCommand(const char* args)
     char* limit_str = strtok (NULL, " ");
     int32 limit = limit_str ? atoi (limit_str) : -1;
 
-    LoginDatabase.EscapeString (email);
+    PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_LIST_BY_EMAIL);
+    stmt->setString(0, email);
+    PreparedQueryResult result = LoginDatabase.Query(stmt);
 
-    QueryResult result = LoginDatabase.PQuery ("SELECT id, username FROM account WHERE email = '%s'", email.c_str ());
-
-    return LookupPlayerSearchCommand (result, limit);
+    return LookupPlayerSearchCommand(result, limit);
 }
 
-bool ChatHandler::LookupPlayerSearchCommand(QueryResult result, int32 limit)
+bool ChatHandler::LookupPlayerSearchCommand(PreparedQueryResult result, int32 limit)
 {
     if (!result)
     {
@@ -757,8 +774,11 @@ bool ChatHandler::LookupPlayerSearchCommand(QueryResult result, int32 limit)
         uint32 acc_id = fields[0].GetUInt32();
         std::string acc_name = fields[1].GetString();
 
-        QueryResult chars = CharacterDatabase.PQuery("SELECT guid, name FROM characters WHERE account = '%u'", acc_id);
-        if (chars)
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_GUID_NAME_BY_ACC);
+        stmt->setUInt32(0, acc_id);
+        PreparedQueryResult result2 = CharacterDatabase.Query(stmt);
+
+        if (result2)
         {
             PSendSysMessage(LANG_LOOKUP_PLAYER_ACCOUNT, acc_name.c_str(), acc_id);
 
@@ -767,14 +787,14 @@ bool ChatHandler::LookupPlayerSearchCommand(QueryResult result, int32 limit)
 
             do
             {
-                Field* charfields = chars->Fetch();
+                Field* charfields = result2->Fetch();
                 guid = charfields[0].GetUInt64();
                 name = charfields[1].GetString();
 
                 PSendSysMessage(LANG_LOOKUP_PLAYER_CHARACTER, name.c_str(), guid);
                 ++i;
 
-            } while (chars->NextRow() && (limit == -1 || i < limit));
+            } while (result2->NextRow() && (limit == -1 || i < limit));
         }
     } while (result->NextRow());
 

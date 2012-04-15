@@ -46,6 +46,8 @@ enum CharacterDatabaseStatements
         name for a suiting suffix.
     */
 
+    CHAR_SEL_CHAR_GUID_NAME_BY_ACC,
+
     CHAR_DEL_QUEST_POOL_SAVE,
     CHAR_ADD_QUEST_POOL_SAVE,
     CHAR_DEL_NONEXISTENT_GUILD_BANK_ITEM,

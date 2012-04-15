@@ -214,15 +214,13 @@ public:
 
             ///- Get the username, last IP and GM level of each account
             // No SQL injection. account is uint32.
-            QueryResult resultLogin =
-                LoginDatabase.PQuery("SELECT a.username, a.last_ip, aa.gmlevel, a.expansion "
-                "FROM account a "
-                "LEFT JOIN account_access aa "
-                "ON (a.id = aa.id) "
-                "WHERE a.id = '%u'", account);
+            PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_INFO);
+            stmt->setUInt32(0, account);
+            PreparedQueryResult resultLogin = LoginDatabase.Query(stmt);
+
             if (resultLogin)
             {
-                Field *fieldsLogin = resultLogin->Fetch();
+                Field* fieldsLogin = resultLogin->Fetch();
                 handler->PSendSysMessage(LANG_ACCOUNT_LIST_LINE,
                     fieldsLogin[0].GetCString(), name.c_str(), fieldsLogin[1].GetCString(),
                     fieldsDB[2].GetUInt16(), fieldsDB[3].GetUInt16(), fieldsLogin[3].GetUInt32(),
@@ -246,18 +244,26 @@ public:
             return false;
         }
 
-        std::string argstr = (char*)args;
-        if (argstr == "on")
-        {
-            LoginDatabase.PExecute("UPDATE account SET locked = '1' WHERE id = '%d'", handler->GetSession()->GetAccountId());
-            handler->PSendSysMessage(LANG_COMMAND_ACCLOCKLOCKED);
-            return true;
-        }
+        std::string param = (char*)args;
 
-        if (argstr == "off")
+        if (!param.empty())
         {
-            LoginDatabase.PExecute("UPDATE account SET locked = '0' WHERE id = '%d'", handler->GetSession()->GetAccountId());
-            handler->PSendSysMessage(LANG_COMMAND_ACCLOCKUNLOCKED);
+            PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_ACCOUNT_LOCK);
+
+            if (param == "on")
+            {
+                stmt->setBool(0, true);                                     // locked
+                handler->PSendSysMessage(LANG_COMMAND_ACCLOCKLOCKED);
+            }
+            else if (param == "off")
+            {
+                stmt->setBool(0, false);                                    // unlocked
+                handler->PSendSysMessage(LANG_COMMAND_ACCLOCKUNLOCKED);
+            }
+
+            stmt->setUInt32(1, handler->GetSession()->GetAccountId());
+
+            LoginDatabase.Execute(stmt);
             return true;
         }
 
@@ -337,7 +343,7 @@ public:
             return false;
 
         std::string account_name;
-        uint32 account_id;
+        uint32 accountId;
 
         if (!szExp)
         {
@@ -345,8 +351,8 @@ public:
             if (!player)
                 return false;
 
-            account_id = player->GetSession()->GetAccountId();
-            AccountMgr::GetName(account_id, account_name);
+            accountId = player->GetSession()->GetAccountId();
+            AccountMgr::GetName(accountId, account_name);
             szExp = szAcc;
         }
         else
@@ -360,8 +366,8 @@ public:
                 return false;
             }
 
-            account_id = AccountMgr::GetId(account_name);
-            if (!account_id)
+            accountId = AccountMgr::GetId(account_name);
+            if (!accountId)
             {
                 handler->PSendSysMessage(LANG_ACCOUNT_NOT_EXIST, account_name.c_str());
                 handler->SetSentErrorMessage(true);
@@ -372,17 +378,22 @@ public:
 
         // Let set addon state only for lesser (strong) security level
         // or to self account
-        if (handler->GetSession() && handler->GetSession()->GetAccountId () != account_id &&
-            handler->HasLowerSecurityAccount (NULL, account_id, true))
+        if (handler->GetSession() && handler->GetSession()->GetAccountId () != accountId &&
+            handler->HasLowerSecurityAccount (NULL, accountId, true))
             return false;
 
         int expansion = atoi(szExp);                                    //get int anyway (0 if error)
         if (expansion < 0 || uint8(expansion) > sWorld->getIntConfig(CONFIG_EXPANSION))
             return false;
 
-        // No SQL injection
-        LoginDatabase.PExecute("UPDATE account SET expansion = '%d' WHERE id = '%u'", expansion, account_id);
-        handler->PSendSysMessage(LANG_ACCOUNT_SETADDON, account_name.c_str(), account_id, expansion);
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_EXPANSION);
+
+        stmt->setUInt8(0, expansion);
+        stmt->setUInt32(1, accountId);
+
+        LoginDatabase.Execute(stmt);
+
+        handler->PSendSysMessage(LANG_ACCOUNT_SETADDON, account_name.c_str(), accountId, expansion);
         return true;
     }
 
@@ -454,7 +465,13 @@ public:
         // Check and abort if the target gm has a higher rank on one of the realms and the new realm is -1
         if (gmRealmID == -1 && !AccountMgr::IsConsoleAccount(plSecurity))
         {
-            QueryResult result = LoginDatabase.PQuery("SELECT * FROM account_access WHERE id = '%u' AND gmlevel > '%d'", targetAccountId, gm);
+            PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_ACCESS_GMLEVEL_TEST);
+
+            stmt->setUInt32(0, targetAccountId);
+            stmt->setUInt8(1, uint8(gm));
+
+            PreparedQueryResult result = LoginDatabase.Query(stmt);
+
             if (result)
             {
                 handler->SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
@@ -472,13 +489,35 @@ public:
         }
 
         // If gmRealmID is -1, delete all values for the account id, else, insert values for the specific realmID
+        PreparedStatement* stmt;
+
         if (gmRealmID == -1)
-            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u'", targetAccountId);
+        {
+            stmt = LoginDatabase.GetPreparedStatement(LOGIN_DEL_ACCOUNT_ACCESS);
+
+            stmt->setUInt32(0, targetAccountId);
+        }
         else
-            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u' AND (RealmID = '%d' OR RealmID = '-1')", targetAccountId, realmID);
+        {
+            stmt = LoginDatabase.GetPreparedStatement(LOGIN_DEL_ACCOUNT_ACCESS_BY_REALM);
+
+            stmt->setUInt32(0, targetAccountId);
+            stmt->setUInt32(1, realmID);
+        }
+
+        LoginDatabase.Execute(stmt);
 
         if (gm != 0)
-            LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u', '%d', '%d')", targetAccountId, gm, realmID);
+        {
+            stmt = LoginDatabase.GetPreparedStatement(LOGIN_INS_ACCOUNT_ACCESS);
+
+            stmt->setUInt32(0, targetAccountId);
+            stmt->setUInt8(1, uint8(gm));
+            stmt->setInt32(2, gmRealmID);
+
+            LoginDatabase.Execute(stmt);
+        }
+
         handler->PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
         return true;
     }
