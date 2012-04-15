@@ -486,7 +486,7 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
         if (areaEntry)
         {
             int loc = GetSessionDbcLocale ();
-            std::string name = areaEntry->area_name[loc];
+            std::string name = areaEntry->area_name;
             if (name.empty())
                 continue;
 
@@ -495,14 +495,14 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
                 loc = 0;
                 for (; loc < TOTAL_LOCALES; ++loc)
                 {
-                    if (loc == GetSessionDbcLocale ())
+                    if (loc == GetSessionDbcLocale())
                         continue;
 
-                    name = areaEntry->area_name[loc];
+                    name = areaEntry->area_name;
                     if (name.empty ())
                         continue;
 
-                    if (Utf8FitTo (name, wnamepart))
+                    if (Utf8FitTo(name, wnamepart))
                         break;
                 }
             }
@@ -522,7 +522,7 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
                 else
                     ss << areaEntry->ID << " - " << name << ' ' << localeNames[loc];
 
-                SendSysMessage (ss.str ().c_str());
+                SendSysMessage(ss.str ().c_str());
 
                 if (!found)
                     found = true;
