@@ -694,6 +694,7 @@ class WorldSession
 
         bool processChatmessageFurtherAfterSecurityChecks(std::string&, uint32);
         void HandleMessageChatOpcode(WorldPacket& recvPacket);
+        void HandleAddonMessageChatOpcode(WorldPacket& recvPacket);
         void SendPlayerNotFoundNotice(std::string name);
         void SendPlayerAmbiguousNotice(std::string name);
         void SendWrongFactionNotice();

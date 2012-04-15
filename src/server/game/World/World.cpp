@@ -1772,9 +1772,9 @@ void World::SetInitialWorldSettings()
 
 void World::DetectDBCLang()
 {
-    uint8 m_lang_confid = ConfigMgr::GetIntDefault("DBC.Locale", 255);
+    uint8 m_lang_confid = ConfigMgr::GetIntDefault("DBC.Locale", 0);
 
-    if (m_lang_confid != 255 && m_lang_confid >= TOTAL_LOCALES)
+    if (m_lang_confid >= TOTAL_LOCALES)
     {
         sLog->outError("Incorrect DBC.Locale! Must be >= 0 and < %d (set to 0)", TOTAL_LOCALES);
         m_lang_confid = LOCALE_enUS;
@@ -1787,7 +1787,7 @@ void World::DetectDBCLang()
     uint8 default_locale = TOTAL_LOCALES;
     for (uint8 i = default_locale - 1; i < TOTAL_LOCALES; --i)  // -1 will be 255 due to uint8
     {
-        if (race->name > 0)                     // check by race names
+        if (race->name != '\0')                     // check by race names
         {
             default_locale = i;
             m_availableDbcLocaleMask |= (1 << i);
@@ -1808,9 +1808,9 @@ void World::DetectDBCLang()
         exit(1);
     }
 
-    m_defaultDbcLocale = LocaleConstant(default_locale);
+    m_defaultDbcLocale = LocaleConstant(m_lang_confid);
 
-    sLog->outString("Using %s DBC Locale as default. All available DBC locales: %s", localeNames[m_defaultDbcLocale], availableLocalsStr.empty() ? "<none>" : availableLocalsStr.c_str());
+    sLog->outString("Using %s DBC Locale", localeNames[m_defaultDbcLocale]);
     sLog->outString();
 }
 
