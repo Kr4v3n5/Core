@@ -348,7 +348,7 @@ class Field
         }
 
     private:
-        #ifdef TRINITY_DEBUG
+        #ifdef TRILLIUM_DEBUG
         static char const* FieldTypeToString(enum_field_types type)
         {
             switch (type)

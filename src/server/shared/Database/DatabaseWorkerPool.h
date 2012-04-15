@@ -348,22 +348,22 @@ class DatabaseWorkerPool
         //! were appended to the transaction will be respected during execution.
         void CommitTransaction(SQLTransaction transaction)
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef TRILLIUM_DEBUG
             //! Only analyze transaction weaknesses in Debug mode.
             //! Ideally we catch the faults in Debug mode and then correct them,
             //! so there's no need to waste these CPU cycles in Release mode.
             switch (transaction->GetSize())
             {
                 case 0:
-                    sLog->outSQLDriver("Transaction contains 0 queries. Not executing.");
+                    sLogMgr->WriteLn(SQLDRIVER_LOG, "Transaction contains 0 queries. Not executing.");
                     return;
                 case 1:
-                    sLog->outSQLDriver("Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
+                    sLogMgr->WriteLn(SQLDRIVER_LOG, "Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
                     break;
                 default:
                     break;
             }
-            #endif // TRINITY_DEBUG
+            #endif // TRILLIUM_DEBUG
 
             Enqueue(new TransactionTask(transaction));
         }
