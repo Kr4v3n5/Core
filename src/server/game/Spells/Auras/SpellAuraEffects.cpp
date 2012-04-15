@@ -1930,7 +1930,7 @@ void AuraEffect::HandlePhase(AuraApplication const* aurApp, uint8 mode, bool app
 
     // no-phase is also phase state so same code for apply and remove
     uint32 newPhase = 0;
-    uint32 MapID;
+    uint32 MapID = 0;
     Unit::AuraEffectList const& phases = target->GetAuraEffectsByType(SPELL_AURA_PHASE);
     if (!phases.empty())
         for (Unit::AuraEffectList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)

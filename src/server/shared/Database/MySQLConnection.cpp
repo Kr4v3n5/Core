@@ -66,9 +66,7 @@ MySQLConnection::~MySQLConnection()
         delete m_stmts[i];
 
     for (PreparedStatementMap::const_iterator itr = m_queries.begin(); itr != m_queries.end(); ++itr)
-    {
         free((void *)m_queries[itr->first].first);
-    }
 
     mysql_close(m_Mysql);
 }

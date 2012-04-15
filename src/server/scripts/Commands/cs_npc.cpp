@@ -246,12 +246,14 @@ public:
         if (wait < 0)
             wait = 0;
 
-        //Player* player = handler->GetSession()->GetPlayer();
+        // Update movement type
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_UPD_CREATURE_MOVEMENT_TYPE);
 
-        //WaypointMgr.AddLastNode(lowguid, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), wait, 0);
+        stmt->setUInt8(0, uint8(WAYPOINT_MOTION_TYPE));
+        stmt->setUInt32(1, lowguid);
 
-        // update movement type
-        WorldDatabase.PExecute("UPDATE creature SET MovementType = '%u' WHERE guid = '%u'", WAYPOINT_MOTION_TYPE, lowguid);
+        WorldDatabase.Execute(stmt);
+
         if (creature && creature->GetWaypointPath())
         {
             creature->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
