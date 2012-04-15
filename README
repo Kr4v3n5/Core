@@ -1,6 +1,6 @@
 = TrilliumEMU -- General information =
 
-Copyright (C) TrilliumEMU (http://www.trilliumemu.org)
+Copyright (C) TrilliumEMU (http://trilliumx.code-engine.org/)
 
   TrilliumEMU is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ Copyright (C) TrilliumEMU (http://www.trilliumemu.org)
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 For further information on the TrilliumEMU project, please visit our
-project website at http://www.trilliumemu.org
+project website at http://trilliumx.code-engine.org/
 
 API documentation can be obtained by running the "make doc" command inside
 the doc directory. (maybe -- doubt it -- this needs to be fixed or removed)
