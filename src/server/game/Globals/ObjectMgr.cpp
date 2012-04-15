@@ -3084,11 +3084,8 @@ void ObjectMgr::LoadPlayerInfo()
     {
         uint32 oldMSTime = getMSTime();
 
-        QueryResult result = QueryResult(NULL);
-        if (sWorld->getBoolConfig(CONFIG_START_ALL_SPELLS))
-            result = WorldDatabase.Query("SELECT race, class, Spell, Active FROM playercreateinfo_spell_custom");
-        else
-            result = WorldDatabase.Query("SELECT race, class, Spell FROM playercreateinfo_spell");
+        std::string tableName = sWorld->getBoolConfig(CONFIG_START_ALL_SPELLS) ? "playercreateinfo_spell_custom" : "playercreateinfo_spell";
+        QueryResult result = WorldDatabase.PQuery("SELECT race, class, Spell FROM %s", tableName.c_str());
 
         if (!result)
         {
@@ -3644,9 +3641,7 @@ void ObjectMgr::LoadQuests()
         // additional quest integrity checks (GO, creature_template and item_template must be loaded already)
 
         if (qinfo->GetQuestMethod() >= 3)
-        {
             sLog->outErrorDb("Quest %u has `Method` = %u, expected values are 0, 1 or 2.", qinfo->GetQuestId(), qinfo->GetQuestMethod());
-        }
 
         if (qinfo->QuestFlags & ~QUEST_TRILLIUM_FLAGS_DB_ALLOWED)
         {
@@ -4327,9 +4322,8 @@ void ObjectMgr::LoadScripts(ScriptsType type)
     scripts->clear();                                       // need for reload support
 
     bool isSpellScriptTable = (type == SCRIPTS_SPELL);
-    char buff[125];
-    sprintf(buff, "SELECT id, delay, command, datalong, datalong2, dataint, x, y, z, o%s FROM %s", isSpellScriptTable ? ", effIndex" : "", tableName.c_str());
-    QueryResult result = WorldDatabase.Query(buff);
+    //                                                 0    1       2         3         4          5    6  7  8  9
+    QueryResult result = WorldDatabase.PQuery("SELECT id, delay, command, datalong, datalong2, dataint, x, y, z, o%s FROM %s", isSpellScriptTable ? ", effIndex" : "", tableName.c_str());
 
     if (!result)
     {
@@ -5863,8 +5857,6 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
 
         WorldDatabase.Execute(stmt);
     }
-
-    return;
 }
 
 void ObjectMgr::LoadAreaTriggerTeleports()
