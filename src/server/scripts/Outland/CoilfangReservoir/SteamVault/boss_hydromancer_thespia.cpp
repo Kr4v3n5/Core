@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2008 - 2011 TrinityCore <http://www.trinitycore.org/>
  *
- * Copyright (C) 2011 - 2012 TrilliumEMU <http://www.trilliumemu.org/>
+ * Copyright (C) 2011 - 2012 TrilliumEMU <http://trilliumx.code-engine.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
