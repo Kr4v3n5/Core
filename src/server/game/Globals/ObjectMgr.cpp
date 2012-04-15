@@ -1391,7 +1391,7 @@ bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guidLow, uint32 linkedGuidLow)
     if (!linkedGuidLow) // we're removing the linking
     {
         mLinkedRespawnMap.erase(guid);
-        PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CRELINKED_RESPAWN);
+        PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_CREATURE_LINKED_RESPAWN);
         stmt->setUInt32(0, guidLow);
         WorldDatabase.Execute(stmt);
         return true;
@@ -1415,7 +1415,7 @@ bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guidLow, uint32 linkedGuidLow)
     uint64 linkedGuid = MAKE_NEW_GUID(linkedGuidLow, slave->id, HIGHGUID_UNIT);
 
     mLinkedRespawnMap[guid] = linkedGuid;
-    PreparedStatement *stmt = WorldDatabase.GetPreparedStatement(WORLD_REP_CRELINKED_RESPAWN);
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_REP_CREATURE_LINKED_RESPAWN);
     stmt->setUInt32(0, guidLow);
     stmt->setUInt32(1, linkedGuidLow);
     WorldDatabase.Execute(stmt);
@@ -5785,7 +5785,7 @@ GraveYardData const* ObjectMgr::FindGraveYardData(uint32 id, uint32 zoneId)
     return NULL;
 }
 
-bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool inDB)
+bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool persist /*= true*/)
 {
     if (FindGraveYardData(id, zoneId))
         return false;
@@ -5798,16 +5798,21 @@ bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool inD
     mGraveYardMap.insert(GraveYardMap::value_type(zoneId, data));
 
     // add link to DB
-    if (inDB)
+    if (persist)
     {
-        WorldDatabase.PExecute("INSERT INTO game_graveyard_zone (id, ghost_zone, faction) "
-            "VALUES ('%u', '%u', '%u')", id, zoneId, team);
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_INS_GRAVEYARD_ZONE);
+
+        stmt->setUInt32(0, id);
+        stmt->setUInt32(1, zoneId);
+        stmt->setUInt16(2, uint16(team));
+
+        WorldDatabase.Execute(stmt);
     }
 
     return true;
 }
 
-void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool inDB)
+void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool persist /*= false*/)
 {
     GraveYardMap::iterator graveLow  = mGraveYardMap.lower_bound(zoneId);
     GraveYardMap::iterator graveUp   = mGraveYardMap.upper_bound(zoneId);
@@ -5846,9 +5851,15 @@ void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, uint32 team, bool 
     mGraveYardMap.erase(itr);
 
     // remove link from DB
-    if (inDB)
+    if (persist)
     {
-        WorldDatabase.PExecute("DELETE FROM game_graveyard_zone WHERE id = '%u' AND ghost_zone = '%u' AND faction = '%u'", id, zoneId, team);
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_GRAVEYARD_ZONE);
+
+        stmt->setUInt32(0, id);
+        stmt->setUInt32(1, zoneId);
+        stmt->setUInt16(2, uint16(team));
+
+        WorldDatabase.Execute(stmt);
     }
 
     return;
@@ -8008,8 +8019,18 @@ bool ObjectMgr::AddGameTele(GameTele& tele)
 
     m_GameTeleMap[new_id] = tele;
 
-    WorldDatabase.PExecute("INSERT INTO game_tele (id, position_x, position_y, position_z, orientation, map, name) VALUES (%u, %f, %f, %f, %f, %d, '%s')",
-        new_id, tele.position_x, tele.position_y, tele.position_z, tele.orientation, tele.mapId, tele.name.c_str());
+    PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_INS_GAME_TELE);
+
+    stmt->setUInt32(0, new_id);
+    stmt->setFloat(1, tele.position_x);
+    stmt->setFloat(2, tele.position_y);
+    stmt->setFloat(3, tele.position_z);
+    stmt->setFloat(4, tele.orientation);
+    stmt->setUInt16(5, uint16(tele.mapId));
+    stmt->setString(6, tele.name);
+
+    WorldDatabase.Execute(stmt);
+
     return true;
 }
 
@@ -8027,7 +8048,11 @@ bool ObjectMgr::DeleteGameTele(const std::string& name)
     {
         if (itr->second.wnameLow == wname)
         {
-            WorldDatabase.PExecute("DELETE FROM game_tele WHERE name = '%s'", itr->second.name.c_str());
+            PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_GAME_TELE);
+
+            stmt->setString(0, itr->second.name);
+
+            WorldDatabase.Execute(stmt);
             m_GameTeleMap.erase(itr);
             return true;
         }
@@ -8446,16 +8471,26 @@ void ObjectMgr::LoadGossipMenuItems()
     sLog->outString();
 }
 
-void ObjectMgr::AddVendorItem(uint32 entry, uint32 item, int32 maxcount, uint32 incrtime, uint32 extendedcost, bool savetodb)
+void ObjectMgr::AddVendorItem(uint32 entry, uint32 item, int32 maxcount, uint32 incrtime, uint32 extendedcost, bool persist)
 {
     VendorItemData& vList = m_mCacheVendorItemMap[entry];
     vList.AddItem(item, maxcount, incrtime, extendedcost);
 
-    if (savetodb)
-        WorldDatabase.PExecute("INSERT INTO npc_vendor (entry, item, maxcount, incrtime, extendedcost) VALUES('%u', '%u', '%u', '%u', '%u')", entry, item, maxcount, incrtime, extendedcost);
+    if (persist)
+    {
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_INS_NPC_VENODR);
+
+        stmt->setUInt32(0, entry);
+        stmt->setUInt32(1, item);
+        stmt->setUInt8(2, maxcount);
+        stmt->setUInt32(3, incrtime);
+        stmt->setUInt32(4, extendedcost);
+
+        WorldDatabase.Execute(stmt);
+    }
 }
 
-bool ObjectMgr::RemoveVendorItem(uint32 entry, uint32 item, bool savetodb)
+bool ObjectMgr::RemoveVendorItem(uint32 entry, uint32 item, bool persist)
 {
     CacheVendorItemMap::iterator  iter = m_mCacheVendorItemMap.find(entry);
     if (iter == m_mCacheVendorItemMap.end())
@@ -8464,7 +8499,16 @@ bool ObjectMgr::RemoveVendorItem(uint32 entry, uint32 item, bool savetodb)
     if (!iter->second.RemoveItem(item))
         return false;
 
-    if (savetodb) WorldDatabase.PExecute("DELETE FROM npc_vendor WHERE entry='%u' AND item='%u'", entry, item);
+    if (persist)
+    {
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_DEL_NPC_VENDOR);
+
+        stmt->setUInt32(0, entry);
+        stmt->setUInt32(1, item);
+
+        WorldDatabase.Execute(stmt);
+    }
+
     return true;
 }
 

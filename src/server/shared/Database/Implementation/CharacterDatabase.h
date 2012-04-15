@@ -41,7 +41,7 @@ typedef DatabaseWorkerPool<CharacterDatabaseConnection> CharacterDatabaseWorkerP
 enum CharacterDatabaseStatements
 {
     /*  Naming standard for defines:
-        {DB}_{SET/DEL/ADD/REP}_{Summary of data changed}
+        {DB}_{SEL/INS/UPD/DEL/REP}_{Summary of data changed}
         When updating more than one field, consider looking at the calling function
         name for a suiting suffix.
     */
@@ -49,7 +49,7 @@ enum CharacterDatabaseStatements
     CHAR_SEL_CHAR_GUID_NAME_BY_ACC,
 
     CHAR_DEL_QUEST_POOL_SAVE,
-    CHAR_ADD_QUEST_POOL_SAVE,
+    CHAR_INS_QUEST_POOL_SAVE,
     CHAR_DEL_NONEXISTENT_GUILD_BANK_ITEM,
     CHAR_DEL_EXPIRED_BANS,
     CHAR_GET_GUID_BY_NAME,

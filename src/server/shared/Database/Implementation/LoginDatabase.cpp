@@ -63,7 +63,6 @@ void LoginDatabaseConnection::DoPrepareStatements()
     PREPARE_STATEMENT(LOGIN_UPD_EXPANSION, "UPDATE account SET expansion = ? WHERE id = ?", CONNECTION_ASYNC);
     PREPARE_STATEMENT(LOGIN_UPD_ACCOUNT_LOCK, "UPDATE account SET locked = ? WHERE id = ?", CONNECTION_ASYNC);
     PREPARE_STATEMENT(LOGIN_INS_LOG, "INSERT INTO logs (time, realm, type, string) VALUES (UNIX_TIMESTAMP(), ? , ?, ?)", CONNECTION_ASYNC);
-    // TODO.
     PREPARE_STATEMENT(LOGIN_UPD_USERNAME, "UPDATE account SET v = 0, s = 0, username = ?, sha_pass_hash = ? WHERE id = ?", CONNECTION_ASYNC);
     PREPARE_STATEMENT(LOGIN_UPD_PASSWORD, "UPDATE account SET v = 0, s = 0, sha_pass_hash = ? WHERE id = ?", CONNECTION_ASYNC);
     PREPARE_STATEMENT(LOGIN_UPD_MUTE_TIME, "UPDATE account SET mutetime = ? WHERE id = ?", CONNECTION_ASYNC);

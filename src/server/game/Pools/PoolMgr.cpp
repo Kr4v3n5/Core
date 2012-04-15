@@ -812,7 +812,7 @@ void PoolMgr::LoadFromDB()
     {
         uint32 oldMSTime = getMSTime();
 
-        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_LOAD_QUEST_POOLS);
+        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_QUEST_POOLS);
         PreparedQueryResult result = WorldDatabase.Query(stmt);
 
         if (!result)
@@ -969,7 +969,7 @@ void PoolMgr::SaveQuestsToDB()
     {
         if (IsSpawnedObject<Quest>(itr->first))
         {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_ADD_QUEST_POOL_SAVE);
+            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_QUEST_POOL_SAVE);
             stmt->setUInt32(0, itr->second);
             stmt->setUInt32(1, itr->first);
             trans->Append(stmt);
