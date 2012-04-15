@@ -121,7 +121,7 @@ void LogMgr::LogFile::WriteDb(LogLevel level, const std::string& msg)
 {
     if (!msg.empty())
     {
-        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_ADD_LOG);
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_INS_LOG);
         stmt->setUInt32(0, uint32(time(NULL)));
         stmt->setUInt32(1, sLogMgr->GetRealmId());
         stmt->setString(2, _name);
