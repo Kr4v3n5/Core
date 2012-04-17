@@ -3423,7 +3423,7 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
 void Spell::EffectDualWield(SpellEffIndex /*effIndex*/)
 {
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
     unitTarget->SetCanDualWield(true);
@@ -3439,7 +3439,7 @@ void Spell::EffectPull(SpellEffIndex effIndex)
 
 void Spell::EffectDistract(SpellEffIndex /*effIndex*/)
 {
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
     // Check for possible target
@@ -3470,7 +3470,7 @@ void Spell::EffectDistract(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectPickPocket(SpellEffIndex /*effIndex*/)
 {
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
@@ -3487,7 +3487,7 @@ void Spell::EffectPickPocket(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectAddFarsight(SpellEffIndex effIndex)
 {
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
     if (m_caster->GetTypeId() != TYPEID_PLAYER)

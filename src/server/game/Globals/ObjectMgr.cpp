@@ -429,7 +429,6 @@ void ObjectMgr::LoadCreatureTemplates()
 
         uint32 entry = fields[0].GetUInt32();
 
-
         CreatureTemplate& creatureTemplate = CreatureTemplateStore[entry];
 
         creatureTemplate.Entry = entry;
