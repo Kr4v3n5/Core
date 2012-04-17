@@ -1147,75 +1147,81 @@ struct ItemEntry
     uint32   Sheath;                                         // 7
 };
 
+struct ItemCurrencyCostEntry
+{
+    //uint32  Id;
+    uint32  ItemId;
+};
+
 struct ItemSparseEntry
 {
-    uint32 Id;
-    uint32 Quality;
-    uint32 Flags;
-    uint32 Flags2;
-    int32 BuyPrice;
-    int32 SellPrice;
-    uint32 InventoryType;
-    int32 AllowableClass;
-    int32 AllowableRace;
-    uint32 ItemLevel;
-    uint32 RequiredLevel;
-    uint32 RequiredSkill;
-    uint32 RequiredSkillRank;
-    uint32 RequiredSpell;
-    uint32 RequiredHonorRank;
-    uint32 RequiredCityRank;
-    uint32 RequiredReputationFaction;
-    uint32 RequiredReputationRank;
-    int32 MaxCount;
-    int32 Stackable;
-    int32 ContainerSlots;
-    int32 ItemStatType[MAX_ITEM_PROTO_STATS];
-    int32 ItemStatValue[MAX_ITEM_PROTO_STATS];
-    int32 ItemStatUnk1[MAX_ITEM_PROTO_STATS];
-    int32 ItemStatUnk2[MAX_ITEM_PROTO_STATS];
-    int32 ScalingStatDistribution;
-    int32 DamageType;
-    int32 Delay;
-    float RangedModRange;
-    int32 SpellId[MAX_ITEM_PROTO_SPELLS];
-    int32 SpellTrigger[MAX_ITEM_PROTO_SPELLS];
-    int32 SpellCharges[MAX_ITEM_PROTO_SPELLS];
-    int32 SpellCooldown[MAX_ITEM_PROTO_SPELLS];
-    int32 SpellCategory[MAX_ITEM_PROTO_SPELLS];
-    int32 SpellCategoryCooldown[MAX_ITEM_PROTO_SPELLS];
-    int32 Bonding;
-    char* name;
-    char* name2;
-    char* name3;
-    char* name4;
-    char* description;
-    int32 PageText;
-    int32 LanguageId;
-    int32 PageMaterial;
-    int32 StartQuest;
-    int32 LockID;
-    int32 Material;
-    int32 Sheath;
-    int32 RandomProperty;
-    int32 RandomSuffix;
-    int32 ItemSet;
-    uint32 MaxDurability;
-    int32 Area;
-    int32 Map;
-    int32 BagFamily;
-    int32 TotemCategory;
-    int32 SocketColor[MAX_ITEM_PROTO_SOCKETS];
-    int32 SocketContent[MAX_ITEM_PROTO_SOCKETS];
-    int32 SocketBonus;
-    int32 GemProperties;
-    float ArmorDamageModifier;
-    int32 Duration;
-    int32 ItemLimitCategory;
-    int32 HolidayId;
-    float StatScalingFactor;
-    int32 field_130; // related to archaeology (?)
-    int32 field_131; // related to archaeology
+    uint32     ID;                                           // 0
+    uint32     Quality;                                      // 1
+    uint32     Flags;                                        // 2
+    uint32     Flags2;                                       // 3
+    uint32     BuyPrice;                                     // 4
+    uint32     SellPrice;                                    // 5
+    uint32     InventoryType;                                // 6
+    int32      AllowableClass;                               // 7
+    int32      AllowableRace;                                // 8
+    uint32     ItemLevel;                                    // 9
+    int32      RequiredLevel;                                // 10
+    uint32     RequiredSkill;                                // 11
+    uint32     RequiredSkillRank;                            // 12
+    uint32     RequiredSpell;                                // 13
+    uint32     RequiredHonorRank;                            // 14
+    uint32     RequiredCityRank;                             // 15
+    uint32     RequiredReputationFaction;                    // 16
+    uint32     RequiredReputationRank;                       // 17
+    uint32     MaxCount;                                     // 18
+    uint32     Stackable;                                    // 19
+    uint32     ContainerSlots;                               // 20
+    int32      ItemStatType[MAX_ITEM_PROTO_STATS];           // 21 - 30
+    uint32     ItemStatValue[MAX_ITEM_PROTO_STATS];          // 31 - 40
+    int32      ItemStatUnk1[MAX_ITEM_PROTO_STATS];           // 41 - 50
+    int32      ItemStatUnk2[MAX_ITEM_PROTO_STATS];           // 51 - 60
+    uint32     ScalingStatDistribution;                      // 61
+    uint32     DamageType;                                   // 62
+    uint32     Delay;                                        // 63
+    float      RangedModRange;                               // 64
+    int32      SpellId[MAX_ITEM_PROTO_SPELLS];               // 65 - 69
+    int32      SpellTrigger[MAX_ITEM_PROTO_SPELLS];          // 70 - 74
+    int32      SpellCharges[MAX_ITEM_PROTO_SPELLS];          // 75 - 79
+    int32      SpellCooldown[MAX_ITEM_PROTO_SPELLS];         // 80 - 84
+    int32      SpellCategory[MAX_ITEM_PROTO_SPELLS];         // 85 - 89
+    int32      SpellCategoryCooldown[MAX_ITEM_PROTO_SPELLS]; // 90 - 94
+    uint32     Bonding;                                      // 95
+    char*      Name;                                         // 96
+    char*      Name2;                                        // 97
+    char*      Name3;                                        // 98
+    char*      Name4;                                        // 99
+    char*      Description;                                  // 100
+    uint32     PageText;                                     // 101
+    uint32     LanguageID;                                   // 102
+    uint32     PageMaterial;                                 // 103
+    uint32     StartQuest;                                   // 104
+    uint32     LockID;                                       // 105
+    int32      Material;                                     // 106
+    uint32     Sheath;                                       // 107
+    uint32     RandomProperty;                               // 108
+    uint32     RandomSuffix;                                 // 109
+    uint32     ItemSet;                                      // 110
+    uint32     MaxDurability;                                // 111
+    uint32     Area;                                         // 112
+    uint32     Map;                                          // 113
+    uint32     BagFamily;                                    // 114
+    uint32     TotemCategory;                                // 115
+    uint32     Color[MAX_ITEM_PROTO_SOCKETS];                // 116 - 118
+    uint32     Content[MAX_ITEM_PROTO_SOCKETS];              // 119 - 121
+    int32      SocketBonus;                                  // 122
+    uint32     GemProperties;                                // 123
+    float      ArmorDamageModifier;                          // 124
+    uint32     Duration;                                     // 125
+    uint32     ItemLimitCategory;                            // 126
+    uint32     HolidayId;                                    // 127
+    float      StatScalingFactor;                            // 128
+    int32      Field130;                                     // 129
+    int32      Field131;                                     // 130
 };
 
 struct ItemArmorQualityEntry
@@ -1261,6 +1267,17 @@ struct ItemDisplayInfoEntry
                                                             // 11       m_particleColorID
 };
 
+struct ItemDisenchantLootEntry
+{
+    uint32 Id;
+    uint32 ItemClass;
+    int32 Unk;
+    uint32 ItemQuality;
+    uint32 MinItemLevel;
+    uint32 MaxItemLevel;
+    uint32 RequiredDisenchantSkill;
+};
+
 //struct ItemCondExtCostsEntry
 //{
 //    uint32      ID;
@@ -1281,7 +1298,7 @@ struct ItemDisplayInfoEntry
 struct ItemDamageEntry
 {
   uint32    Id;                                             // 0 item level
-  float     Value[7];                                       // 1-7 multiplier for item quality
+  float     DPS[7];                                         // 1-7 multiplier for item quality
   uint32    Id2;                                            // 8 item level
 };
 
