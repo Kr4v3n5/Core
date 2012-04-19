@@ -487,14 +487,10 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.SkinLootId        = fields[47].GetUInt32();
 
         for (uint8 i = SPELL_SCHOOL_HOLY; i < MAX_SPELL_SCHOOL; ++i)
-        {
             creatureTemplate.resistance[i] = fields[48 + i -1].GetInt32();
-        }
 
         for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
-        {
             creatureTemplate.spells[i] = fields[54 + i].GetUInt32();
-        }
 
         creatureTemplate.PetSpellDataId = fields[62].GetUInt32();
         creatureTemplate.VehicleId      = fields[63].GetUInt32();
@@ -509,9 +505,7 @@ void ObjectMgr::LoadCreatureTemplates()
         creatureTemplate.RacialLeader   = fields[72].GetBool();
 
         for (uint8 i = 0; i < MAX_CREATURE_QUEST_ITEMS; ++i)
-        {
             creatureTemplate.questItems[i] = fields[73 + i].GetUInt32();
-        }
 
         creatureTemplate.movementId         = fields[79].GetUInt32();
         creatureTemplate.RegenHealth        = fields[80].GetBool();
@@ -526,9 +520,7 @@ void ObjectMgr::LoadCreatureTemplates()
 
     // Checking needs to be done after loading because of the difficulty self referencing
     for (CreatureTemplateContainer::const_iterator itr = CreatureTemplateStore.begin(); itr != CreatureTemplateStore.end(); ++itr)
-    {
         CheckCreatureTemplate(&itr->second);
-    }
 
     sLog->outString(">> Loaded %u creature definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
@@ -1504,7 +1496,7 @@ void ObjectMgr::LoadCreatures()
         }
 
         if (data.spawnMask & ~spawnMasks[data.mapid])
-            sLog->outErrorDb("Table `creature` have creature (GUID: %u) that have wrong spawn mask %u including not supported difficulty modes for map (Id: %u).", guid, data.spawnMask, data.mapid);
+            sLog->outErrorDb("Table `creature` have creature (GUID: %u) that have wrong spawn mask %u including not supported difficulty modes for map (Id: %u) spawnMasks[data.mapid]: %u.", guid, data.spawnMask, data.mapid, spawnMasks[data.mapid]);
 
         bool ok = true;
         for (uint32 diff = 0; diff < MAX_DIFFICULTY - 1 && ok; ++diff)

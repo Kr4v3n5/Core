@@ -16591,7 +16591,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     // 47      48      49      50      51      52           53         54          55             56
     //"power1, power2, power3, power4, power5, instance_id, speccount, activespec, exploredZones, equipmentCache,
     // 57           58                 59          60
-    //"knownTitles, achievementPoints, actionBars, grantableLevels FROM characters WHERE guid = '%u'", guid);
+    //"knownTitles, achievementPoints, actionBars, grantableLevels, guildid FROM characters WHERE guid = '%u'", guid);
     PreparedQueryResult result = holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
     if (!result)
@@ -17212,7 +17212,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     if (m_grantableLevels > 0)
         SetByteValue(PLAYER_FIELD_BYTES, 1, 0x01);
 
-    m_guildId = fields[62].GetUInt32();
+    m_guildId = fields[61].GetUInt32();
 
     _LoadDeclinedNames(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
 
