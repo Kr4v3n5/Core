@@ -477,6 +477,7 @@ public:
                 }
                 m_uiPhase = 0;
             }
+            DoMeleeAttackIfReady();
         }
     };
 

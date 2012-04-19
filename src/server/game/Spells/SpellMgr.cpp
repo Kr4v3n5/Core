@@ -2816,6 +2816,10 @@ void SpellMgr::LoadSpellCustomAttr()
             case 43140: // Flame Breath
             case 43215: // Flame Breath
             case 70461: // Coldflame Trap
+            case 72133: // Pain and Suffering
+            case 73788: // Pain and Suffering
+            case 73789: // Pain and Suffering
+            case 73790: // Pain and Suffering
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_CONE_LINE;
                 break;
             case 24340: // Meteor
@@ -3393,6 +3397,91 @@ void SpellMgr::LoadDbcDataCorrections()
             case 86150: // Guardian of Ancient Kings
                 spellEffect->EffectTriggerSpell = 86698;
                 spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER;
+                break;
+            case 71614: // Ice Lock
+                spellMechanic->Mechanic = MECHANIC_STUN;
+                break;
+            case 72762: // Defile
+                spellInfo->DurationIndex = 559; // 53 seconds
+                break;
+            case 72743: // Defile
+                spellInfo->DurationIndex = 22; // 45 seconds
+                break;
+            case 72754: // Defile
+            case 73708: // Defile
+            case 73709: // Defile
+            case 73710: // Defile
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                break;
+            case 69030: // Val'kyr Target Search
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                break;
+            case 69198: // Raging Spirit Visual
+                spellInfo->rangeIndex = 13;             // 50000yd
+                break;
+            case 73654: // Harvest Souls
+            case 74295: // Harvest Souls
+            case 74296: // Harvest Souls
+            case 74297: // Harvest Souls
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                break;
+            case 73655: // Harvest Soul
+                spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_DONE_BONUS;
+                break;
+            case 73540: // Summon Shadow Trap
+                spellInfo->DurationIndex = 23;          // 90 seconds
+                break;
+            case 73530: // Shadow Trap (visual)
+                spellInfo->DurationIndex = 28;          // 5 seconds
+                break;
+            case 73529: // Shadow Trap
+                spellEffect->EffectRadiusIndex = 13;   // 10yd
+                break;
+            case 74282: // Shadow Trap (searcher)
+                spellEffect->EffectRadiusIndex = 15;   // 3yd
+                break;
+            case 72595: // Restore Soul
+            case 73650: // Restore Soul
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                break;
+            case 74086: // Destroy Soul
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                break;
+            case 74302: // Summon Spirit Bomb
+            case 74342: // Summon Spirit Bomb
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                spellTarget->MaxAffectedTargets = 1;
+                break;
+            case 74341: // Summon Spirit Bomb
+            case 74343: // Summon Spirit Bomb
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
+                spellTarget->MaxAffectedTargets = 3;
+                break;
+            case 73579: // Summon Spirit Bomb
+                spellEffect->EffectRadiusIndex = 20;   // 25yd
+                break;
+            case 72350: // Fury of Frostmourne
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                break;
+            case 75127: // Kill Frostmourne Players
+            case 72351: // Fury of Frostmourne
+            case 72429: // Mass Resurrection
+            case 73159: // Play Movie
+            case 73582: // Trigger Vile Spirit (Inside, Heroic)
+                spellEffect->EffectRadiusIndex[0] = 28;   // 50000yd
+                break;
+            case 72376: // Raise Dead
+                spellTarget->MaxAffectedTargets = 3;
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                break;
+            case 71809: // Jump
+                spellInfo->rangeIndex = 3;              // 20yd
+                spellEffect->EffectRadiusIndex = 20;   // 25yd
                 break;
             default:
                 break;
