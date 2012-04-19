@@ -535,18 +535,15 @@ void WorldSession::HandleAddFriendOpcode(WorldPacket & recv_data)
     if (!normalizePlayerName(friendName))
         return;
 
-    CharacterDatabase.EscapeString(friendName);            // prevent SQL injection - normal name must not be changed by this call
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUID_RACE_ACC_BY_NAME);
 
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: %s asked to add friend : '%s'",
-        GetPlayer()->GetName(), friendName.c_str());
+    stmt->setString(0, friendName);
 
     _addFriendCallback.SetParam(friendNote);
-    _addFriendCallback.SetFutureResult(
-        CharacterDatabase.AsyncPQuery("SELECT guid, race, account FROM characters WHERE name = '%s'", friendName.c_str())
-        );
+    _addFriendCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }
 
-void WorldSession::HandleAddFriendOpcodeCallBack(QueryResult result, std::string friendNote)
+void WorldSession::HandleAddFriendOpcodeCallBack(PreparedQueryResult result, std::string friendNote)
 {
     if (!GetPlayer())
         return;
@@ -624,15 +621,14 @@ void WorldSession::HandleAddIgnoreOpcode(WorldPacket & recv_data)
     if (!normalizePlayerName(IgnoreName))
         return;
 
-    CharacterDatabase.EscapeString(IgnoreName);            // prevent SQL injection - normal name must not be changed by this call
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUID_BY_NAME);
 
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: %s asked to Ignore: '%s'",
-        GetPlayer()->GetName(), IgnoreName.c_str());
+    stmt->setString(0, IgnoreName);
 
-    _addIgnoreCallback = CharacterDatabase.AsyncPQuery("SELECT guid FROM characters WHERE name = '%s'", IgnoreName.c_str());
+    _addIgnoreCallback = CharacterDatabase.AsyncQuery(stmt);
 }
 
-void WorldSession::HandleAddIgnoreOpcodeCallBack(QueryResult result)
+void WorldSession::HandleAddIgnoreOpcodeCallBack(PreparedQueryResult result)
 {
     if (!GetPlayer())
         return;
@@ -710,9 +706,12 @@ void WorldSession::HandleBugOpcode(WorldPacket & recv_data)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", type.c_str());
     sLog->outDebug(LOG_FILTER_NETWORKIO, "%s", content.c_str());
 
-    CharacterDatabase.EscapeString(type);
-    CharacterDatabase.EscapeString(content);
-    CharacterDatabase.PExecute ("INSERT INTO bugreport (type, content) VALUES('%s', '%s')", type.c_str(), content.c_str());
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_BUG_REPORT);
+
+    stmt->setString(0, type);
+    stmt->setString(1, content);
+
+    CharacterDatabase.Execute(stmt);
 }
 
 void WorldSession::HandleReclaimCorpseOpcode(WorldPacket &recv_data)

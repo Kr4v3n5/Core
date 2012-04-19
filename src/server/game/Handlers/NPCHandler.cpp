@@ -394,7 +394,7 @@ void WorldSession::SendBindPoint(Creature *npc)
     uint32 bindspell = 3286;
 
     // update sql homebind
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SET_PLAYER_HOMEBIND);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_PLAYER_HOMEBIND);
     stmt->setUInt16(0, _player->GetMapId());
     stmt->setUInt16(1, _player->GetAreaId());
     stmt->setFloat (2, _player->GetPositionX());
@@ -443,14 +443,17 @@ void WorldSession::HandleListStabledPetsOpcode(WorldPacket & recv_data)
 
 void WorldSession::SendStablePet(uint64 guid)
 {
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_SLOTS_DETAIL);
+
+    stmt->setUInt32(0, _player->GetGUIDLow());
+    stmt->setUInt8(1, PET_SLOT_HUNTER_FIRST);
+    stmt->setUInt8(2, PET_SLOT_STABLE_LAST);
+
     _sendStabledPetCallback.SetParam(guid);
-    _sendStabledPetCallback.SetFutureResult(
-        CharacterDatabase.AsyncPQuery("SELECT owner, slot, id, entry, level, name FROM character_pet WHERE owner = '%u' AND slot >= '%u' AND slot <= '%u' ORDER BY slot",
-            _player->GetGUIDLow(), PET_SLOT_HUNTER_FIRST, PET_SLOT_STABLE_LAST)
-        );
+    _sendStabledPetCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
 }
 
-void WorldSession::SendStablePetCallback(QueryResult result, uint64 guid)
+void WorldSession::SendStablePetCallback(PreparedQueryResult result, uint64 guid)
 {
     if (!GetPlayer())
         return;
@@ -541,13 +544,14 @@ void WorldSession::HandleStableChangeSlot(WorldPacket & recv_data)
     if (pet && GetPlayer()->m_currentPetSlot == newslot)
         _player->RemovePet(pet, PET_SLOT_ACTUAL_PET_SLOT);
 
-    _stableChangeSlotCallback.SetParam(newslot);
-    _stableChangeSlotCallback.SetFutureResult(
-        CharacterDatabase.PQuery("SELECT slot,entry,id FROM character_pet WHERE owner = '%u' AND id = '%u'",
-        _player->GetGUIDLow(), petnumber));
+    // TODO.
+    //_stableChangeSlotCallback.SetParam(newslot);
+    //_stableChangeSlotCallback.SetFutureResult(
+    //    CharacterDatabase.PQuery("SELECT slot,entry,id FROM character_pet WHERE owner = '%u' AND id = '%u'",
+    //    _player->GetGUIDLow(), petnumber));
 }
 
-void WorldSession::HandleStableChangeSlotCallback(QueryResult result, uint8 newslot)
+void WorldSession::HandleStableChangeSlotCallback(PreparedQueryResult result, uint8 newslot)
 {
     if (!GetPlayer())
         return;

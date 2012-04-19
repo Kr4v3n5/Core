@@ -308,9 +308,10 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         if (HasLowerSecurity(NULL, target_guid))
             return false;
 
-        //                                                     0          1      2      3        4     5      6    7
-        QueryResult result = CharacterDatabase.PQuery("SELECT totaltime, level, money, account, race, class, map, zone FROM characters "
-                                                      "WHERE guid = '%u'", GUID_LOPART(target_guid));
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_PINFO);
+        stmt->setUInt32(0, GUID_LOPART(target_guid));
+        PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
         if (!result)
             return false;
 
@@ -371,18 +372,17 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
     PreparedQueryResult result2 = LoginDatabase.Query(stmt);
     if (!result2)
     {
-        Field* fields = result2->Fetch();
-        banTime = fields[1].GetBool() ? 0 : fields[0].GetUInt64();
-        bannedby = fields[2].GetString();
-        banreason = fields[3].GetString();
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PINFO_BANS);
+        stmt->setUInt32(0, GUID_LOPART(target_guid));
+        result2 = CharacterDatabase.Query(stmt);
     }
-    else if (QueryResult result3 = CharacterDatabase.PQuery("SELECT unbandate, bandate = unbandate, bannedby, banreason FROM character_banned "
-                                                           "WHERE guid = '%u' AND active ORDER BY bandate ASC LIMIT 1", GUID_LOPART(target_guid)))
+
+    if (result2)
     {
-        Field* fields = result3->Fetch();
-        banTime = fields[1].GetBool() ? 0 : fields[0].GetUInt64();
-        bannedby = fields[2].GetString();
-        banreason = fields[3].GetString();
+        Field* fields = result2->Fetch();
+        banTime       = int64(fields[1].GetBool() ? 0 : fields[0].GetUInt32());
+        bannedby      = fields[2].GetString();
+        banreason     = fields[3].GetString();
     }
 
     if (muteTime > 0)
@@ -485,7 +485,13 @@ bool ChatHandler::HandleCharacterRenameCommand(const char* args)
         std::string oldNameLink = playerLink(targetName);
 
         PSendSysMessage(LANG_RENAME_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(targetGuid));
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '1' WHERE guid = '%u'", GUID_LOPART(targetGuid));
+
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+        stmt->setUInt16(0, uint16(AT_LOGIN_RENAME));
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
+
+        CharacterDatabase.Execute(stmt);
     }
 
     return true;
@@ -500,47 +506,61 @@ bool ChatHandler::HandleCharacterCustomizeCommand(const char* args)
     if (!extractPlayerTarget((char*)args, &target, &targetGuid, &targetName))
         return false;
 
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+    stmt->setUInt16(0, uint16(AT_LOGIN_CUSTOMIZE));
+
     if (target)
     {
         PSendSysMessage(LANG_CUSTOMIZE_PLAYER, GetNameLink(target).c_str());
         target->SetAtLoginFlag(AT_LOGIN_CUSTOMIZE);
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '8' WHERE guid = '%u'", target->GetGUIDLow());
+
+        stmt->setUInt32(1, target->GetGUIDLow());
+    }
+    else
+    {
+        std::string oldNameLink = playerLink(targetName);
+
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
+
+        PSendSysMessage(LANG_CUSTOMIZE_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(targetGuid));
+    }
+
+    CharacterDatabase.Execute(stmt);
+
+    return true;
+}
+
+bool ChatHandler::HandleCharacterChangeFactionCommand(const char* args)
+{
+    Player* target;
+    uint64 targetGuid;
+    std::string targetName;
+
+    if (!extractPlayerTarget((char*)args, &target, &targetGuid, &targetName))
+        return false;
+
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+    stmt->setUInt16(0, uint16(AT_LOGIN_CHANGE_FACTION));
+
+    if (target)
+    {
+        PSendSysMessage(LANG_CUSTOMIZE_PLAYER, GetNameLink(target).c_str());
+        target->SetAtLoginFlag(AT_LOGIN_CHANGE_FACTION);
+
+        stmt->setUInt32(1, target->GetGUIDLow());
     }
     else
     {
         std::string oldNameLink = playerLink(targetName);
 
         PSendSysMessage(LANG_CUSTOMIZE_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(targetGuid));
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '8' WHERE guid = '%u'", GUID_LOPART(targetGuid));
+
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
     }
 
-    return true;
-}
-
-bool ChatHandler::HandleCharacterChangeFactionCommand(const char * args)
-{
-    Player* target;
-    uint64 target_guid;
-    std::string target_name;
-
-    if (!extractPlayerTarget((char*)args, &target, &target_guid, &target_name))
-        return false;
-
-    if (target)
-    {
-        // TODO : add text into database
-        PSendSysMessage(LANG_CUSTOMIZE_PLAYER, GetNameLink(target).c_str());
-        target->SetAtLoginFlag(AT_LOGIN_CHANGE_FACTION);
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '64' WHERE guid = %u", target->GetGUIDLow());
-    }
-    else
-    {
-        std::string oldNameLink = playerLink(target_name);
-
-        // TODO : add text into database
-        PSendSysMessage(LANG_CUSTOMIZE_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(target_guid));
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '64' WHERE guid = %u", GUID_LOPART(target_guid));
-    }
+    CharacterDatabase.Execute(stmt);
 
     return true;
 }
@@ -548,26 +568,32 @@ bool ChatHandler::HandleCharacterChangeFactionCommand(const char * args)
 bool ChatHandler::HandleCharacterChangeRaceCommand(const char * args)
 {
     Player* target;
-    uint64 target_guid;
-    std::string target_name;
-    if (!extractPlayerTarget((char*)args, &target, &target_guid, &target_name))
+    uint64 targetGuid;
+    std::string targetName;
+    if (!extractPlayerTarget((char*)args, &target, &targetGuid, &targetName))
         return false;
+
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+    stmt->setUInt16(0, uint16(AT_LOGIN_CHANGE_RACE));
 
     if (target)
     {
-        // TODO : add text into database
         PSendSysMessage(LANG_CUSTOMIZE_PLAYER, GetNameLink(target).c_str());
         target->SetAtLoginFlag(AT_LOGIN_CHANGE_RACE);
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '128' WHERE guid = %u", target->GetGUIDLow());
+
+        stmt->setUInt32(1, target->GetGUIDLow());
     }
     else
     {
-        std::string oldNameLink = playerLink(target_name);
+        std::string oldNameLink = playerLink(targetName);
 
-        // TODO : add text into database
-        PSendSysMessage(LANG_CUSTOMIZE_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(target_guid));
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '128' WHERE guid = %u", GUID_LOPART(target_guid));
+        PSendSysMessage(LANG_CUSTOMIZE_PLAYER_GUID, oldNameLink.c_str(), GUID_LOPART(targetGuid));
+
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
     }
+
+    CharacterDatabase.Execute(stmt);
 
     return true;
 }

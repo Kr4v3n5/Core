@@ -64,13 +64,18 @@ AccountOpResult DeleteAccount(uint32 accountId)
     if (!result)
         return AOR_NAME_NOT_EXIST;                          // account doesn't exist
 
-    // existed characters list
-    QueryResult result1 = CharacterDatabase.PQuery("SELECT guid FROM characters WHERE account='%d'", accountId);
+    // Obtain accounts characters
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHARS_BY_ACCOUNT_ID);
+
+    stmt->setUInt32(0, accountId);
+
+    result = CharacterDatabase.Query(stmt);
+
     if (result)
     {
         do
         {
-            uint32 guidLow = (*result1)[0].GetUInt32();
+            uint32 guidLow = (*result)[0].GetUInt32();
             uint64 guid = MAKE_NEW_GUID(guidLow, 0, HIGHGUID_PLAYER);
 
             // kick if player is online
@@ -82,7 +87,7 @@ AccountOpResult DeleteAccount(uint32 accountId)
             }
 
             Player::DeleteFromDB(guid, accountId, false);       // no need to update realm characters
-        } while (result1->NextRow());
+        } while (result->NextRow());
     }
 
     // table realm specific but common for all characters of account for realm
@@ -229,8 +234,11 @@ bool CheckPassword(uint32 accountId, std::string password)
 uint32 GetCharactersCount(uint32 accountId)
 {
     // check character count
-    QueryResult result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", accountId);
-    return (result) ? (*result)[0].GetUInt32() : 0;
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_SUM_CHARS);
+    stmt->setUInt32(0, accountId);
+    PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
+    return (result) ? (*result)[0].GetUInt64() : 0;
 }
 
 bool normalizeString(std::string& utf8String)

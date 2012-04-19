@@ -530,7 +530,13 @@ void WorldSession::LogoutPlayer(bool Save)
 
         ///- Since each account can only have one online character at any given time, ensure all characters for active account are marked as offline
         //No SQL injection as AccountId is uint32
-        CharacterDatabase.PExecute("UPDATE characters SET online = 0 WHERE account = '%u'", GetAccountId());
+
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ACCOUNT_ONLINE);
+
+        stmt->setUInt32(0, GetAccountId());
+
+        CharacterDatabase.Execute(stmt);
+
         sLog->outDebug(LOG_FILTER_NETWORKIO, "SESSION: Sent SMSG_LOGOUT_COMPLETE Message");
     }
 
@@ -627,7 +633,7 @@ void WorldSession::SendAuthWaitQue(uint32 position)
 
 void WorldSession::LoadGlobalAccountData()
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_LOAD_ACCOUNT_DATA);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ACCOUNT_DATA);
     stmt->setUInt32(0, GetAccountId());
     LoadAccountData(CharacterDatabase.Query(stmt), GLOBAL_CACHE_MASK);
 }
@@ -670,7 +676,7 @@ void WorldSession::SetAccountData(AccountDataType type, time_t tm, std::string d
     if ((1 << type) & GLOBAL_CACHE_MASK)
     {
         id = GetAccountId();
-        index = CHAR_SET_ACCOUNT_DATA;
+        index = CHAR_REP_ACCOUNT_DATA;
     }
     else
     {
@@ -679,7 +685,7 @@ void WorldSession::SetAccountData(AccountDataType type, time_t tm, std::string d
             return;
 
         id = m_GUIDLow;
-        index = CHAR_SET_PLAYER_ACCOUNT_DATA;
+        index = CHAR_REP_PLAYER_ACCOUNT_DATA;
     }
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(index);
@@ -709,7 +715,7 @@ void WorldSession::LoadTutorialsData()
 {
     memset(m_Tutorials, 0, sizeof(uint32) * MAX_ACCOUNT_TUTORIAL_VALUES);
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_LOAD_TUTORIALS);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_TUTORIALS);
     stmt->setUInt32(0, GetAccountId());
     if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
         for (uint8 i = 0; i < MAX_ACCOUNT_TUTORIAL_VALUES; ++i)
@@ -731,11 +737,11 @@ void WorldSession::SaveTutorialsData(SQLTransaction &trans)
     if (!m_TutorialsChanged)
         return;
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_GET_HAS_TUTORIALS);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_HAS_TUTORIALS);
     stmt->setUInt32(0, GetAccountId());
     bool hasTutorials = !CharacterDatabase.Query(stmt).null();
     // Modify data in DB
-    stmt = CharacterDatabase.GetPreparedStatement(hasTutorials ? CHAR_SET_TUTORIALS : CHAR_ADD_TUTORIALS);
+    stmt = CharacterDatabase.GetPreparedStatement(hasTutorials ? CHAR_UPD_TUTORIALS : CHAR_INS_TUTORIALS);
     for (uint8 i = 0; i < MAX_ACCOUNT_TUTORIAL_VALUES; ++i)
         stmt->setUInt32(i, m_Tutorials[i]);
     stmt->setUInt32(MAX_ACCOUNT_TUTORIAL_VALUES, GetAccountId());
@@ -904,7 +910,7 @@ void WorldSession::InitializeQueryCallbackParameters()
 
 void WorldSession::ProcessQueryCallbacks()
 {
-    QueryResult result;
+    PreparedQueryResult result;
 
     //! HandleCharEnumOpcode
     if (_charEnumCallback.ready())
@@ -916,9 +922,8 @@ void WorldSession::ProcessQueryCallbacks()
 
     if (_charCreateCallback.IsReady())
     {
-        PreparedQueryResult pResult;
-        _charCreateCallback.GetResult(pResult);
-        HandleCharCreateCallback(pResult, _charCreateCallback.GetParam());
+        _charCreateCallback.GetResult(result);
+        HandleCharCreateCallback(result, _charCreateCallback.GetParam());
         // Don't call FreeResult() here, the callback handler will do that depending on the events in the callback chain
     }
     //! HandlePlayerLoginOpcode

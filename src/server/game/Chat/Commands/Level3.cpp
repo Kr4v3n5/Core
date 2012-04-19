@@ -421,22 +421,22 @@ bool ChatHandler::HandleListItemCommand(const char *args)
         return false;
     uint32 count = uint32(_count);
 
-    QueryResult result;
+    PreparedQueryResult result;
 
     // inventory case
     uint32 inv_count = 0;
-    result = CharacterDatabase.PQuery("SELECT COUNT(itemEntry) FROM character_inventory ci INNER JOIN item_instance ii ON ii.guid = ci.item WHERE itemEntry = '%u'", item_id);
+
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_INVENTORY_COUNT_ITEM);
+    stmt->setUInt32(0, item_id);
+    result = CharacterDatabase.Query(stmt);
+
     if (result)
         inv_count = (*result)[0].GetUInt32();
 
-    result=CharacterDatabase.PQuery(
-    //          0        1               2        3        4          5
-        "SELECT ci.item, cb.slot AS bag, ci.slot, ci.guid, c.account, c.name FROM characters c "
-        "INNER JOIN character_inventory ci ON ci.guid = c.guid "
-        "INNER JOIN item_instance ii ON ii.guid = ci.item "
-        "LEFT JOIN character_inventory cb ON cb.item = ci.bag "
-        "WHERE ii.itemEntry = '%u' LIMIT %u ",
-        item_id, count);
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_INVENTORY_ITEM_BY_ENTRY);
+    stmt->setUInt32(0, item_id);
+    stmt->setUInt32(1, count);
+    result = CharacterDatabase.Query(stmt);
 
     if (result)
     {
@@ -474,24 +474,23 @@ bool ChatHandler::HandleListItemCommand(const char *args)
 
     // mail case
     uint32 mail_count = 0;
-    result = CharacterDatabase.PQuery("SELECT COUNT(itemEntry) FROM mail_items mi INNER JOIN item_instance ii ON ii.guid = mi.item_guid WHERE itemEntry = '%u'", item_id);
+
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAIL_COUNT_ITEM);
+    stmt->setUInt32(0, item_id);
+    result = CharacterDatabase.Query(stmt);
+
     if (result)
         mail_count = (*result)[0].GetUInt32();
 
     if (count > 0)
     {
-        result = CharacterDatabase.PQuery(
-        //          0             1         2           3           4        5           6
-            "SELECT mi.item_guid, m.sender, m.receiver, cs.account, cs.name, cr.account, cr.name FROM mail m "
-            "INNER JOIN mail_items mi ON mi.mail_id = m.id "
-            "INNER JOIN item_instance ii ON ii.guid = mi.item_guid "
-            "INNER JOIN characters cs ON cs.guid = m.sender "
-            "INNER JOIN characters cr ON cr.guid = m.receiver "
-            "WHERE ii.itemEntry = '%u' LIMIT %u",
-            item_id, count);
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAIL_ITEMS_BY_ENTRY);
+        stmt->setUInt32(0, item_id);
+        stmt->setUInt32(1, count);
+        result = CharacterDatabase.Query(stmt);
     }
     else
-        result = QueryResult(NULL);
+        result = PreparedQueryResult(NULL);
 
     if (result)
     {
@@ -522,21 +521,23 @@ bool ChatHandler::HandleListItemCommand(const char *args)
 
     // auction case
     uint32 auc_count = 0;
-    result=CharacterDatabase.PQuery("SELECT COUNT(itemEntry) FROM auctionhouse ah INNER JOIN item_instance ii ON ii.guid = ah.itemguid WHERE itemEntry = '%u'", item_id);
+
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_AUCTIONHOUSE_COUNT_ITEM);
+    stmt->setUInt32(0, item_id);
+    result = CharacterDatabase.Query(stmt);
+
     if (result)
         auc_count = (*result)[0].GetUInt32();
 
     if (count > 0)
     {
-        result = CharacterDatabase.PQuery(
-        //           0            1             2          3
-            "SELECT  ah.itemguid, ah.itemowner, c.account, c.name FROM auctionhouse ah "
-            "INNER JOIN characters c ON c.guid = ah.itemowner "
-            "INNER JOIN item_instance ii ON ii.guid = ah.itemguid "
-            "WHERE ii.itemEntry = '%u' AND LIMIT %u", item_id, count);
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_AUCTIONHOUSE_ITEM_BY_ENTRY);
+        stmt->setUInt32(0, item_id);
+        stmt->setUInt32(1, count);
+        result = CharacterDatabase.Query(stmt);
     }
     else
-        result = QueryResult(NULL);
+        result = PreparedQueryResult(NULL);
 
     if (result)
     {
@@ -557,17 +558,18 @@ bool ChatHandler::HandleListItemCommand(const char *args)
 
     // guild bank case
     uint32 guild_count = 0;
-    result = CharacterDatabase.PQuery("SELECT COUNT(itemEntry) FROM guild_bank_item gbi INNER JOIN item_instance ii ON ii.guid = gbi.item_guid WHERE itemEntry = '%u'", item_id);
+
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_BANK_COUNT_ITEM);
+    stmt->setUInt32(0, item_id);
+    result = CharacterDatabase.Query(stmt);
+
     if (result)
         guild_count = (*result)[0].GetUInt32();
 
-    result = CharacterDatabase.PQuery(
-        //      0             1           2
-        "SELECT gi.item_guid, gi.guildid, g.name FROM guild_bank_item gi "
-        "INNER JOIN guild g ON g.guildid = gi.guildid "
-        "INNER JOIN item_instance ii ON ii.guid = gi.item_guid "
-        "WHERE ii.itemEntry = '%u' LIMIT %u ",
-        item_id, count);
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_BANK_ITEM_BY_ENTRY);
+    stmt->setUInt32(0, item_id);
+    stmt->setUInt32(1, count);
+    result = CharacterDatabase.Query(stmt);
 
     if (result)
     {
@@ -2179,8 +2181,13 @@ void ChatHandler::HandleCharacterLevel(Player* player, uint64 player_guid, uint3
     }
     else
     {
-        // update level and XP at level, all other will be updated at loading
-        CharacterDatabase.PExecute("UPDATE characters SET level = '%u', xp = 0 WHERE guid = '%u'", newlevel, GUID_LOPART(player_guid));
+        // Update level and reset XP, everything else will be updated at login
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_LEVEL);
+
+        stmt->setUInt8(0, uint8(newlevel));
+        stmt->setUInt32(1, GUID_LOPART(player_guid));
+
+        CharacterDatabase.Execute(stmt);
     }
 }
 
@@ -2542,12 +2549,12 @@ bool ChatHandler::HandleResetStatsCommand(const char * args)
     return true;
 }
 
-bool ChatHandler::HandleResetSpellsCommand(const char * args)
+bool ChatHandler::HandleResetSpellsCommand(const char* args)
 {
     Player* target;
-    uint64 target_guid;
-    std::string target_name;
-    if (!extractPlayerTarget((char*)args, &target, &target_guid, &target_name))
+    uint64 targetGuid;
+    std::string targetName;
+    if (!extractPlayerTarget((char*)args, &target, &targetGuid, &targetName))
         return false;
 
     if (target)
@@ -2560,26 +2567,32 @@ bool ChatHandler::HandleResetSpellsCommand(const char * args)
     }
     else
     {
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '%u' WHERE guid = '%u'", uint32(AT_LOGIN_RESET_SPELLS), GUID_LOPART(target_guid));
-        PSendSysMessage(LANG_RESET_SPELLS_OFFLINE, target_name.c_str());
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+        stmt->setUInt16(0, uint16(AT_LOGIN_RESET_SPELLS));
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
+
+        CharacterDatabase.Execute(stmt);
+
+        PSendSysMessage(LANG_RESET_SPELLS_OFFLINE, targetName.c_str());
     }
 
     return true;
 }
 
-bool ChatHandler::HandleResetTalentsCommand(const char * args)
+bool ChatHandler::HandleResetTalentsCommand(const char* args)
 {
     Player* target;
-    uint64 target_guid;
-    std::string target_name;
-    if (!extractPlayerTarget((char*)args, &target, &target_guid, &target_name))
+    uint64 targetGuid;
+    std::string targetName;
+    if (!extractPlayerTarget((char*)args, &target, &targetGuid, &targetName))
     {
         // Try reset talents as Hunter Pet
         Creature* creature = getSelectedCreature();
         if (!*args && creature && creature->isPet())
         {
             Unit* owner = creature->GetOwner();
-            if (owner && owner->GetTypeId() == TYPEID_PLAYER && creature->ToPet()->IsPermanentPetfor (owner->ToPlayer()))
+            if (owner && owner->GetTypeId() == TYPEID_PLAYER && creature->ToPet()->IsPermanentPetfor(owner->ToPlayer()))
             {
                 creature->ToPet()->resetTalents();
                 owner->ToPlayer()->SendTalentsInfoData(true);
@@ -2610,11 +2623,16 @@ bool ChatHandler::HandleResetTalentsCommand(const char * args)
             target->SendTalentsInfoData(true);
         return true;
     }
-    else if (target_guid)
+    else if (targetGuid)
     {
-        uint32 at_flags = AT_LOGIN_NONE | AT_LOGIN_RESET_PET_TALENTS;
-        CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '%u' WHERE guid = '%u'", at_flags, GUID_LOPART(target_guid));
-        std::string nameLink = playerLink(target_name);
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+
+        stmt->setUInt16(0, uint16(AT_LOGIN_NONE | AT_LOGIN_RESET_PET_TALENTS));
+        stmt->setUInt32(1, GUID_LOPART(targetGuid));
+
+        CharacterDatabase.Execute(stmt);
+
+        std::string nameLink = playerLink(targetName);
         PSendSysMessage(LANG_RESET_TALENTS_OFFLINE, nameLink.c_str());
         return true;
     }
@@ -2655,7 +2673,11 @@ bool ChatHandler::HandleResetAllCommand(const char * args)
         return false;
     }
 
-    CharacterDatabase.PExecute("UPDATE characters SET at_login = at_login | '%u' WHERE (at_login & '%u') = '0'", atLogin, atLogin);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ALL_AT_LOGIN_FLAGS);
+
+    stmt->setUInt16(0, uint16(atLogin));
+
+    CharacterDatabase.Execute(stmt);
 
     ACE_GUARD_RETURN(ACE_Thread_Mutex, guard, *HashMapHolder<Player>::GetLock(), true);
     HashMapHolder<Player>::MapType const& plist = sObjectAccessor->GetPlayers();
@@ -2699,7 +2721,7 @@ bool ChatHandler::HandleServerShutDownCommand(const char *args)
         if (exitcode < 0 || exitcode > 125)
             return false;
 
-        sWorld->ShutdownServ (time, 0, exitcode);
+        sWorld->ShutdownServ(time, 0, exitcode);
     }
     else
         sWorld->ShutdownServ(time, 0, SHUTDOWN_EXIT_CODE);
@@ -2734,7 +2756,7 @@ bool ChatHandler::HandleServerRestartCommand(const char *args)
         if (exitcode < 0 || exitcode > 125)
             return false;
 
-        sWorld->ShutdownServ (time, SHUTDOWN_MASK_RESTART, exitcode);
+        sWorld->ShutdownServ(time, SHUTDOWN_MASK_RESTART, exitcode);
     }
     else
         sWorld->ShutdownServ(time, SHUTDOWN_MASK_RESTART, RESTART_EXIT_CODE);
@@ -2769,7 +2791,7 @@ bool ChatHandler::HandleServerIdleRestartCommand(const char *args)
         if (exitcode < 0 || exitcode > 125)
             return false;
 
-        sWorld->ShutdownServ (time, SHUTDOWN_MASK_RESTART|SHUTDOWN_MASK_IDLE, exitcode);
+        sWorld->ShutdownServ(time, SHUTDOWN_MASK_RESTART|SHUTDOWN_MASK_IDLE, exitcode);
     }
     else
         sWorld->ShutdownServ(time, SHUTDOWN_MASK_RESTART|SHUTDOWN_MASK_IDLE, RESTART_EXIT_CODE);
@@ -3072,7 +3094,7 @@ bool ChatHandler::HandleBanInfoCharacterCommand(const char *args)
 
     if (!target)
     {
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_GET_GUID_BY_NAME);
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUID_BY_NAME);
         stmt->setString(0, name);
         PreparedQueryResult resultCharacter = CharacterDatabase.Query(stmt);
 
@@ -3087,7 +3109,7 @@ bool ChatHandler::HandleBanInfoCharacterCommand(const char *args)
     else
         target_guid = target->GetGUIDLow();
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_GET_BANINFO);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_BANINFO);
     stmt->setUInt32(0, target_guid);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
     if (!result)
@@ -3182,7 +3204,7 @@ bool ChatHandler::HandleBanListCharacterCommand(const char *args)
         return false;
 
     std::string filter(cFilter);
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_GET_GUID_BY_NAME_FILTER);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUID_BY_NAME_FILTER);
     stmt->setString(0, filter.c_str());
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
     if (!result)
@@ -3199,7 +3221,7 @@ bool ChatHandler::HandleBanListCharacterCommand(const char *args)
         do
         {
             Field* fields = result->Fetch();
-            PreparedStatement* stmt2 = CharacterDatabase.GetPreparedStatement(CHAR_GET_BANNED_NAME);
+            PreparedStatement* stmt2 = CharacterDatabase.GetPreparedStatement(CHAR_SEL_BANNED_NAME);
             stmt2->setUInt32(0, fields[0].GetUInt32());
             PreparedQueryResult banresult = CharacterDatabase.Query(stmt2);
             if (banresult)
@@ -3221,7 +3243,7 @@ bool ChatHandler::HandleBanListCharacterCommand(const char *args)
 
             std::string char_name = fields[1].GetString();
 
-            PreparedStatement* stmt2 = CharacterDatabase.GetPreparedStatement(CHAR_GET_BANINFO_LIST);
+            PreparedStatement* stmt2 = CharacterDatabase.GetPreparedStatement(CHAR_SEL_BANINFO_LIST);
             stmt2->setUInt32(0, fields[0].GetUInt32());
             PreparedQueryResult banInfo = CharacterDatabase.Query(stmt2);
             if (banInfo)
@@ -3322,7 +3344,7 @@ bool ChatHandler::HandleBanListHelper(PreparedQueryResult result)
         {
             SendSysMessage("-------------------------------------------------------------------------------");
             Field* fields = result->Fetch();
-            uint32 account_id = fields[0].GetUInt32 ();
+            uint32 account_id = fields[0].GetUInt32();
 
             std::string account_name;
 
@@ -4432,7 +4454,7 @@ bool ChatHandler::HandleChannelSetOwnership(const char *args)
     {
         if (chn)
             chn->SetOwnership(true);
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SET_CHANNEL_OWNERSHIP);
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHANNEL_OWNERSHIP);
         stmt->setUInt8 (0, 1);
         stmt->setString(1, channel);
         CharacterDatabase.Execute(stmt);
@@ -4442,7 +4464,7 @@ bool ChatHandler::HandleChannelSetOwnership(const char *args)
     {
         if (chn)
             chn->SetOwnership(false);
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SET_CHANNEL_OWNERSHIP);
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHANNEL_OWNERSHIP);
         stmt->setUInt8 (0, 0);
         stmt->setString(1, channel);
         CharacterDatabase.Execute(stmt);
@@ -4453,10 +4475,6 @@ bool ChatHandler::HandleChannelSetOwnership(const char *args)
 
     return true;
 }
-
-/*------------------------------------------
- *-------------TRILLIUM----------------------
- *-------------------------------------*/
 
 bool ChatHandler::HandlePlayAllCommand(const char *args)
 {
@@ -4551,22 +4569,21 @@ bool ChatHandler::HandleUnFreezeCommand(const char *args)
 {
     std::string name;
     Player* player;
-    char *TargetName = strtok((char*)args, " "); //get entered name
-    if (!TargetName) //if no name entered use target
-    {
-        player = getSelectedPlayer();
-        if (player) //prevent crash with creature as target
-            name = player->GetName();
-    }
+    char* targetName = strtok((char*)args, " "); // Get entered name
 
-    else // if name entered
+    if (targetName)
     {
-        name = TargetName;
+        name = targetName;
         normalizePlayerName(name);
         player = sObjectAccessor->FindPlayerByName(name.c_str());
     }
+    else // If no name was entered - use target
+    {
+        player = getSelectedPlayer();
+        if (player)
+            name = player->GetName();
+    }
 
-    //effect
     if (player)
     {
         PSendSysMessage(LANG_COMMAND_UNFREEZE, name.c_str());
@@ -4581,23 +4598,28 @@ bool ChatHandler::HandleUnFreezeCommand(const char *args)
         //save player
         player->SaveToDB();
     }
-
-    if (!player)
+    else
     {
-        if (TargetName)
+        if (targetName)
         {
-            //check for offline players
-            QueryResult result = CharacterDatabase.PQuery("SELECT characters.guid FROM characters WHERE characters.name = '%s'", name.c_str());
+            // Check for offline players
+            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_GUID_BY_NAME);
+            stmt->setString(0, name);
+            PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
             if (!result)
             {
                 SendSysMessage(LANG_COMMAND_FREEZE_WRONG);
                 return true;
             }
-            //if player found: delete his freeze aura
-            Field* fields=result->Fetch();
-            uint64 pguid = fields[0].GetUInt64();
+            // If player found: delete his freeze aura
+            Field* fields = result->Fetch();
+            uint32 lowGuid = fields[0].GetUInt32();
 
-            CharacterDatabase.PQuery("DELETE FROM character_aura WHERE character_aura.spell = 9454 AND character_aura.guid = '%u'", pguid);
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_AURA_FROZEN);
+            stmt->setUInt32(0, lowGuid);
+            CharacterDatabase.Execute(stmt);
+
             PSendSysMessage(LANG_COMMAND_UNFREEZE, name.c_str());
             return true;
         }
@@ -4613,8 +4635,11 @@ bool ChatHandler::HandleUnFreezeCommand(const char *args)
 
 bool ChatHandler::HandleListFreezeCommand(const char * /*args*/)
 {
-    //Get names from DB
-    QueryResult result = CharacterDatabase.Query("SELECT characters.name FROM characters LEFT JOIN character_aura ON (characters.guid = character_aura.guid) WHERE character_aura.spell = 9454");
+    // Get names from DB
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHARACTER_AURA_FROZEN);
+
+    PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
     if (!result)
     {
         SendSysMessage(LANG_COMMAND_NO_FROZEN_PLAYERS);

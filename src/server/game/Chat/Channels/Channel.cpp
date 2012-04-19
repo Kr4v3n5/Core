@@ -52,13 +52,12 @@ Channel::Channel(const std::string& name, uint32 channel_id, uint32 Team)
     }
     else                                                    // it's custom channel
     {
-        channel_id = 0;
         m_flags |= CHANNEL_FLAG_CUSTOM;
 
         // If storing custom channels in the db is enabled either load or save the channel
         if (sWorld->getBoolConfig(CONFIG_PRESERVE_CUSTOM_CHANNELS))
         {
-            PreparedStatement *stmt = CharacterDatabase.GetPreparedStatement(CHAR_LOAD_CHANNEL);
+            PreparedStatement *stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHANNEL);
             stmt->setString(0, name);
             stmt->setUInt32(1, m_Team);
             PreparedQueryResult result = CharacterDatabase.Query(stmt);
@@ -88,7 +87,7 @@ Channel::Channel(const std::string& name, uint32 channel_id, uint32 Team)
             }
             else // save
             {
-                PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_ADD_CHANNEL);
+                stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHANNEL);
                 stmt->setString(0, name);
                 stmt->setUInt32(1, m_Team);
                 CharacterDatabase.Execute(stmt);
@@ -111,7 +110,7 @@ void Channel::UpdateChannelInDB() const
 
         std::string banListStr = banlist.str();
 
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SET_CHANNEL);
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHANNEL);
         stmt->setBool(0, m_announce);
         stmt->setBool(1, m_ownership);
         stmt->setString(2, m_password);
@@ -127,7 +126,7 @@ void Channel::UpdateChannelInDB() const
 
 void Channel::UpdateChannelUseageInDB() const
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SET_CHANNEL_USAGE);
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHANNEL_USAGE);
     stmt->setString(0, m_name);
     stmt->setUInt32(1, m_Team);
     CharacterDatabase.Execute(stmt);
