@@ -344,6 +344,11 @@ struct SmartEvent
 
         struct
         {
+            uint32 GoRespawnTime;
+        } RespawnTarget;
+
+        struct
+        {
             uint32 param1;
             uint32 param2;
             uint32 param3;

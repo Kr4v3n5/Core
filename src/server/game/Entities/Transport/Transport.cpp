@@ -45,7 +45,7 @@ Transport::~Transport()
         {
             Map* map = passenger->GetMap();
             passenger->CleanupsBeforeDelete();
-            map->Remove(passenger, true);
+            map->RemoveFromMap(passenger, true);
         }
     }
 
@@ -390,7 +390,7 @@ Creature* Transport::CreateNPCPassenger(uint32 entry, float x, float y, float z,
     }
 
     creature->setActive(true);
-    map->Add(creature);
+    map->AddToMap(creature);
     AddPassenger(creature);
 
     sScriptMgr->OnAddCreaturePassenger(this, creature);

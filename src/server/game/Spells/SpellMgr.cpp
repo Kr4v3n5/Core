@@ -3055,7 +3055,6 @@ void SpellMgr::LoadDbcDataCorrections()
             case 25425: // Shoot
             case 45761: // Shoot
             case 42611: // Shoot
-            case 62374: // Pursued
             case 61588: // Blazing Harpoon
             case 52479: // Gift of the Harvester
                 spellTarget->MaxAffectedTargets = 1;
@@ -3240,6 +3239,9 @@ void SpellMgr::LoadDbcDataCorrections()
                 break;
             // ULDUAR SPELLS
             //
+            case 62374: // Pursued (Flame Leviathan)
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
+                break;
             case 63342: // Focused Eyebeam Summon Trigger (Kologarn)
                 spellTarget->MaxAffectedTargets = 1;
                 break;
@@ -3398,9 +3400,9 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellEffect->EffectTriggerSpell = 86698;
                 spellEffect->EffectImplicitTargetA = TARGET_UNIT_CASTER;
                 break;
-            case 71614: // Ice Lock
-                spellMechanic->Mechanic = MECHANIC_STUN;
-                break;
+            //case 71614: // Ice Lock
+            //    spellMechanic->Mechanic = MECHANIC_STUN;
+            //    break;
             case 72762: // Defile
                 spellInfo->DurationIndex = 559; // 53 seconds
                 break;
@@ -3470,10 +3472,11 @@ void SpellMgr::LoadDbcDataCorrections()
                 break;
             case 75127: // Kill Frostmourne Players
             case 72351: // Fury of Frostmourne
+            case 72431: // Jump (removes Fury of Frostmourne debuff)
             case 72429: // Mass Resurrection
             case 73159: // Play Movie
             case 73582: // Trigger Vile Spirit (Inside, Heroic)
-                spellEffect->EffectRadiusIndex[0] = 28;   // 50000yd
+                spellEffect->EffectRadiusIndex = 28;   // 50000yd
                 break;
             case 72376: // Raise Dead
                 spellTarget->MaxAffectedTargets = 3;
@@ -3482,6 +3485,9 @@ void SpellMgr::LoadDbcDataCorrections()
             case 71809: // Jump
                 spellInfo->rangeIndex = 3;              // 20yd
                 spellEffect->EffectRadiusIndex = 20;   // 25yd
+                break;
+            case 72405: // Broken Frostmourne
+                spellEffect->EffectRadiusIndex = 22;   // 200yd
                 break;
             default:
                 break;

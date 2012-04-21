@@ -218,7 +218,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     if (cinfo->type == CREATURE_TYPE_CRITTER)
     {
         m_loading = false;
-        map->Add(this->ToCreature());
+        map->AddToMap(this->ToCreature());
         return true;
     }
 
@@ -298,7 +298,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     }
 
     owner->SetMinion(this, true, slotID == PET_SLOT_UNK_SLOT ? PET_SLOT_OTHER_PET : slotID);
-    map->Add(this->ToCreature());
+    map->AddToMap(this->ToCreature());
 
     InitTalentForLevel();                                   // set original talents points before spell loading
 

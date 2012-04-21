@@ -39,11 +39,11 @@ enum SpellEffIndex
 // loot modes for creatures and gameobjects, bitmask!
 enum LootModes
 {
-    LOOT_MODE_DEFAULT                  = 1,
-    LOOT_MODE_HARD_MODE_1              = 2,
-    LOOT_MODE_HARD_MODE_2              = 4,
-    LOOT_MODE_HARD_MODE_3              = 8,
-    LOOT_MODE_HARD_MODE_4              = 16
+    LOOT_MODE_DEFAULT                  = 0x1,
+    LOOT_MODE_HARD_MODE_1              = 0x2,
+    LOOT_MODE_HARD_MODE_2              = 0x4,
+    LOOT_MODE_HARD_MODE_3              = 0x8,
+    LOOT_MODE_HARD_MODE_4              = 0x10
 };
 
 enum Gender
@@ -56,7 +56,7 @@ enum Gender
 // Race value is index in ChrRaces.dbc
 enum Races
 {
-    //RACE_NONE           = 0,
+    RACE_NONE           = 0,
     RACE_HUMAN          = 1,
     RACE_ORC            = 2,
     RACE_DWARF          = 3,
@@ -100,6 +100,7 @@ enum Races
 // Class value is index in ChrClasses.dbc
 enum Classes
 {
+    CLASS_NONE          = 0,
     CLASS_WARRIOR       = 1,
     CLASS_PALADIN       = 2,
     CLASS_HUNTER        = 3,
@@ -1305,7 +1306,8 @@ enum Mechanics
     MECHANIC_DISCOVERY        = 28,
     MECHANIC_IMMUNE_SHIELD    = 29,                         // Divine (Blessing) Shield/Protection and Ice Block
     MECHANIC_SAPPED           = 30,
-    MECHANIC_ENRAGED          = 31
+    MECHANIC_ENRAGED          = 31,
+    MECHANIC_WOUNDED          = 32,
 };
 
 // Used for spell 42292 Immune Movement Impairment and Loss of Control (0x49967ca6)
@@ -3257,7 +3259,7 @@ enum RemoveMethod
 // account with expansion > client supported will rejected at connection by client
 // because if client receive unsupported expansion level it think
 // that it not have expansion installed and reject
-#define MAX_EXPANSION 3
+#define MAX_EXPANSION 4
 
 enum PetTalentType
 {

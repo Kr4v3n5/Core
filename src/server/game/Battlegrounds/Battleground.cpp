@@ -440,6 +440,13 @@ inline void Battleground::_ProcessJoin(uint32 diff)
     {
         m_Events |= BG_STARTING_EVENT_1;
 
+        if (!FindBgMap())
+        {
+            sLog->outError("Battleground::_ProcessJoin: map (map id: %u, instance id: %u) is not created!", m_MapId, m_InstanceID);
+            EndNow();
+            return;
+        }
+
         // Setup here, only when at least one player has ported to the map
         if (!SetupBattleground())
         {
@@ -1430,7 +1437,7 @@ bool Battleground::AddObject(uint32 type, uint32 entry, float x, float y, float 
     // If the assert is called, means that m_BgObjects must be resized!
     ASSERT(type < m_BgObjects.size());
 
-    Map *map = GetBgMap();
+    Map *map = FindBgMap();
     if (!map)
         return false;
     // Must be created this way, adding to godatamap would add it to the base map of the instance
@@ -1470,7 +1477,7 @@ bool Battleground::AddObject(uint32 type, uint32 entry, float x, float y, float 
     data.go_state       = 1;
 */
     // Add to world, so it can be later looked up from HashMapHolder
-    map->Add(go);
+    map->AddToMap(go);
     m_BgObjects[type] = go->GetGUID();
     return true;
 }
@@ -1527,7 +1534,7 @@ Creature* Battleground::GetBGCreature(uint32 type)
 
 void Battleground::SpawnBGObject(uint32 type, uint32 respawntime)
 {
-    if (Map* map = GetBgMap())
+    if (Map* map = FindBgMap())
         if (GameObject *obj = map->GetGameObject(m_BgObjects[type]))
         {
             if (respawntime)
@@ -1537,7 +1544,7 @@ void Battleground::SpawnBGObject(uint32 type, uint32 respawntime)
                     // Change state from GO_JUST_DEACTIVATED to GO_READY in case battleground is starting again
                     obj->SetLootState(GO_READY);
             obj->SetRespawnTime(respawntime);
-            map->Add(obj);
+            map->AddToMap(obj);
         }
 }
 
@@ -1546,7 +1553,7 @@ Creature* Battleground::AddCreature(uint32 entry, uint32 type, uint32 teamval, f
     // If the assert is called, means that m_BgCreatures must be resized!
     ASSERT(type < m_BgCreatures.size());
 
-    Map* map = GetBgMap();
+    Map* map = FindBgMap();
     if (!map)
         return NULL;
 
@@ -1573,7 +1580,7 @@ Creature* Battleground::AddCreature(uint32 entry, uint32 type, uint32 teamval, f
     pCreature->SetSpeed(MOVE_WALK,  cinfo->speed_walk);
     pCreature->SetSpeed(MOVE_RUN,   cinfo->speed_run);
 
-    map->Add(pCreature);
+    map->AddToMap(pCreature);
     m_BgCreatures[type] = pCreature->GetGUID();
 
     if (respawntime)

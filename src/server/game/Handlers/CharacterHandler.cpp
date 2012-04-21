@@ -744,6 +744,7 @@ void WorldSession::HandleCharCreateCallback(PreparedQueryResult result, Characte
             sLog->outDetail("Account: %d (IP: %s) Create Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), createInfo->Name.c_str(), newChar.GetGUIDLow());
             sLogMgr->WriteLn(CHAR_LOG, "Account: %d (IP: %s) Create Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), createInfo->Name.c_str(), newChar.GetGUIDLow());
             sScriptMgr->OnPlayerCreate(&newChar);
+            sWorld->AddCharacterNameData(newChar.GetGUIDLow(), std::string(newChar.GetName()), newChar.getGender(), newChar.getRace(), newChar.getClass());
 
             delete createInfo;
             _charCreateCallback.Reset();
@@ -811,6 +812,7 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket & recv_data)
     sLog->outDetail("Account: %d (IP: %s) Delete Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), name.c_str(), GUID_LOPART(guid));
     sLogMgr->WriteLn(CHAR_LOG, "Account: %d (IP: %s) Delete Character:[%s] (GUID: %u)", GetAccountId(), IP_str.c_str(), name.c_str(), GUID_LOPART(guid));
     sScriptMgr->OnPlayerDelete(guid);
+    sWorld->DeleteCharacterNameData(GUID_LOPART(guid));
 
     if (sLogMgr->IsDumpCharacters())
     {
@@ -1025,7 +1027,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         }
     }
 
-    if (!pCurrChar->GetMap()->Add(pCurrChar) || !pCurrChar->CheckInstanceLoginValid())
+    if (!pCurrChar->GetMap()->AddToMap(pCurrChar) || !pCurrChar->CheckInstanceLoginValid())
     {
         AreaTrigger const* at = sObjectMgr->GetGoBackTrigger(pCurrChar->GetMapId());
         if (at)
@@ -1591,6 +1593,8 @@ void WorldSession::HandleCharCustomize(WorldPacket& recv_data)
 
     CharacterDatabase.Execute(stmt);
 
+    sWorld->UpdateCharacterNameData(GUID_LOPART(guid), newname, gender);
+
     WorldPacket data(SMSG_CHAR_CUSTOMIZE, 1+8+(newname.size()+1)+6);
     data << uint8(RESPONSE_SUCCESS);
     data << uint64(guid);
@@ -1602,8 +1606,6 @@ void WorldSession::HandleCharCustomize(WorldPacket& recv_data)
     data << uint8(hairColor);
     data << uint8(facialHair);
     SendPacket(&data);
-
-    sWorld->ReloadSingleCharacterNameData(GUID_LOPART(guid));
 }
 
 void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
@@ -1823,6 +1825,8 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recv_data)
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_DECLINED_NAME);
     stmt->setUInt32(0, lowGuid);
     trans->Append(stmt);
+
+    sWorld->UpdateCharacterNameData(GUID_LOPART(guid), newname, gender, race); 
 
     BattlegroundTeamId team = BG_TEAM_ALLIANCE;
 

@@ -374,7 +374,7 @@ void PoolGroup<Creature>::Spawn1Object(PoolObject* obj)
                 return;
             }
             else
-                map->Add(pCreature);
+                map->AddToMap(pCreature);
         }
     }
 }
@@ -402,7 +402,7 @@ void PoolGroup<GameObject>::Spawn1Object(PoolObject* obj)
             else
             {
                 if (pGameobject->isSpawnedByDefault())
-                    map->Add(pGameobject);
+                    map->AddToMap(pGameobject);
             }
         }
     }
@@ -510,7 +510,7 @@ void PoolGroup<Creature>::ReSpawn1Object(PoolObject* obj)
 {
     if (CreatureData const* data = sObjectMgr->GetCreatureData(obj->guid))
         if (Creature* pCreature = ObjectAccessor::GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_UNIT), (Creature*)NULL))
-            pCreature->GetMap()->Add(pCreature);
+            pCreature->GetMap()->AddToMap(pCreature);
 }
 
 // Method that does the respawn job on the specified gameobject
@@ -519,7 +519,7 @@ void PoolGroup<GameObject>::ReSpawn1Object(PoolObject* obj)
 {
     if (GameObjectData const* data = sObjectMgr->GetGOData(obj->guid))
         if (GameObject* pGameobject = ObjectAccessor::GetObjectInWorld(MAKE_NEW_GUID(obj->guid, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
-            pGameobject->GetMap()->Add(pGameobject);
+            pGameobject->GetMap()->AddToMap(pGameobject);
 }
 
 // Nothing to do for a child Pool
