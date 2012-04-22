@@ -64,7 +64,7 @@ bool PlayerSocial::AddToSocialList(uint32 friend_guid, bool ignore)
             return false;
     }
 
-    uint32 flag = SOCIAL_FLAG_FRIEND;
+    uint8 flag = SOCIAL_FLAG_FRIEND;
     if (ignore)
         flag = SOCIAL_FLAG_IGNORED;
 
@@ -104,7 +104,7 @@ void PlayerSocial::RemoveFromSocialList(uint32 friend_guid, bool ignore)
     if (itr == m_playerSocialMap.end())                     // not exist
         return;
 
-    uint32 flag = SOCIAL_FLAG_FRIEND;
+    uint8 flag = SOCIAL_FLAG_FRIEND;
     if (ignore)
         flag = SOCIAL_FLAG_IGNORED;
 
@@ -342,7 +342,7 @@ PlayerSocial *SocialMgr::LoadFromDB(PreparedQueryResult result, uint32 guid)
         return social;
 
     uint32 friend_guid = 0;
-    uint32 flags = 0;
+    uint8 flags = 0;
     std::string note = "";
 
     do
@@ -350,7 +350,7 @@ PlayerSocial *SocialMgr::LoadFromDB(PreparedQueryResult result, uint32 guid)
         Field* fields = result->Fetch();
 
         friend_guid = fields[0].GetUInt32();
-        flags = fields[1].GetUInt32();
+        flags = fields[1].GetUInt8();
         note = fields[2].GetString();
 
         social->m_playerSocialMap[friend_guid] = FriendInfo(flags, note);

@@ -317,13 +317,13 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
 
         Field* fields = result->Fetch();
         total_player_time = fields[0].GetUInt32();
-        level = fields[1].GetUInt32();
-        money = fields[2].GetUInt32();
-        accId = fields[3].GetUInt32();
-        race = fields[4].GetUInt8();
-        Class = fields[5].GetUInt8();
-        mapId = fields[6].GetUInt16();
-        areaId = fields[7].GetUInt16();
+        level             = fields[1].GetUInt8();
+        money             = fields[2].GetUInt32();
+        accId             = fields[3].GetUInt32();
+        race              = fields[4].GetUInt8();
+        Class             = fields[5].GetUInt8();
+        mapId             = fields[6].GetUInt16();
+        areaId            = fields[7].GetUInt16();
     }
 
     std::string username   = GetTrilliumString(LANG_ERROR);
@@ -340,10 +340,10 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
     if (result)
     {
         Field* fields = result->Fetch();
-        username = fields[0].GetString();
-        security = fields[1].GetUInt32();
-        email = fields[2].GetString();
-        muteTime = fields[5].GetUInt64();
+        username      = fields[0].GetString();
+        security      = fields[1].GetUInt8();
+        email         = fields[2].GetString();
+        muteTime      = fields[5].GetUInt64();
 
         if (email.empty())
             email = "-";

@@ -51,7 +51,7 @@ enum SocialFlag
 struct FriendInfo
 {
     FriendStatus Status;
-    uint32 Flags;
+    uint8 Flags;
     uint32 Area;
     uint8 Level;
     uint8 Class;
@@ -67,7 +67,7 @@ struct FriendInfo
         Note = "";
     }
 
-    FriendInfo(uint32 flags, const std::string& note)
+    FriendInfo(uint8 flags, const std::string& note)
     {
         Status = FRIEND_STATUS_OFFLINE;
         Flags = flags;

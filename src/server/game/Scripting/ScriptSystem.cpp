@@ -132,9 +132,9 @@ void SystemMgr::LoadScriptTextsCustom()
 
         int32 iId              = pFields[0].GetInt32();
         pTemp.uiSoundId        = pFields[1].GetUInt32();
-        pTemp.uiType           = pFields[2].GetUInt32();
-        pTemp.uiLanguage       = pFields[3].GetUInt32();
-        pTemp.uiEmote          = pFields[4].GetUInt32();
+        pTemp.uiType            = pFields[2].GetUInt8();
+        pTemp.uiLanguage        = pFields[3].GetUInt8();
+        pTemp.uiEmote           = pFields[4].GetUInt16();
 
         if (iId >= 0)
         {
